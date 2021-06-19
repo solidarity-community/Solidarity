@@ -1,0 +1,18 @@
+{
+	"extends": [
+		"./node_modules/@3mo/model/.eslintrc.json"
+	],
+	"settings": {
+		"import/resolver": {
+			"node": {
+				"extensions": [
+					".js",
+					".ts"
+				],
+				"paths": [
+					"."
+				]
+			}
+		}
+	}
+}

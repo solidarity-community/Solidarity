@@ -1,0 +1,20 @@
+{
+	"name": "@solidarity/client",
+	"license": "GNU GPLV3",
+	"version": "0.0.1",
+	"scripts": {
+		"start": "webpack serve --mode=development",
+		"lint": "eslint **/*.ts",
+		"build": "webpack --mode=production"
+	},
+	"dependencies": {
+		"@3mo/model": "git+https://github.com/3mo-esolutions/model.git"
+	},
+	"devDependencies": {
+		"ts-lit-plugin": "1.*",
+		"typescript": "4.*",
+		"webpack": "5.*",
+		"webpack-cli": "4.*",
+		"webpack-dev-server": "3.*"
+	}
+}
