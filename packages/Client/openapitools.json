@@ -1,0 +1,19 @@
+{
+	"$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+	"spaces": 4,
+	"generator-cli": {
+		"version": "5.1.0",
+		"generators": {
+			"additionalProperties": {
+				"glob": "../Server/solidarity.api.json",
+				"output": "./sdk/",
+				"generatorName": "typescript-fetch",
+				"additionalProperties": {
+					"fileContentDataType": "Blob",
+					"legacyDiscriminatorBehavior": false,
+					"supportsES6": true
+				}
+			}
+		}
+	}
+}

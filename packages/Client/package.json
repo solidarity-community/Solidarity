@@ -3,9 +3,10 @@
 	"license": "GNU GPLV3",
 	"version": "0.0.1",
 	"scripts": {
-		"start": "webpack serve --mode=development",
+		"start": "npm run generate && webpack serve --mode=development",
 		"lint": "eslint **/*.ts",
-		"build": "webpack --mode=production"
+		"build": "webpack --mode=production",
+		"generate": "openapi-generator-cli generate"
 	},
 	"dependencies": {
 		"@3mo/model": "git+https://github.com/3mo-esolutions/model.git"
@@ -15,6 +16,10 @@
 		"typescript": "4.*",
 		"webpack": "5.*",
 		"webpack-cli": "4.*",
-		"webpack-dev-server": "3.*"
+		"webpack-dev-server": "3.*",
+		"@openapitools/openapi-generator-cli": "2.*",
+		"copy-webpack-plugin": "9.*",
+		"favicons-webpack-plugin": "5.*",
+		"download-file": "*"
 	}
 }

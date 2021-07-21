@@ -1,0 +1,12 @@
+{
+	"version": "0.1.0",
+	"name": "Solidarity",
+	"short_name": "Solidarity",
+	"description": "Solidarity",
+	"start_url": "/",
+	"scope": "/",
+	"display": "standalone",
+	"display_override": [
+		"tabbed"
+	]
+}
