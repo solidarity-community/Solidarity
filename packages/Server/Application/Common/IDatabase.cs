@@ -15,8 +15,6 @@ namespace Solidarity.Application.Common
 		DbSet<DonationChannel> DonationChannels { get; set; }
 		DbSet<CryptoMnemonic> CryptoMnemonics { get; set; }
 
-		DbSet<T> Set<T>() where T : Model;
-
 		void CommitChanges();
 		// Task SaveChangesAsync();
 	}
