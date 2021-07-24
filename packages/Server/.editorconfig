@@ -1,3 +1,4 @@
+insert_final_newline = false
 
 # C# files
 [*.cs]
@@ -24,7 +25,7 @@ dotnet_style_parentheses_in_other_operators = never_if_unnecessary:warning
 dotnet_style_parentheses_in_relational_binary_operators = always_for_clarity:warning
 
 # Modifier preferences
-dotnet_style_require_accessibility_modifiers = omit_if_default:warning
+dotnet_style_require_accessibility_modifiers = always:warning
 
 # Expression-level preferences
 dotnet_style_coalesce_expression = true:warning
@@ -61,11 +62,11 @@ csharp_style_var_when_type_is_apparent = true:warning
 
 # Expression-bodied members
 csharp_style_expression_bodied_accessors = true:warning
-csharp_style_expression_bodied_constructors = false:warning
-csharp_style_expression_bodied_indexers = true:warning
-csharp_style_expression_bodied_lambdas = true:warning
-csharp_style_expression_bodied_local_functions = false:warning
-csharp_style_expression_bodied_methods = false:warning
+csharp_style_expression_bodied_constructors = true:none
+csharp_style_expression_bodied_indexers = true:none
+csharp_style_expression_bodied_lambdas = true:none
+csharp_style_expression_bodied_local_functions = true:none
+csharp_style_expression_bodied_methods = true:none
 csharp_style_expression_bodied_operators = false:warning
 csharp_style_expression_bodied_properties = true:warning
 
