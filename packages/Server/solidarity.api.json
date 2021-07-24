@@ -1,0 +1,1500 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Solidarity",
+    "version": "1"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:5001",
+      "description": "Development Server"
+    },
+    {
+      "url": "http://api.solidarity.community",
+      "description": "Production Server"
+    }
+  ],
+  "paths": {
+    "/Account": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Account"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Account"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Account/reset": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Account/recover": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "parameters": [
+          {
+            "name": "phrase",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authentication/check": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authentication": {
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationList"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationList"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthenticationList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authentication/password": {
+      "put": {
+        "tags": [
+          "Authentication"
+        ],
+        "parameters": [
+          {
+            "name": "newPassword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "oldPassword",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Authentication"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Campaign": {
+      "get": {
+        "tags": [
+          "Campaign"
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Campaign"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Campaign"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Campaign"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Campaign"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Campaign/{id}": {
+      "get": {
+        "tags": [
+          "Campaign"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Campaign"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Campaign"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Campaign"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Campaign/{id}/balance": {
+      "get": {
+        "tags": [
+          "Campaign"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "number",
+                  "format": "double"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Account": {
+        "required": [
+          "publicKey",
+          "username"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creatorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creation": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifierId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastModification": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "username": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "publicKey": {
+            "type": "string"
+          },
+          "passwordAuthentication": {
+            "$ref": "#/components/schemas/PasswordAuthentication"
+          },
+          "identity": {
+            "$ref": "#/components/schemas/Identity"
+          },
+          "campaigns": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Campaign"
+            },
+            "nullable": true
+          },
+          "votes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vote"
+            },
+            "nullable": true
+          },
+          "publicRSAKey": {
+            "$ref": "#/components/schemas/RSA"
+          }
+        },
+        "additionalProperties": false
+      },
+      "AuthenticationList": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Campaign": {
+        "required": [
+          "description",
+          "title"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creatorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creation": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifierId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastModification": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "creator": {
+            "$ref": "#/components/schemas/Account"
+          },
+          "location": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "title": {
+            "maxLength": 50,
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "completion": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "donationChannels": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DonationChannel"
+            },
+            "nullable": true
+          },
+          "validationId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/Validation"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Coordinate": {
+        "type": "object",
+        "properties": {
+          "x": {
+            "type": "number",
+            "format": "double"
+          },
+          "y": {
+            "type": "number",
+            "format": "double"
+          },
+          "z": {
+            "type": "number",
+            "format": "double"
+          },
+          "m": {
+            "type": "number",
+            "format": "double"
+          },
+          "coordinateValue": {
+            "$ref": "#/components/schemas/Coordinate"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CoordinateEqualityComparer": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "CoordinateSequence": {
+        "type": "object",
+        "properties": {
+          "dimension": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "measures": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "spatial": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "ordinates": {
+            "$ref": "#/components/schemas/Ordinates"
+          },
+          "hasZ": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "hasM": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "zOrdinateIndex": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "mOrdinateIndex": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "count": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "CoordinateSequenceFactory": {
+        "type": "object",
+        "properties": {
+          "ordinates": {
+            "$ref": "#/components/schemas/Ordinates"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Dimension": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          -3,
+          -2,
+          -1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "DonationChannel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creatorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creation": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifierId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastModification": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/Campaign"
+          },
+          "walletAddress": {
+            "type": "string",
+            "nullable": true
+          },
+          "donor": {
+            "$ref": "#/components/schemas/Account"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Envelope": {
+        "type": "object",
+        "properties": {
+          "isNull": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "width": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "height": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "diameter": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "minX": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "maxX": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "minY": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "maxY": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "area": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "minExtent": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "maxExtent": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "centre": {
+            "$ref": "#/components/schemas/Coordinate"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Geometry": {
+        "type": "object",
+        "properties": {
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Coordinate"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "numPoints": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "isEmpty": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "dimension": {
+            "$ref": "#/components/schemas/Dimension"
+          },
+          "boundaryDimension": {
+            "$ref": "#/components/schemas/Dimension"
+          },
+          "coordinate": {
+            "$ref": "#/components/schemas/Coordinate"
+          },
+          "geometryType": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "ogcGeometryType": {
+            "$ref": "#/components/schemas/OgcGeometryType"
+          },
+          "boundary": {
+            "$ref": "#/components/schemas/Geometry"
+          },
+          "factory": {
+            "$ref": "#/components/schemas/GeometryFactory"
+          },
+          "userData": {
+            "nullable": true
+          },
+          "srid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "precisionModel": {
+            "$ref": "#/components/schemas/PrecisionModel"
+          },
+          "numGeometries": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "isSimple": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isValid": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "area": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "length": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "centroid": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "interiorPoint": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "pointOnSurface": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "envelope": {
+            "$ref": "#/components/schemas/Geometry"
+          },
+          "envelopeInternal": {
+            "$ref": "#/components/schemas/Envelope"
+          },
+          "isRectangle": {
+            "type": "boolean",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "GeometryFactory": {
+        "type": "object",
+        "properties": {
+          "precisionModel": {
+            "$ref": "#/components/schemas/PrecisionModel"
+          },
+          "coordinateSequenceFactory": {
+            "$ref": "#/components/schemas/CoordinateSequenceFactory"
+          },
+          "srid": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "geometryServices": {
+            "$ref": "#/components/schemas/NtsGeometryServices"
+          }
+        },
+        "additionalProperties": false
+      },
+      "GeometryOverlay": {
+        "type": "object",
+        "additionalProperties": false
+      },
+      "Identity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creatorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creation": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifierId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastModification": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "accountId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "account": {
+            "$ref": "#/components/schemas/Account"
+          },
+          "firstName": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "lastName": {
+            "maxLength": 50,
+            "type": "string",
+            "nullable": true
+          },
+          "birthDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "KeySizes": {
+        "type": "object",
+        "properties": {
+          "minSize": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "maxSize": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "skipSize": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NtsGeometryServices": {
+        "type": "object",
+        "properties": {
+          "geometryOverlay": {
+            "$ref": "#/components/schemas/GeometryOverlay"
+          },
+          "coordinateEqualityComparer": {
+            "$ref": "#/components/schemas/CoordinateEqualityComparer"
+          },
+          "defaultSRID": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "defaultCoordinateSequenceFactory": {
+            "$ref": "#/components/schemas/CoordinateSequenceFactory"
+          },
+          "defaultPrecisionModel": {
+            "$ref": "#/components/schemas/PrecisionModel"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OgcGeometryType": {
+        "enum": [
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "Ordinates": {
+        "enum": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          7,
+          8,
+          16,
+          32,
+          64,
+          128,
+          256,
+          512,
+          1024,
+          2048,
+          4096,
+          8192,
+          16384,
+          32768,
+          65535,
+          65536,
+          65539,
+          65543,
+          131072,
+          262144,
+          524288,
+          1048576,
+          2097152,
+          4194304,
+          8388608,
+          16777216,
+          33554432,
+          67108864,
+          134217728,
+          268435456,
+          536870912,
+          1073741824,
+          -2147483648,
+          -65536,
+          -1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "PasswordAuthentication": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creatorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creation": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifierId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastModification": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "accountId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "account": {
+            "$ref": "#/components/schemas/Account"
+          },
+          "data": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Point": {
+        "type": "object",
+        "properties": {
+          "factory": {
+            "$ref": "#/components/schemas/GeometryFactory"
+          },
+          "userData": {
+            "nullable": true
+          },
+          "srid": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "precisionModel": {
+            "$ref": "#/components/schemas/PrecisionModel"
+          },
+          "numGeometries": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "isSimple": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "isValid": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "area": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "length": {
+            "type": "number",
+            "format": "double",
+            "readOnly": true
+          },
+          "centroid": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "interiorPoint": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "pointOnSurface": {
+            "$ref": "#/components/schemas/Point"
+          },
+          "envelope": {
+            "$ref": "#/components/schemas/Geometry"
+          },
+          "envelopeInternal": {
+            "$ref": "#/components/schemas/Envelope"
+          },
+          "isRectangle": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "coordinateSequence": {
+            "$ref": "#/components/schemas/CoordinateSequence"
+          },
+          "coordinates": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Coordinate"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "numPoints": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "isEmpty": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "dimension": {
+            "$ref": "#/components/schemas/Dimension"
+          },
+          "boundaryDimension": {
+            "$ref": "#/components/schemas/Dimension"
+          },
+          "x": {
+            "type": "number",
+            "format": "double"
+          },
+          "y": {
+            "type": "number",
+            "format": "double"
+          },
+          "coordinate": {
+            "$ref": "#/components/schemas/Coordinate"
+          },
+          "geometryType": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "ogcGeometryType": {
+            "$ref": "#/components/schemas/OgcGeometryType"
+          },
+          "boundary": {
+            "$ref": "#/components/schemas/Geometry"
+          },
+          "z": {
+            "type": "number",
+            "format": "double"
+          },
+          "m": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrecisionModel": {
+        "type": "object",
+        "properties": {
+          "isFloating": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "maximumSignificantDigits": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          },
+          "scale": {
+            "type": "number",
+            "format": "double"
+          },
+          "precisionModelType": {
+            "$ref": "#/components/schemas/PrecisionModels"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PrecisionModels": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "RSA": {
+        "type": "object",
+        "properties": {
+          "keySize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "legalKeySizes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/KeySizes"
+            },
+            "nullable": true,
+            "readOnly": true
+          },
+          "keyExchangeAlgorithm": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "signatureAlgorithm": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Validation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creatorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creation": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifierId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastModification": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "campaign": {
+            "$ref": "#/components/schemas/Campaign"
+          },
+          "votes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Vote"
+            },
+            "nullable": true
+          },
+          "expiration": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Vote": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creatorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creation": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifierId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastModification": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "validation": {
+            "$ref": "#/components/schemas/Validation"
+          },
+          "account": {
+            "$ref": "#/components/schemas/Account"
+          },
+          "value": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "scheme": "Bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

@@ -17,6 +17,7 @@ namespace Solidarity
 		public void ConfigureServices(IServiceCollection services)
 		{
 			services
+				.InstallSolidarity()
 				.AddHttpContextAccessor()
 				.AddCors()
 				.AddControllers()

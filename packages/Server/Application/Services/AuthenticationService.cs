@@ -17,7 +17,7 @@ using System;
 
 namespace Solidarity.Application.Services
 {
-	public class AuthenticationService : Service<AuthenticationMethod>
+	public class AuthenticationService : Service
 	{
 		private AccountService AccountService { get; }
 
