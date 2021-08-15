@@ -1,0 +1,36 @@
+version: "3"
+services:
+  sqlserver:
+    container_name: solidarity_database
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=DevPa$$w0rd
+      - MSSQL_PID=Express
+    ports:
+      - "1433:1433"
+  server:
+    container_name: solidarity_server
+    build:
+      context: ./packages/Server
+    ports: 
+      - "5000:80"
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - Database:Server=solidarity_database,1433
+      - Database:User=SA
+      - Database:Password=DevPa$$w0rd
+      - Jwt:SecretKey=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
+      # TODO: Crypto Note conainers
+      - CryptoNodes.Bitcoin.MainNet.Server=http://0.0.0.0:8000/
+      - CryptoNodes.Bitcoin.MainNet.Username=bitcoin
+      - CryptoNodes.Bitcoin.MainNet.Password=xxxxxxxxxxxxxx
+      - CryptoNodes.Bitcoin.TestNet.Server=http://0.0.0.0:8001/
+      - CryptoNodes.Bitcoin.TestNet.Username=bitcoin
+      - CryptoNodes.Bitcoin.TestNet.Password=xxxxxxxxxxxxxx
+  client:
+    container_name: solidarity_client
+    build:
+      context: ./packages/Client
+    ports:
+      - "80:80"

@@ -5,7 +5,6 @@ const MoDeLWebpackConfigFactory = require('@3mo/model/build/WebpackConfig.ts')
 const CopyPlugin = require('copy-webpack-plugin')
 // const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
-
 module.exports = (_, arguments) => MoDeLWebpackConfigFactory(arguments.mode, {
 	cache: false,
 	entry: './application/index.ts',

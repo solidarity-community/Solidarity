@@ -3,7 +3,7 @@
 	"license": "GNU GPLV3",
 	"version": "0.0.1",
 	"scripts": {
-		"start": "npm run generate && webpack serve --mode=development",
+		"start": "webpack serve --mode=development",
 		"lint": "eslint **/*.ts",
 		"build": "webpack --mode=production",
 		"generate": "openapi-generator-cli generate"

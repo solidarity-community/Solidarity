@@ -31,7 +31,7 @@ namespace Solidarity.Infrastructure.Persistance
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
-			modelBuilder.Entity<Account>(account => account.HasIndex(e => e.Username).IsUnique());
+			modelBuilder.Entity<Account>(a => a.HasIndex(e => e.Username).IsUnique());
 			modelBuilder.Entity<Account>().HasOne(a => a.Identity).WithOne(i => i!.Account);
 			modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne(c => c!.Creator);
 			modelBuilder.Entity<Account>().HasMany(a => a.Votes).WithOne(v => v!.Account);

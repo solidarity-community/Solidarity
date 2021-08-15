@@ -18,8 +18,8 @@ namespace Solidarity.Installers
 					ValidateAudience = true,
 					ValidateLifetime = true,
 					ValidateIssuerSigningKey = true,
-					ValidIssuer = Program.Configuration?["Jwt:Issuer"],
-					ValidAudience = Program.Configuration?["Jwt:Audience"],
+					ValidIssuer = "Solidarity",
+					ValidAudience = "Solidarity",
 					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Program.Configuration!["Jwt:SecretKey"])),
 				};
 			});
