@@ -15,10 +15,14 @@ module.exports = (_, arguments) => MoDeLWebpackConfigFactory(arguments.mode, {
 		publicPath: '/'
 	},
 	devServer: {
+		host: '0.0.0.0',
+		port: 8080,
 		contentBase: path.join(__dirname, 'dist'),
 		historyApiFallback: true,
-		clientLogLevel: 'silent',
-	}
+		watchOptions: {
+			poll: true // enable polling since "fsevents" are not supported in docker
+		}
+	},
 }, [
 	// new FaviconsWebpackPlugin({
 	// 	logo: 'assets/solidarity.svg',

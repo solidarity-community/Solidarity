@@ -1,8 +1,8 @@
-FROM node AS build
+FROM node:16
+RUN mkdir -p /Solidarity
 WORKDIR /Solidarity
-COPY . ./
-RUN npm install && npm run build
-
-FROM nginx
-COPY --from=build /Solidarity/dist /usr/share/nginx/html
+COPY package.json .
+RUN npm install
+COPY . .
 EXPOSE 8080
+CMD ["npm", "start"]
