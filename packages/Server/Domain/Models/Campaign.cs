@@ -12,7 +12,7 @@ namespace Solidarity.Domain.Models
 		public Point Location { get; set; } = null!;
 
 		[MaxLength(50), Required(ErrorMessage = "Title cannot be empty")]
-		public string? Title { get; set; }
+		public string Title { get; set; } = string.Empty;
 
 		[Required(ErrorMessage = "Description cannot be empty")]
 		public string Description { get; set; } = null!;

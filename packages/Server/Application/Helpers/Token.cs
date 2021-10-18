@@ -20,7 +20,7 @@ namespace Solidarity.Application.Helpers
 
 			claims.AddRange(pairs.Where(pair => pair.value != null).Select(pair => new Claim(pair.key, pair.value)));
 
-			var secretKey = Program.Configuration != null ? Program.Configuration["Jwt:SecretKey"] : "UnitTestSecretUnitTestSecretUnitTestSecretUnitTestSecretUnitTestSecret";
+			var secretKey = Program.Configuration!["JWT_KEY"];
 			var issuer = "Solidarity";
 			var audience = "Solidarity";
 

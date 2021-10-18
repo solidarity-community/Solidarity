@@ -17,13 +17,13 @@ namespace Solidarity.Application.Services
 
 		public Campaign Get(int id)
 		{
-			return Database.Campaigns.Find(id).WithoutAuthenticationData()
+			return database.Campaigns.Find(id)?.WithoutAuthenticationData()
 				?? throw new EntityNotFoundException("Campaign Not found");
 		}
 
 		public IEnumerable<Campaign> GetAll()
 		{
-			return Database.Campaigns
+			return database.Campaigns
 				.IncludeAll()
 				.WithoutAuthenticationData();
 		}
@@ -31,7 +31,7 @@ namespace Solidarity.Application.Services
 		public decimal GetBalance(int id)
 		{
 			var campaign = Get(id);
-			var client = CryptoClientFactory.GetClient(CoinType.Bitcoin, Domain.Enums.NetworkType.TestNet);
+			var client = cryptoClientFactory.GetClient(CoinType.Bitcoin, Domain.Enums.NetworkType.TestNet);
 			var balance = campaign.DonationChannels
 				.Select(dc => client.GetBalance(dc.WalletAddress))
 				.Sum();
@@ -42,11 +42,11 @@ namespace Solidarity.Application.Services
 		{
 			campaign.Completion = null;
 
-			Database.Campaigns.Add(campaign);
-			Database.CommitChanges();
+			database.Campaigns.Add(campaign);
+			database.CommitChanges();
 
-			var cryptoClient = CryptoClientFactory.GetClient(CoinType.Bitcoin, Domain.Enums.NetworkType.TestNet);
-			var address = cryptoClient.GetAddress(cryptoClient.DeriveKey(CryptoPrivateKey, campaign.Id));
+			var cryptoClient = cryptoClientFactory.GetClient(CoinType.Bitcoin, Domain.Enums.NetworkType.TestNet);
+			var address = cryptoClient.GetAddress(cryptoClient.DeriveKey(cryptoPrivateKey, campaign.Id));
 			var addressText = address.ToString();
 			if (addressText == null)
 			{
@@ -62,7 +62,7 @@ namespace Solidarity.Application.Services
 				}
 			};
 
-			Database.CommitChanges();
+			database.CommitChanges();
 
 			return campaign.WithoutAuthenticationData();
 		}
@@ -72,7 +72,7 @@ namespace Solidarity.Application.Services
 			model.Id = id;
 			var campaign = Get(id);
 
-			if (campaign.CreatorId != CurrentUserService.Id)
+			if (campaign.CreatorId != currentUserService.Id)
 			{
 				throw new Exception("You are not allowed to edit this campaign");
 			}
@@ -80,7 +80,7 @@ namespace Solidarity.Application.Services
 			campaign.Title = campaign.Title;
 			campaign.Description = campaign.Description;
 
-			Database.CommitChanges();
+			database.CommitChanges();
 			return campaign.WithoutAuthenticationData();
 		}
 	}

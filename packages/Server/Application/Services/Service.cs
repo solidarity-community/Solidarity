@@ -10,30 +10,30 @@ namespace Solidarity.Application.Services
 {
 	public abstract class Service
 	{
-		protected IDatabase Database { get; }
-		protected ICryptoClientFactory CryptoClientFactory { get; }
-		protected ICurrentUserService CurrentUserService { get; }
-		protected ExtKey CryptoPrivateKey { get; }
+		protected readonly IDatabase database;
+		protected readonly ICryptoClientFactory cryptoClientFactory;
+		protected readonly ICurrentUserService currentUserService;
+		protected readonly ExtKey cryptoPrivateKey;
 
 		public Service(IDatabase database, ICryptoClientFactory cryptoClientFactory, ICurrentUserService currentUserService)
 		{
-			Database = database;
-			CryptoClientFactory = cryptoClientFactory;
-			CurrentUserService = currentUserService;
-			CryptoPrivateKey = new Mnemonic(GetMnemonic().Mnemonic, Wordlist.English).DeriveExtKey();
+			this.database = database;
+			this.cryptoClientFactory = cryptoClientFactory;
+			this.currentUserService = currentUserService;
+			cryptoPrivateKey = new Mnemonic(GetMnemonic().Mnemonic, Wordlist.English).DeriveExtKey();
 		}
 
 		private CryptoMnemonic GetMnemonic()
 		{
-			if (Database.CryptoMnemonics.Any())
+			if (database.CryptoMnemonics.Any())
 			{
-				return Database.CryptoMnemonics.First();
+				return database.CryptoMnemonics.First();
 			}
 			else
 			{
 				var mnemonics = new CryptoMnemonic(new Mnemonic(Wordlist.English, WordCount.TwentyFour).ToString());
-				Database.CryptoMnemonics.Add(mnemonics);
-				Database.CommitChanges();
+				database.CryptoMnemonics.Add(mnemonics);
+				database.CommitChanges();
 				return mnemonics;
 			}
 		}

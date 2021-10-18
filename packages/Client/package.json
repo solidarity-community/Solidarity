@@ -9,17 +9,17 @@
 		"generate": "openapi-generator-cli generate"
 	},
 	"dependencies": {
-		"@3mo/model": "git+https://github.com/3mo-esolutions/model.git"
+		"@3mo/model": "git+https://github.com/3mo-esolutions/model.git",
+		"jsencrypt": "3.*"
 	},
 	"devDependencies": {
+		"copy-webpack-plugin": "9.*",
+		"download-file": "*",
+		"favicons-webpack-plugin": "5.*",
 		"ts-lit-plugin": "1.*",
-		"typescript": "4.*",
+		"typescript": "4.3.*",
 		"webpack": "5.*",
 		"webpack-cli": "4.*",
-		"webpack-dev-server": "3.*",
-		"@openapitools/openapi-generator-cli": "2.*",
-		"copy-webpack-plugin": "9.*",
-		"favicons-webpack-plugin": "5.*",
-		"download-file": "*"
+		"webpack-dev-server": "3.*"
 	}
 }

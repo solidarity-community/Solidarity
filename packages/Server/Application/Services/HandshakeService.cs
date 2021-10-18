@@ -14,7 +14,7 @@ namespace Solidarity.Application.Services
 		public Handshake GetByPhrase(string phrase)
 		{
 			DeleteInvalid();
-			return Database.Handshakes
+			return database.Handshakes
 				.IncludeAll()
 				.FirstOrDefault(hs => hs.Phrase == phrase)
 				?? throw new EntityNotFoundException("Handshake was not found");
@@ -22,11 +22,11 @@ namespace Solidarity.Application.Services
 
 		private void DeleteInvalid()
 		{
-			Database.Handshakes
+			database.Handshakes
 				.Where(e => e.Expiration <= DateTime.Now)
 				.ToList()
-				.ForEach(handshake => Database.Handshakes.Remove(handshake));
-			Database.CommitChanges();
+				.ForEach(handshake => database.Handshakes.Remove(handshake));
+			database.CommitChanges();
 		}
 	}
 }

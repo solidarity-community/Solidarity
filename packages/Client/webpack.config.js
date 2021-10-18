@@ -7,7 +7,7 @@ const CopyPlugin = require('copy-webpack-plugin')
 
 module.exports = (_, arguments) => MoDeLWebpackConfigFactory(arguments.mode, {
 	cache: false,
-	entry: './application/index.ts',
+	entry: './index.ts',
 	context: path.resolve(__dirname),
 	output: {
 		filename: 'main.js',

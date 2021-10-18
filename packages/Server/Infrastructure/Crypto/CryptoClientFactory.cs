@@ -15,7 +15,7 @@ namespace Solidarity.Infrastructure.Crypto
 
 		private string? GetConfig(string configKey)
 		{
-			return Program.Configuration?[$"CryptoNodes:{Coin}:{Network}:{configKey}"];
+			return Program.Configuration?[$"CRYPTONODES_{Coin}_{Network}_{configKey}"];
 		}
 
 		public CryptoClient GetClient(CoinType coinType, NetworkType networkType)

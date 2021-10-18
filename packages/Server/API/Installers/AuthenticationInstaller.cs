@@ -11,7 +11,7 @@ namespace Solidarity.Installers
 		{
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 			{
-				// Set validation parameters
+				var secretKey = Program.Configuration!["JWT_KEY"];
 				options.TokenValidationParameters = new TokenValidationParameters
 				{
 					ValidateIssuer = true,
@@ -20,7 +20,7 @@ namespace Solidarity.Installers
 					ValidateIssuerSigningKey = true,
 					ValidIssuer = "Solidarity",
 					ValidAudience = "Solidarity",
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Program.Configuration!["Jwt:SecretKey"])),
+					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
 				};
 			});
 		}

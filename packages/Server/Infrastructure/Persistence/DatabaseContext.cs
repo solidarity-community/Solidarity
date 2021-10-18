@@ -6,14 +6,15 @@ namespace Solidarity.Infrastructure.Persistance
 {
 	public class DatabaseContext : DbContext, IDatabase
 	{
-		private ICurrentUserService CurrentUserService { get; }
+		private readonly ICurrentUserService currentUserService;
 
 		public DatabaseContext(DbContextOptions<DatabaseContext> options, ICurrentUserService currentUserService) : base(options)
 		{
-			CurrentUserService = currentUserService;
+			this.currentUserService = currentUserService;
 			if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
 			{
 				Database.Migrate();
+				DatabaseSeeder.Seed(this);
 			}
 		}
 
@@ -48,7 +49,7 @@ namespace Solidarity.Infrastructure.Persistance
 
 		public override int SaveChanges()
 		{
-			var userId = CurrentUserService.Id ?? 0;
+			var userId = currentUserService.Id ?? 0;
 			foreach (var entry in ChangeTracker.Entries<Model>())
 			{
 				switch (entry.State)

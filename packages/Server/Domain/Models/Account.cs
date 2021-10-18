@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Security.Cryptography;
 
 namespace Solidarity.Domain.Models
 {
@@ -11,7 +8,7 @@ namespace Solidarity.Domain.Models
 		[MaxLength(50), Required(ErrorMessage = "Username cannot be null")]
 		public string Username { get; set; } = null!;
 
-		[Required(ErrorMessage = "Username cannot be null")]
+		[Required(ErrorMessage = "Public-key cannot be null")]
 		public string PublicKey { get; set; } = null!;
 
 		public PasswordAuthentication? PasswordAuthentication { get; set; }
@@ -21,24 +18,6 @@ namespace Solidarity.Domain.Models
 		public List<Campaign> Campaigns { get; set; } = new();
 
 		public List<Vote> Votes { get; set; } = new();
-
-		[NotMapped]
-		public RSA? PublicRSAKey
-		{
-			get
-			{
-				try
-				{
-					var rsa = RSA.Create();
-					rsa.ImportRSAPublicKey(Convert.FromBase64String(PublicKey), out _);
-					return rsa;
-				}
-				catch (Exception)
-				{
-					return null;
-				}
-			}
-		}
 
 		public List<AuthenticationMethod> GetAuthentications()
 		{
@@ -52,10 +31,7 @@ namespace Solidarity.Domain.Models
 
 		public AuthenticationList GetAuthenticationList()
 		{
-			return new AuthenticationList
-			{
-				Password = PasswordAuthentication != null
-			};
+			return new AuthenticationList { Password = PasswordAuthentication != null };
 		}
 
 		public T? GetAuthentication<T>() where T : AuthenticationMethod

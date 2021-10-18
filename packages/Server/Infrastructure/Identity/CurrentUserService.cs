@@ -13,11 +13,7 @@ namespace Solidarity.Infrastructure.Identity
 		{
 			var claim = httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier);
 			var value = claim?.Value;
-
-			if (value is not null)
-			{
-				Id = IsAuthenticated ? int.Parse(value) : null;
-			}
+			Id = value is null ? null : int.Parse(value);
 		}
 	}
 }

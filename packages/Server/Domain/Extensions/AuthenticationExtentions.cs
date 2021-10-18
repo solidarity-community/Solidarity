@@ -7,7 +7,7 @@ namespace Solidarity.Domain.Extensions
 	{
 		public static T WithoutData<T>(this T auth) where T : AuthenticationMethod
 		{
-			auth.Data = null;
+			auth.Data = null!;
 			return auth;
 		}
 

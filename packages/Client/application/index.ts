@@ -1,7 +1,5 @@
 import '@3mo/model'
-import './Solidarity'
-import './pages'
-
-declare global {
-	type GlobalFetch = WindowOrWorkerGlobalScope
-}
+export * from './Solidarity'
+export * from './campaign/components'
+export * from './account/dialogs'
+export * from './campaign/pages'

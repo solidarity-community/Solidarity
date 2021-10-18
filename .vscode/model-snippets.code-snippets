@@ -1,0 +1,134 @@
+{
+	"TypeScript Property Definition": {
+		"prefix": "prop",
+		"body": [
+			"private _${1:propName}: ${2:propType}",
+			"get ${1:propName}() { return this._${1:propName} }",
+			"set ${1:propName}(value) { this._${1:propName} = value }"
+		],
+	},
+	"MoDeL Property": {
+		"prefix": "mprop",
+		"body": [
+			"@property() ${1:propName}: ${2:propType}"
+		],
+	},
+	"MoDeL State Property": {
+		"prefix": "mstate",
+		"body": [
+			"@state() private ${1:propName}: ${2:propType}"
+		],
+	},
+	"MoDeL Event Handler": {
+		"prefix": "event",
+		"body": [
+			"@event() readonly ${1:eventName}!: EventDispatcher<${2:eventHanlderType}>",
+		],
+	},
+	"MoDeL Test": {
+		"prefix": "test",
+		"body": [
+			"import { ${1:ComponentClass} } from '.'",
+			"",
+			"describe('${1:ComponentClass}', () => {",
+			"	let component: ${1:ComponentClass}",
+			"	beforeEach(async () => component = await initializeTestComponent(new ${1:ComponentClass}()))",
+			"	afterEach(() => component.remove())",
+			"",
+			"	it('should ${2:}', () => {",
+			"",
+			"	})",
+			"})"
+		]
+	},
+	"Register HTMLElement in TypeScript": {
+		"prefix": "register",
+		"body": [
+			"declare global {",
+			"	interface HTMLElementTagNameMap {",
+			"		'${1:tagName}': ${2:tagClass}",
+			"	}",
+			"}"
+		],
+	},
+	"Handle Event HTML": {
+		"prefix": "handle",
+		"body": [
+			"@${1:eventName}=${(e: CustomEvent<${2:eventHandlerType}>) => ${3}e.detail}"
+		],
+	},
+	"Handle Event TS": {
+		"prefix": "handle",
+		"body": [
+			"private handle${1:EventName}(e: CustomEvent<${2:eventHandlerType}>) {",
+			"	${3}",
+			"}"
+		],
+	},
+	"Tempalte Getter Function": {
+		"prefix": "template",
+		"body": [
+			"protected override get template() {",
+			"	return html`",
+			"		${1}",
+			"	`}",
+			"`"
+		],
+	},
+	"Component": {
+		"prefix": "component",
+		"body": [
+			"import { Component, component, html } from '@3mo/model'",
+			"",
+			"@component('solid-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}')",
+			"export class ${TM_FILENAME_BASE} extends Component {",
+			"	protected override get template() {",
+			"		return html`",
+			"			${0}",
+			"		`",
+			"	}",
+			"}",
+			"",
+			"declare global {",
+			"	interface HTMLElementTagNameMap {",
+			"		'solid-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}': ${TM_FILENAME_BASE}",
+			"	}",
+			"}"
+		],
+	},
+	"PageComponent": {
+		"prefix": "pageComponent",
+		"body": [
+			"import { component, PageComponent, html, route } from '@3mo/model'",
+			"",
+			"@route('/${1:route}')",
+			"@component('solid-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}')",
+			"export class ${TM_FILENAME_BASE} extends PageComponent {",
+			"	protected override get template() {",
+			"		return html`",
+			"			<mo-page header='${2:${TM_FILENAME_BASE/(Page)//}}'>",
+			"				${0}",
+			"			</mo-page>",
+			"		`",
+			"	}"
+			"}"
+		],
+	},
+	"DialogComponent": {
+		"prefix": "dialogComponent",
+		"body": [
+			"import { component, DialogComponent, html } from '@3mo/model'",
+			"",
+			"@component('solid-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}')",
+			"export class ${TM_FILENAME_BASE} extends DialogComponent {",
+			"	protected override get template() {",
+			"		return html`",
+			"			<mo-dialog header='${1:${TM_FILENAME_BASE/(Dialog)//}}'>",
+			"				${0}",
+			"			</mo-dialog>",
+			"		`",
+			"	}",
+			"}"
+		],
+	},
+}

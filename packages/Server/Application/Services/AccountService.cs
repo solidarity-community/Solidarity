@@ -1,28 +1,28 @@
 using Solidarity.Application.Common;
 using Solidarity.Application.Extensions;
 using Solidarity.Application.Helpers;
-using Solidarity.Core.Application;
 using Solidarity.Domain.Exceptions;
 using Solidarity.Domain.Extensions;
 using Solidarity.Domain.Models;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Cryptography;
 
 namespace Solidarity.Application.Services
 {
 	public class AccountService : Service
 	{
-		private HandshakeService HandshakeService { get; }
+		private readonly HandshakeService handshakeService;
 
 		public AccountService(IDatabase database, ICryptoClientFactory cryptoClientFactory, ICurrentUserService currentUserService, HandshakeService handshakeService) : base(database, cryptoClientFactory, currentUserService)
 		{
-			HandshakeService = handshakeService;
+			this.handshakeService = handshakeService;
 		}
 
 		public Account Get(int? id)
 		{
-			return Database.Accounts.Find(id ?? CurrentUserService.Id)
+			return database.Accounts.Find(id ?? currentUserService.Id)
 				?? throw new EntityNotFoundException("Account Not found");
 		}
 
@@ -33,70 +33,67 @@ namespace Solidarity.Application.Services
 
 		public Account GetByUsername(string username)
 		{
-			return Database.Accounts.SingleOrDefault(account => account.Username == username)
+			return database.Accounts.SingleOrDefault(account => account.Username == username)
 				?? throw new EntityNotFoundException("Account Not found");
 		}
 
 		public bool Exists(Expression<Func<Account, bool>> predicate)
 		{
-			return Database.Accounts.SingleOrDefault(predicate) != null;
+			return database.Accounts.SingleOrDefault(predicate) != null;
+		}
+
+		public bool IsUsernameAvailable(string username)
+		{
+			return database.Accounts.SingleOrDefault(a => a.Username == username.ToLower()) == null;
 		}
 
 		public string Create(Account account)
 		{
-			if (!IsUsernameAvailable(account.Username))
+			if (string.IsNullOrWhiteSpace(account.Username) == false && IsUsernameAvailable(account.Username) == false)
 			{
 				throw new AccountTakenException("This username is not available");
 			}
 
 			account.Username = account.Username.ToLower();
-			Database.Accounts.Add(account);
+			database.Accounts.Add(account);
 
-			Database.CommitChanges();
+			database.CommitChanges();
 
 			var token = account.IssueAccountAccess(TimeSpan.FromDays(30));
 			return token;
 		}
 
-		public bool IsUsernameAvailable(string username)
-		{
-			return Database.Accounts.SingleOrDefault(a => a.Username == username.ToLower()) == null;
-		}
-
 		public Account Update(Account model)
 		{
-			model.Id = CurrentUserService.Id ?? throw new Exception("You are not logged in");
+			model.Id = currentUserService.Id ?? throw new Exception("You are not authenticated");
 			var account = Get(model.Id);
 
-			if (model.Username != account.Username && !IsUsernameAvailable(model.Username))
+			if (model.Username != account.Username)
 			{
-				throw new AccountTakenException("This username is not available");
+				if (IsUsernameAvailable(model.Username) == false)
+				{
+					throw new AccountTakenException("This username is not available");
+				}
+				account.Username = model.Username.ToLower();
 			}
 
-			account.Username = model.Username.ToLower();
 			if (model.Identity != null)
 			{
-				if (account.Identity == null)
-				{
-					account.Identity = new Identity()
-					{
-						AccountId = account.Id,
-						FirstName = model.Identity.FirstName,
-						LastName = model.Identity.LastName,
-						BirthDate = model.Identity.BirthDate
-					};
-				}
-				else
-				{
-					account.Identity.AccountId = account.Id;
-					account.Identity.FirstName = model.Identity.FirstName;
-					account.Identity.LastName = model.Identity.LastName;
-					account.Identity.BirthDate = model.Identity.BirthDate;
-				}
+				account.Identity ??= new Identity();
+				account.Identity.AccountId = account.Id;
+				account.Identity.FirstName = model.Identity.FirstName;
+				account.Identity.LastName = model.Identity.LastName;
+				account.Identity.BirthDate = model.Identity.BirthDate;
 			}
 
-			Database.CommitChanges();
+			database.CommitChanges();
 			return account.WithoutAuthenticationData();
+		}
+
+		public string ResetByUsername(string username)
+		{
+			var account = GetByUsername(username);
+			return Reset(account.Id);
 		}
 
 		public string Reset(int id)
@@ -109,22 +106,25 @@ namespace Solidarity.Application.Services
 				Phrase = RandomStringGenerator.Generate(64),
 				Expiration = DateTime.Now.AddMinutes(10)
 			};
-			Database.Handshakes.Add(handshake);
-			Database.CommitChanges();
+			database.Handshakes.Add(handshake);
+			database.CommitChanges();
 
-			// Encrypt Handshake with the public key of the accountoString(handshake.Phrase);
-			var encryptedHandshake = account.PublicRSAKey?.SignDataToString(handshake.Phrase) ?? throw new Exception("Cannot sign data");
+			var publicRsaKey = RSA.Create();
+			// TODO This fails
+			publicRsaKey.ImportRSAPublicKey(Convert.FromBase64String(account.PublicKey), out _);
+			// Encrypt Handshake with the public key of the SignDataToString(handshake.Phrase);
+			var encryptedHandshake = publicRsaKey.SignDataToString(handshake.Phrase) ?? throw new Exception("Cannot sign data");
 			return encryptedHandshake;
 		}
 
 		public string Recover(string phrase)
 		{
-			var handshake = HandshakeService.GetByPhrase(phrase);
+			var handshake = handshakeService.GetByPhrase(phrase);
 			var token = handshake.Account.IssueAccountAccess(TimeSpan.FromDays(30));
 			handshake.Account.DeleteAuthenticationMethods();
-			Database.Authentications.RemoveRange(Database.Authentications.Where(e => e.AccountId == handshake.Account.Id));
-			Database.Handshakes.Remove(handshake);
-			Database.CommitChanges();
+			database.Authentications.RemoveRange(database.Authentications.Where(e => e.AccountId == handshake.Account.Id));
+			database.Handshakes.Remove(handshake);
+			database.CommitChanges();
 			return token;
 		}
 	}
