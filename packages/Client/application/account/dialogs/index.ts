@@ -1,3 +1,5 @@
 export * from './DialogAccountRegister'
 export * from './DialogAccountReset'
 export * from './DialogAuthenticator'
+export * from './DialogIdentity'
+export * from './DialogAuthenticationMethods'

@@ -11,21 +11,18 @@ using System.Linq;
 
 namespace Solidarity.Application.Services
 {
-	public class CampaignService : Service
+	public class CampaignService : CrudService<Campaign>
 	{
 		public CampaignService(IDatabase database, ICryptoClientFactory cryptoClientFactory, ICurrentUserService currentUserService) : base(database, cryptoClientFactory, currentUserService) { }
 
-		public Campaign Get(int id)
+		public override Campaign Get(int id)
 		{
-			return database.Campaigns.Find(id)?.WithoutAuthenticationData()
-				?? throw new EntityNotFoundException("Campaign Not found");
+			return base.Get(id).WithoutAuthenticationData();
 		}
 
-		public IEnumerable<Campaign> GetAll()
+		public override IEnumerable<Campaign> GetAll()
 		{
-			return database.Campaigns
-				.IncludeAll()
-				.WithoutAuthenticationData();
+			return base.GetAll().WithoutAuthenticationData();
 		}
 
 		public decimal GetBalance(int id)
@@ -38,12 +35,11 @@ namespace Solidarity.Application.Services
 			return balance.ToDecimal(MoneyUnit.Satoshi);
 		}
 
-		public Campaign Create(Campaign campaign)
+		public override Campaign Create(Campaign campaign)
 		{
 			campaign.Completion = null;
 
-			database.Campaigns.Add(campaign);
-			database.CommitChanges();
+			base.Create(campaign);
 
 			var cryptoClient = cryptoClientFactory.GetClient(CoinType.Bitcoin, Domain.Enums.NetworkType.TestNet);
 			var address = cryptoClient.GetAddress(cryptoClient.DeriveKey(cryptoPrivateKey, campaign.Id));
@@ -67,20 +63,13 @@ namespace Solidarity.Application.Services
 			return campaign.WithoutAuthenticationData();
 		}
 
-		public Campaign Update(int id, Campaign model)
+		public override Campaign Update(Campaign campaign)
 		{
-			model.Id = id;
-			var campaign = Get(id);
-
-			if (campaign.CreatorId != currentUserService.Id)
+			if (Get(campaign.Id).CreatorId != currentUserService.Id)
 			{
 				throw new Exception("You are not allowed to edit this campaign");
 			}
-
-			campaign.Title = campaign.Title;
-			campaign.Description = campaign.Description;
-
-			database.CommitChanges();
+			base.Update(campaign);
 			return campaign.WithoutAuthenticationData();
 		}
 	}

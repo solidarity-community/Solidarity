@@ -34,7 +34,7 @@ namespace Solidarity.Application.Helpers
 			return new JwtSecurityTokenHandler().WriteToken(token);
 		}
 
-		public static string IssueAccountAccess(this Account account, TimeSpan expiration)
+		public static string IssueToken(this Account account, TimeSpan expiration)
 		{
 			return Issue(expiration,
 				new[] {

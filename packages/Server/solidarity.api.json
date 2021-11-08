@@ -146,7 +146,7 @@
         }
       }
     },
-    "/Account/reset": {
+    "/Account/{id}/reset": {
       "get": {
         "tags": [
           "Account"
@@ -264,17 +264,26 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthenticationList"
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "boolean"
+                  }
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthenticationList"
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "boolean"
+                  }
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthenticationList"
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "boolean"
+                  }
                 }
               }
             }
@@ -491,8 +500,7 @@
             "in": "path",
             "required": true,
             "schema": {
-              "type": "integer",
-              "format": "int32"
+              "type": "string"
             }
           }
         ],
@@ -586,14 +594,194 @@
           }
         }
       }
+    },
+    "/Identity/{id}": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Identity": {
+      "get": {
+        "tags": [
+          "Identity"
+        ],
+        "parameters": [
+          {
+            "name": "accountId",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Identity"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Identity"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Identity"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Identity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Identity"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Identity"
+              }
+            },
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Identity"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Identity"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/Identity"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Identity"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
     "schemas": {
       "Account": {
         "required": [
-          "publicKey",
-          "username"
+          "publicKey"
         ],
         "type": "object",
         "properties": {
@@ -618,17 +806,18 @@
             "format": "date-time"
           },
           "username": {
-            "maxLength": 50,
-            "type": "string"
+            "type": "string",
+            "nullable": true
           },
           "publicKey": {
             "type": "string"
           },
-          "passwordAuthentication": {
-            "$ref": "#/components/schemas/PasswordAuthentication"
-          },
-          "identity": {
-            "$ref": "#/components/schemas/Identity"
+          "authenticationMethods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AuthenticationMethod"
+            },
+            "nullable": true
           },
           "campaigns": {
             "type": "array",
@@ -643,21 +832,66 @@
               "$ref": "#/components/schemas/Vote"
             },
             "nullable": true
-          },
-          "publicRSAKey": {
-            "$ref": "#/components/schemas/RSA"
           }
         },
         "additionalProperties": false
       },
-      "AuthenticationList": {
+      "AuthenticationMethod": {
         "type": "object",
         "properties": {
-          "password": {
-            "type": "boolean"
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creatorId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "creation": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastModifierId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "lastModification": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "accountId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "account": {
+            "$ref": "#/components/schemas/Account"
+          },
+          "type": {
+            "$ref": "#/components/schemas/AuthenticationMethodType"
+          },
+          "supportsMultiple": {
+            "type": "boolean",
+            "readOnly": true
+          },
+          "salt": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true,
+            "readOnly": true
+          },
+          "data": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
+      },
+      "AuthenticationMethodType": {
+        "enum": [
+          0
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "Campaign": {
         "required": [
@@ -1088,27 +1322,6 @@
         },
         "additionalProperties": false
       },
-      "KeySizes": {
-        "type": "object",
-        "properties": {
-          "minSize": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "maxSize": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          },
-          "skipSize": {
-            "type": "integer",
-            "format": "int32",
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
-      },
       "NtsGeometryServices": {
         "type": "object",
         "properties": {
@@ -1199,43 +1412,6 @@
         ],
         "type": "integer",
         "format": "int32"
-      },
-      "PasswordAuthentication": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "creatorId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "creation": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "lastModifierId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "lastModification": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "accountId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "account": {
-            "$ref": "#/components/schemas/Account"
-          },
-          "data": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
       },
       "Point": {
         "type": "object",
@@ -1384,34 +1560,6 @@
         ],
         "type": "integer",
         "format": "int32"
-      },
-      "RSA": {
-        "type": "object",
-        "properties": {
-          "keySize": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "legalKeySizes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/KeySizes"
-            },
-            "nullable": true,
-            "readOnly": true
-          },
-          "keyExchangeAlgorithm": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          },
-          "signatureAlgorithm": {
-            "type": "string",
-            "nullable": true,
-            "readOnly": true
-          }
-        },
-        "additionalProperties": false
       },
       "Validation": {
         "type": "object",

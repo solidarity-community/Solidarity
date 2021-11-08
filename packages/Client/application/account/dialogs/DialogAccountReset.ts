@@ -8,7 +8,7 @@ export class DialogAccountReset extends DialogComponent {
 
 	protected override get template() {
 		return html`
-			<mo-dialog header='Reset Account' primaryButtonText='Reset'>
+			<mo-dialog heading='Reset Account' primaryButtonText='Reset'>
 				<mo-flex gap='var(--mo-thickness-m)'>
 					<span>To reset your account enter the private key you were provided on account creation</span>
 					<mo-text-area label='Private-Key' rows='10'

@@ -7,6 +7,10 @@ namespace Solidarity.Application.Extensions
 	{
 		public static string GetSha256Hash(this string value)
 		{
+			if (value == null)
+			{
+				return null;
+			}
 			HashAlgorithm algorithm = SHA256.Create();
 			var hashedArr = algorithm.ComputeHash(Encoding.UTF8.GetBytes(value));
 			var sb = new StringBuilder();

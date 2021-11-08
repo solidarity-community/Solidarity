@@ -13,7 +13,7 @@ namespace Solidarity.Domain.Models
 	{
 		public int AccountId { get; set; }
 
-		public Account Account { get; set; } = null!;
+		public Account? Account { get; set; } = null!;
 
 		[MaxLength(50)]
 		public string FirstName { get; set; } = null!;

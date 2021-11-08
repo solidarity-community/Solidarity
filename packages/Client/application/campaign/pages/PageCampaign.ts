@@ -1,5 +1,5 @@
-import { component, PageComponent, html, route, state, PageHost, PageError, css, HttpErrorCode } from '@3mo/model'
-import { Campaign, CampaignService, HttpError } from 'sdk'
+import { component, PageComponent, html, route, state, PageError, HttpErrorCode } from '@3mo/model'
+import { Campaign, CampaignService } from 'sdk'
 
 @route('/campaign/:id')
 @component('solid-page-campaign')
@@ -23,7 +23,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 
 	protected override get template() {
 		return html`
-			<mo-page header='Campaign'>
+			<mo-page heading=${`Campaign "${this.campaign?.title}"`}>
 				<mo-flex direction='horizontal' alignItems='center' gap='10px'>
 					<mo-div width='*' textAlign='center'>
 						Funds Raised Graph
@@ -37,14 +37,13 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 					</mo-flex>
 				</mo-flex>
 				<mo-grid columns='2* *'>
-					<mo-section header='Gallery'>Gallery</mo-section>
-					<mo-section header='Location'>Location</mo-section>
-					<mo-section header='Overview'>
+					<mo-section heading='Gallery'>Gallery</mo-section>
+					<mo-section heading='Location'>Location</mo-section>
+					<mo-section heading='Overview'>
 						${this.campaign?.description}
 					</mo-section>
-					<mo-section header='Expenditure'>Expenditure</mo-section>
+					<mo-section heading='Expenditure'>Expenditure</mo-section>
 				</mo-grid>
-				${this.campaign?.title}
 			</mo-page>
 		`
 	}

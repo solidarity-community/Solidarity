@@ -2,9 +2,9 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
 
-namespace Solidarity.Migrations
+namespace Solidarity.Infrastructure.Persistence.Migrations
 {
-    public partial class initial : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -14,7 +14,7 @@ namespace Solidarity.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Username = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PublicKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatorId = table.Column<int>(type: "int", nullable: false),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
@@ -61,14 +61,14 @@ namespace Solidarity.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Authentications",
+                name: "AuthenticationMethods",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
                     AccountId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Salt = table.Column<int>(type: "int", nullable: false),
                     Data = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
                     CreatorId = table.Column<int>(type: "int", nullable: false),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
                     LastModifierId = table.Column<int>(type: "int", nullable: false),
@@ -76,9 +76,9 @@ namespace Solidarity.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Authentications", x => x.Id);
+                    table.PrimaryKey("PK_AuthenticationMethods", x => new { x.AccountId, x.Type, x.Salt });
                     table.ForeignKey(
-                        name: "FK_Authentications_Accounts_AccountId",
+                        name: "FK_AuthenticationMethods_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
                         principalColumn: "Id",
@@ -238,12 +238,6 @@ namespace Solidarity.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Authentications_AccountId",
-                table: "Authentications",
-                column: "AccountId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Campaigns_CreatorId",
                 table: "Campaigns",
                 column: "CreatorId");
@@ -289,7 +283,7 @@ namespace Solidarity.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Authentications");
+                name: "AuthenticationMethods");
 
             migrationBuilder.DropTable(
                 name: "CryptoMnemonics");

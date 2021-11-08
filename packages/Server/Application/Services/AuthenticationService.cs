@@ -4,6 +4,8 @@ using Solidarity.Domain.Exceptions;
 using Solidarity.Domain.Extensions;
 using Solidarity.Domain.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Solidarity.Application.Services
 {
@@ -18,24 +20,30 @@ namespace Solidarity.Application.Services
 
 		public bool IsAuthenticated()
 		{
-			return currentUserService.Id is not null && accountService.Exists(user => user.Id == currentUserService.Id);
+			return currentUserService.Id is int id
+				&& accountService.Exists(id);
 		}
 
-		public AuthenticationList GetAll()
+		public Dictionary<AuthenticationMethodType, bool> GetAll()
 		{
-			return accountService.Get(null).GetAuthenticationList();
+			var availableAuthenticationMethods = database.AuthenticationMethods
+				.Where(am => am.AccountId == currentUserService.Id)
+				.Select(am => am.Type);
+
+			return new Dictionary<AuthenticationMethodType, bool>
+			{
+				{ AuthenticationMethodType.Password, availableAuthenticationMethods.Contains(AuthenticationMethodType.Password) },
+			};
 		}
 
 		public T AddOrUpdate<T>(T authentication) where T : AuthenticationMethod
 		{
 			var account = accountService.Get(authentication.AccountId);
-			var existingAuthentication = account.GetAuthentication<T>();
+			var existingAuthentication = account.AuthenticationMethods.SingleOrDefault(auth => auth is T) as T;
+			authentication.Encrypt();
 			if (existingAuthentication is null)
 			{
-				// Note that the "Data" property of authentication is not encrypted yet. The setter encrypts it.
-				authentication.Data = authentication.Data;
-				database.Authentications.Add(authentication);
-				account.SetAuthenticationMethod(authentication);
+				database.AuthenticationMethods.Add(authentication);
 				database.CommitChanges();
 				return authentication.WithoutData();
 			}
@@ -49,18 +57,16 @@ namespace Solidarity.Application.Services
 
 		public string Login<T>(int accountId, string data) where T : AuthenticationMethod
 		{
-			var account = accountService.Get(accountId);
-			var authMethod = account.GetAuthentication<T>();
+			var authMethod = database.AuthenticationMethods.SingleOrDefault(am => am is T && am.AccountId == accountId) as T;
 			return authMethod == null || !authMethod.Authenticate(data)
 				? throw new IncorrectCredentialsException()
-				: account.IssueAccountAccess(TimeSpan.FromDays(30));
+				: accountService.Get(accountId).IssueToken(TimeSpan.FromDays(30));
 		}
 
 		public void UpdatePassword(string newPassword, string? oldPassword = null)
 		{
-			var userId = currentUserService.Id ?? throw new NotAuthenticatedException();
-			var account = accountService.Get(userId);
-			var existingAuthentication = account.GetAuthentication<PasswordAuthentication>();
+			var accountId = currentUserService.Id ?? throw new NotAuthenticatedException();
+			var existingAuthentication = database.AuthenticationMethods.FirstOrDefault(am => am is PasswordAuthentication && am.AccountId == accountId);
 
 			if (string.IsNullOrEmpty(oldPassword) == false && existingAuthentication?.Authenticate(oldPassword) == false)
 			{
@@ -69,7 +75,7 @@ namespace Solidarity.Application.Services
 
 			AddOrUpdate(new PasswordAuthentication
 			{
-				AccountId = userId,
+				AccountId = accountId,
 				Data = newPassword,
 			});
 		}
@@ -82,12 +88,3 @@ namespace Solidarity.Application.Services
 		}
 	}
 }
-
-// private void DeleteInvalid()
-// {
-//	foreach (var handshake in database.Handshakes.Where(e => e.Expiration <= DateTime.Now))
-//	{
-//		database.Remove(handshake);
-//	}
-//	database.SaveChanges();
-// }

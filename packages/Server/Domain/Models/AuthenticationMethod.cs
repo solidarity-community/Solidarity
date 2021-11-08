@@ -1,20 +1,29 @@
-﻿namespace Solidarity.Domain.Models
+﻿using System;
+
+namespace Solidarity.Domain.Models
 {
-	public class AuthenticationMethod : Model
+	public abstract class AuthenticationMethod : Model
 	{
 		public int AccountId { get; set; }
 
 		public Account? Account { get; set; }
 
-		private string data = null!;
-		public string Data
+		public virtual AuthenticationMethodType Type { get; }
+
+		public virtual bool SupportsMultiple => false;
+
+		public virtual int Salt { get; private set; }
+
+		public string Data { get; set; } = null!;
+
+		public bool Authenticate(string data) => Data == GetEncrypted(data);
+
+		public void Encrypt()
 		{
-			get => data;
-			set => data = Encrypt(value);
+			Data = GetEncrypted(Data);
+			Salt = SupportsMultiple ? 0 : new Random().Next(1, 99999);
 		}
 
-		public bool Authenticate(string data) => Data == Encrypt(data);
-
-		public virtual string Encrypt(string data) => throw new System.Exception("Not implemented");
+		protected abstract string GetEncrypted(string data);
 	}
 }

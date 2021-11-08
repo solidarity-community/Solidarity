@@ -7,11 +7,13 @@ using Solidarity.Domain.Models;
 using System;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.InteropServices;
+using System.Security.Authentication;
 using System.Security.Cryptography;
 
 namespace Solidarity.Application.Services
 {
-	public class AccountService : Service
+	public class AccountService : CrudService<Account>
 	{
 		private readonly HandshakeService handshakeService;
 
@@ -20,26 +22,23 @@ namespace Solidarity.Application.Services
 			this.handshakeService = handshakeService;
 		}
 
-		public Account Get(int? id)
+		public Account Get()
 		{
-			return database.Accounts.Find(id ?? currentUserService.Id)
-				?? throw new EntityNotFoundException("Account Not found");
+			return base.Get(currentUserService.Id ?? throw new NotAuthenticatedException());
 		}
 
 		public Account GetWithoutAuthentication(int? id)
 		{
-			return Get(id).WithoutAuthenticationData();
+			var account = id.HasValue
+				? Get(id.Value)
+				: Get();
+			return account.WithoutAuthenticationData();
 		}
 
 		public Account GetByUsername(string username)
 		{
 			return database.Accounts.SingleOrDefault(account => account.Username == username)
-				?? throw new EntityNotFoundException("Account Not found");
-		}
-
-		public bool Exists(Expression<Func<Account, bool>> predicate)
-		{
-			return database.Accounts.SingleOrDefault(predicate) != null;
+				?? throw new EntityNotFoundException<Account>();
 		}
 
 		public bool IsUsernameAvailable(string username)
@@ -47,46 +46,26 @@ namespace Solidarity.Application.Services
 			return database.Accounts.SingleOrDefault(a => a.Username == username.ToLower()) == null;
 		}
 
-		public string Create(Account account)
+		public override Account Create(Account account)
 		{
 			if (string.IsNullOrWhiteSpace(account.Username) == false && IsUsernameAvailable(account.Username) == false)
 			{
 				throw new AccountTakenException("This username is not available");
 			}
 
-			account.Username = account.Username.ToLower();
-			database.Accounts.Add(account);
-
-			database.CommitChanges();
-
-			var token = account.IssueAccountAccess(TimeSpan.FromDays(30));
-			return token;
+			return base.Create(account);
 		}
 
-		public Account Update(Account model)
+		public string CreateAndIssueToken(Account account)
 		{
-			model.Id = currentUserService.Id ?? throw new Exception("You are not authenticated");
-			var account = Get(model.Id);
+			Create(account);
+			return account.IssueToken(TimeSpan.FromDays(30));
+		}
 
-			if (model.Username != account.Username)
-			{
-				if (IsUsernameAvailable(model.Username) == false)
-				{
-					throw new AccountTakenException("This username is not available");
-				}
-				account.Username = model.Username.ToLower();
-			}
-
-			if (model.Identity != null)
-			{
-				account.Identity ??= new Identity();
-				account.Identity.AccountId = account.Id;
-				account.Identity.FirstName = model.Identity.FirstName;
-				account.Identity.LastName = model.Identity.LastName;
-				account.Identity.BirthDate = model.Identity.BirthDate;
-			}
-
-			database.CommitChanges();
+		public override Account Update(Account account)
+		{
+			account.Id = currentUserService.Id ?? throw new NotAuthenticatedException();
+			base.Update(account);
 			return account.WithoutAuthenticationData();
 		}
 
@@ -120,9 +99,9 @@ namespace Solidarity.Application.Services
 		public string Recover(string phrase)
 		{
 			var handshake = handshakeService.GetByPhrase(phrase);
-			var token = handshake.Account.IssueAccountAccess(TimeSpan.FromDays(30));
-			handshake.Account.DeleteAuthenticationMethods();
-			database.Authentications.RemoveRange(database.Authentications.Where(e => e.AccountId == handshake.Account.Id));
+			var token = handshake.Account.IssueToken(TimeSpan.FromDays(30));
+			handshake.Account.AuthenticationMethods = new();
+			database.AuthenticationMethods.RemoveRange(database.AuthenticationMethods.Where(e => e.AccountId == handshake.Account.Id));
 			database.Handshakes.Remove(handshake);
 			database.CommitChanges();
 			return token;

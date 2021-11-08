@@ -7,7 +7,7 @@ namespace Solidarity.Domain.Extensions
 	{
 		public static Account WithoutAuthenticationData(this Account account)
 		{
-			account.GetAuthentications().WithoutData();
+			account.AuthenticationMethods = new();
 			return account;
 		}
 

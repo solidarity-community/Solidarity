@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Solidarity.Infrastructure.Persistance;
 
-namespace Solidarity.Migrations
+namespace Solidarity.Infrastructure.Persistence.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
     partial class DatabaseContextModelSnapshot : ModelSnapshot
@@ -45,8 +45,7 @@ namespace Solidarity.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
@@ -58,12 +57,13 @@ namespace Solidarity.Migrations
 
             modelBuilder.Entity("Solidarity.Domain.Models.AuthenticationMethod", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
                     b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Salt")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Creation")
@@ -76,21 +76,20 @@ namespace Solidarity.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("LastModifierId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.HasKey("AccountId", "Type", "Salt");
 
-                    b.HasKey("Id");
+                    b.ToTable("AuthenticationMethods");
 
-                    b.ToTable("Authentications");
-
-                    b.HasDiscriminator<string>("Type").HasValue("AuthenticationMethod");
+                    b.HasDiscriminator<int>("Type");
                 });
 
             modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
@@ -354,10 +353,18 @@ namespace Solidarity.Migrations
                 {
                     b.HasBaseType("Solidarity.Domain.Models.AuthenticationMethod");
 
-                    b.HasIndex("AccountId")
-                        .IsUnique();
+                    b.HasDiscriminator().HasValue(0);
+                });
 
-                    b.HasDiscriminator().HasValue("password");
+            modelBuilder.Entity("Solidarity.Domain.Models.AuthenticationMethod", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Account", "Account")
+                        .WithMany("AuthenticationMethods")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
@@ -410,7 +417,7 @@ namespace Solidarity.Migrations
             modelBuilder.Entity("Solidarity.Domain.Models.Identity", b =>
                 {
                     b.HasOne("Solidarity.Domain.Models.Account", "Account")
-                        .WithOne("Identity")
+                        .WithOne()
                         .HasForeignKey("Solidarity.Domain.Models.Identity", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -437,24 +444,11 @@ namespace Solidarity.Migrations
                     b.Navigation("Validation");
                 });
 
-            modelBuilder.Entity("Solidarity.Domain.Models.PasswordAuthentication", b =>
-                {
-                    b.HasOne("Solidarity.Domain.Models.Account", "Account")
-                        .WithOne("PasswordAuthentication")
-                        .HasForeignKey("Solidarity.Domain.Models.PasswordAuthentication", "AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
-                });
-
             modelBuilder.Entity("Solidarity.Domain.Models.Account", b =>
                 {
+                    b.Navigation("AuthenticationMethods");
+
                     b.Navigation("Campaigns");
-
-                    b.Navigation("Identity");
-
-                    b.Navigation("PasswordAuthentication");
 
                     b.Navigation("Votes");
                 });

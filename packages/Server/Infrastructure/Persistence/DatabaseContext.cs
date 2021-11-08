@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Solidarity.Application.Common;
 using Solidarity.Domain.Models;
+using System.Threading.Tasks;
 
 namespace Solidarity.Infrastructure.Persistance
 {
@@ -20,7 +22,7 @@ namespace Solidarity.Infrastructure.Persistance
 
 		public DbSet<Account> Accounts { get; set; } = null!;
 		public DbSet<Domain.Models.Identity> Identities { get; set; } = null!;
-		public DbSet<AuthenticationMethod> Authentications { get; set; } = null!;
+		public DbSet<AuthenticationMethod> AuthenticationMethods { get; set; } = null!;
 		public DbSet<Handshake> Handshakes { get; set; } = null!;
 		public DbSet<Campaign> Campaigns { get; set; } = null!;
 		public DbSet<Validation> Validations { get; set; } = null!;
@@ -28,18 +30,23 @@ namespace Solidarity.Infrastructure.Persistance
 		public DbSet<DonationChannel> DonationChannels { get; set; } = null!;
 		public DbSet<CryptoMnemonic> CryptoMnemonics { get; set; } = null!;
 
+		public DbSet<TEntity> GetSet<TEntity>() where TEntity : class => Set<TEntity>();
+		public EntityEntry GetEntry(object entity) => Entry(entity);
 		public void CommitChanges() => SaveChanges();
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
 			modelBuilder.Entity<Account>(a => a.HasIndex(e => e.Username).IsUnique());
-			modelBuilder.Entity<Account>().HasOne(a => a.Identity).WithOne(i => i!.Account);
-			modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne(c => c!.Creator);
-			modelBuilder.Entity<Account>().HasMany(a => a.Votes).WithOne(v => v!.Account);
+			modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne(c => c.Creator);
+			modelBuilder.Entity<Account>().HasMany(a => a.Votes).WithOne(v => v.Account);
+
+			modelBuilder.Entity<Domain.Models.Identity>().HasOne(i => i.Account).WithOne();
 
 			modelBuilder.Entity<Handshake>().HasOne(h => h.Account);
 
-			modelBuilder.Entity<AuthenticationMethod>().HasDiscriminator<string>("Type").HasValue<PasswordAuthentication>("password");
+			modelBuilder.Entity<AuthenticationMethod>().Ignore(am => am.SupportsMultiple);
+			modelBuilder.Entity<AuthenticationMethod>().HasKey(am => new { am.AccountId, am.Type, am.Salt });
+			modelBuilder.Entity<AuthenticationMethod>().HasDiscriminator(am => am.Type).HasValue<PasswordAuthentication>(AuthenticationMethodType.Password);
 
 			modelBuilder.Entity<Campaign>().HasOne(c => c.Validation).WithOne(v => v.Campaign);
 			modelBuilder.Entity<Campaign>().HasMany(c => c.DonationChannels).WithOne(dc => dc.Campaign);

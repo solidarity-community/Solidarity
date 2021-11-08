@@ -13,10 +13,9 @@ namespace Solidarity.Infrastructure.Crypto
 
 		private static readonly Dictionary<(CoinType coinType, NetworkType networkType), CryptoClient> clients = new() { };
 
-		private string? GetConfig(string configKey)
-		{
-			return Program.Configuration?[$"CRYPTONODES_{Coin}_{Network}_{configKey}"];
-		}
+		private string? Server => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_SERVER"];
+		private string? Username => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_USERNAME"];
+		private string? Password => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_Password"];
 
 		public CryptoClient GetClient(CoinType coinType, NetworkType networkType)
 		{
@@ -29,14 +28,13 @@ namespace Solidarity.Infrastructure.Crypto
 			Coin = coinType;
 			Network = networkType;
 
-			var serverConfig = GetConfig("Server");
-			if (serverConfig == null)
+			if (Server == null)
 			{
 				throw new Exception();
 			}
 
-			var server = new Uri(serverConfig);
-			var credentials = new NetworkCredential(GetConfig("Username"), GetConfig("Password"));
+			var server = new Uri(Server);
+			var credentials = new NetworkCredential(Username, Password);
 			var network = Network switch
 			{
 				NetworkType.MainNet => NBitcoin.Network.Main,

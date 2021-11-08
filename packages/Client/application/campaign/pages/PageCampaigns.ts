@@ -23,10 +23,11 @@ export class PageCampaigns extends PageComponent {
 
 	protected override get template() {
 		return html`
-			<mo-page header='Campaigns'>
+			<mo-page heading='Campaigns'>
 				<mo-grid columns='repeat(auto-fill, minmax(250px, 1fr))' columnGap='var(--mo-thickness-xl)' rowGap='var(--mo-thickness-xl)'>
 					${this.campaigns.map(campaign => html`
 						<solid-campaign-card
+							tabIndex='0'
 							.campaign=${campaign}
 							@click=${() => new PageCampaign({ id: campaign.id! }).navigate()}
 						></solid-campaign-card>

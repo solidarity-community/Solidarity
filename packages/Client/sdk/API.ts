@@ -15,29 +15,29 @@ export class API {
 		}
 	}
 
-	static get<T = any>(route: string) {
+	static get<T = void>(route: string) {
 		return this.fetch<T>('GET', route)
 	}
 
-	static post<T = any, TData = unknown>(route: string, data: TData) {
+	static post<T = void, TData = unknown>(route: string, data?: TData) {
 		return this.fetch<T>('POST', route, JSON.stringify(data))
 	}
 
-	static postFile<T = any>(route: string, fileList: FileList) {
+	static postFile<T = void>(route: string, fileList: FileList) {
 		const form = new FormData()
 		form.set('formFile', fileList[0], fileList[0].name)
 		return this.fetch<T>('POST', route, form)
 	}
 
-	static put<T = any, TData = unknown>(route: string, data: TData) {
+	static put<T = void, TData = unknown>(route: string, data?: TData) {
 		return this.fetch<T>('PUT', route, JSON.stringify(data))
 	}
 
-	static delete<T = any>(route: string) {
+	static delete<T = void>(route: string) {
 		return this.fetch<T>('DELETE', route)
 	}
 
-	private static async fetch<T = any>(method: HTTPMethod, route: string, body: BodyInit | null = null) {
+	private static async fetch<T = void>(method: HTTPMethod, route: string, body: BodyInit | null = null) {
 		const headers: HeadersInit = {
 			'Accept': 'application/json',
 			'Authorization': `Bearer ${this.token}`
@@ -60,6 +60,10 @@ export class API {
 			throw new HttpError(response.status)
 		}
 
-		return await response.json() as T
+		try {
+			return await response.json() as T
+		} catch (error) {
+			return undefined!
+		}
 	}
 }

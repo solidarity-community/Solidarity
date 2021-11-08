@@ -6,9 +6,9 @@ export const enum IdentityRoles {
 }
 
 export interface Identity extends Model {
-	accountId: number
+	accountId?: number
 	account?: Account
-	firstName: string
-	lastName: string
+	firstName?: string
+	lastName?: string
 	birthDate?: string
 }

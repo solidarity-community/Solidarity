@@ -16,11 +16,11 @@ namespace Solidarity.Controllers
 		public ActionResult<Account> Get() => Ok(accountService.GetWithoutAuthentication(null));
 
 		[HttpPost, AllowAnonymous]
-		public ActionResult<string> Create([FromBody, Bind(nameof(Account.Username), nameof(Account.Identity.FirstName), nameof(Account.Identity.LastName), nameof(Account.Identity.BirthDate))] Account account)
-			=> Ok(accountService.Create(account));
+		public ActionResult<string> Create([FromBody, Bind(nameof(Account.Username))] Account account)
+			=> Ok(accountService.CreateAndIssueToken(account));
 
 		[HttpPut]
-		public ActionResult<Account> Update([FromBody, Bind(nameof(Account.Id), nameof(Account.Username), nameof(Account.Identity.FirstName), nameof(Account.Identity.LastName), nameof(Account.Identity.BirthDate))] Account account)
+		public ActionResult<Account> Update([FromBody, Bind(nameof(Account.Id), nameof(Account.Username))] Account account)
 			=> Ok(accountService.Update(account));
 
 		[HttpGet("{id}/reset"), AllowAnonymous]

@@ -3,8 +3,7 @@ import { Model, PasswordAuthentication, Identity, Campaign, Vote } from 'sdk'
 export interface Account extends Model {
 	username?: string
 	publicKey?: string
-	passwordAuthentication?: PasswordAuthentication
-	identity?: Identity
+	authenticationMethods?: Array<PasswordAuthentication>
 	campaigns?: Array<Campaign>
 	votes?: Array<Vote>
 }

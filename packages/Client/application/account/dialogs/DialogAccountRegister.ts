@@ -4,8 +4,8 @@ import JSEncrypt from 'jsencrypt'
 
 @component('solid-dialog-account-register')
 export class DialogAccountRegister extends DialogComponent {
-	@state() idAndPrivateKey?: string
-	@state() securityConfirmation = false
+	@state() private idAndPrivateKey?: string
+	@state() private securityConfirmation = false
 
 	protected override async initialized() {
 		const privateKey = new JSEncrypt
@@ -20,8 +20,8 @@ export class DialogAccountRegister extends DialogComponent {
 
 	protected override get template() {
 		return html`
-			<mo-dialog header='Register Account'>
-				<mo-button slot='primaryAction' ?disabled=${this.securityConfirmation === false}>Register & Continue</mo-button>
+			<mo-dialog heading='Register Account'>
+				<mo-button slot='primaryAction' raised ?disabled=${this.securityConfirmation === false}>Register & Continue</mo-button>
 
 				<style>
 					code {
@@ -45,7 +45,6 @@ export class DialogAccountRegister extends DialogComponent {
 					<code @click=${this.copyPrivateKeyToClipboard}>${this.idAndPrivateKey}</code>
 					<mo-checkbox @change=${(e: CustomEvent<CheckboxValue>) => this.securityConfirmation = e.detail === 'checked'}>I have secured my private-key</mo-checkbox>
 				</mo-flex>
-
 			</mo-dialog>
 		`
 	}

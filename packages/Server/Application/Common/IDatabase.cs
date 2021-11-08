@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Solidarity.Domain.Models;
 
 namespace Solidarity.Application.Common
@@ -7,7 +8,7 @@ namespace Solidarity.Application.Common
 	{
 		DbSet<Account> Accounts { get; set; }
 		DbSet<Identity> Identities { get; set; }
-		DbSet<AuthenticationMethod> Authentications { get; set; }
+		DbSet<AuthenticationMethod> AuthenticationMethods { get; set; }
 		DbSet<Handshake> Handshakes { get; set; }
 		DbSet<Campaign> Campaigns { get; set; }
 		DbSet<Validation> Validations { get; set; }
@@ -15,6 +16,8 @@ namespace Solidarity.Application.Common
 		DbSet<DonationChannel> DonationChannels { get; set; }
 		DbSet<CryptoMnemonic> CryptoMnemonics { get; set; }
 
+		DbSet<TEntity> GetSet<TEntity>() where TEntity : class;
+		EntityEntry GetEntry(object entity);
 		void CommitChanges();
 		// Task SaveChangesAsync();
 	}

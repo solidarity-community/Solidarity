@@ -8,6 +8,7 @@ namespace Solidarity.Installers
 		public void Install(IServiceCollection services)
 		{
 			services.AddTransient<AccountService>();
+			services.AddTransient<IdentityService>();
 			services.AddTransient<AuthenticationService>();
 			services.AddTransient<CampaignService>();
 			services.AddTransient<HandshakeService>();

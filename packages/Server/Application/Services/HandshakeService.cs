@@ -3,6 +3,7 @@ using Solidarity.Core.Application;
 using Solidarity.Domain.Exceptions;
 using Solidarity.Domain.Models;
 using System;
+using System.IO.Ports;
 using System.Linq;
 
 namespace Solidarity.Application.Services
@@ -17,7 +18,7 @@ namespace Solidarity.Application.Services
 			return database.Handshakes
 				.IncludeAll()
 				.FirstOrDefault(hs => hs.Phrase == phrase)
-				?? throw new EntityNotFoundException("Handshake was not found");
+				?? throw new EntityNotFoundException<Handshake>();
 		}
 
 		private void DeleteInvalid()

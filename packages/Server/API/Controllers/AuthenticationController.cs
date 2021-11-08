@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Solidarity.Application.Services;
 using Solidarity.Domain.Models;
+using System.Collections.Generic;
 
 namespace Solidarity.Controllers
 {
@@ -16,7 +17,7 @@ namespace Solidarity.Controllers
 		public ActionResult<bool> IsAuthenticated() => authenticationService.IsAuthenticated();
 
 		[HttpGet]
-		public ActionResult<AuthenticationList> GetAll() => authenticationService.GetAll();
+		public ActionResult<Dictionary<AuthenticationMethodType, bool>> GetAll() => authenticationService.GetAll();
 
 		[HttpPut("password")]
 		public ActionResult UpdatePassword([FromQuery] string newPassword, [FromQuery] string? oldPassword = null)
