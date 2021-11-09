@@ -1,9 +1,8 @@
-namespace Solidarity.Domain.Enums
+namespace Solidarity.Domain.Enums;
+
+public enum TransactionSpeed
 {
-	public enum TransactionSpeed
-	{
-		Fast = 1,
-		Normal = 3,
-		Economy = 6
-	}
+	Fast = 1,
+	Normal = 3,
+	Economy = 6
 }

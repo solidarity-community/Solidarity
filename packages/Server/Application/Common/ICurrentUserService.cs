@@ -1,8 +1,7 @@
-namespace Solidarity.Application.Common
+namespace Solidarity.Application.Common;
+
+public interface ICurrentUserService
 {
-	public interface ICurrentUserService
-	{
-		int? Id { get; }
-		bool IsAuthenticated { get; }
-	}
+	int? Id { get; }
+	bool IsAuthenticated { get; }
 }

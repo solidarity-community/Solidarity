@@ -1,14 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Solidarity.Domain.Models;
 
-namespace Solidarity.Domain.Models
+public class Validation : Model
 {
-	public class Validation : Model
-	{
-		public Campaign Campaign { get; set; } = null!;
+	public Campaign Campaign { get; set; } = null!;
 
-		public List<Vote> Votes { get; set; } = null!;
+	public List<Vote> Votes { get; set; } = null!;
 
-		public DateTime Expiration { get; set; }
-	}
+	public DateTime Expiration { get; set; }
 }

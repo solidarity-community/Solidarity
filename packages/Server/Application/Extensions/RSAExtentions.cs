@@ -1,53 +1,48 @@
-﻿using System;
-using System.Security.Cryptography;
-using System.Text;
+﻿namespace Solidarity.Application.Extensions;
 
-namespace Solidarity.Application.Extensions
+public static class RSAExtentions
 {
-	public static class RSAExtentions
+	public static readonly Encoding encoding = Encoding.ASCII;
+	public static readonly RSAEncryptionPadding encryptionPadding = RSAEncryptionPadding.OaepSHA512;
+	public static readonly RSASignaturePadding signaturePadding = RSASignaturePadding.Pkcs1;
+	public static readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
+	public static bool VerifyKeys(string privateKey, string publicKey)
 	{
-		public static readonly Encoding encoding = Encoding.ASCII;
-		public static readonly RSAEncryptionPadding encryptionPadding = RSAEncryptionPadding.OaepSHA512;
-		public static readonly RSASignaturePadding signaturePadding = RSASignaturePadding.Pkcs1;
-		public static readonly HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
-		public static bool VerifyKeys(string privateKey, string publicKey)
+		try
 		{
-			try
-			{
-				var rsa = RSA.Create();
-				rsa.ImportRSAPrivateKey(Convert.FromBase64String(privateKey), out _);
+			var rsa = RSA.Create();
+			rsa.ImportRSAPrivateKey(Convert.FromBase64String(privateKey), out _);
 
-				return Convert.ToBase64String(rsa.ExportRSAPublicKey()) == publicKey;
-			}
-			catch
-			{
-				return false;
-			}
+			return Convert.ToBase64String(rsa.ExportRSAPublicKey()) == publicKey;
 		}
-
-		public static string ExportRSAPublicKeyString(this RSA rsa)
+		catch
 		{
-			return Convert.ToBase64String(rsa.ExportRSAPublicKey());
+			return false;
 		}
+	}
 
-		public static string ExportRSAPrivateKeyString(this RSA rsa)
-		{
-			return Convert.ToBase64String(rsa.ExportRSAPrivateKey());
-		}
+	public static string ExportRSAPublicKeyString(this RSA rsa)
+	{
+		return Convert.ToBase64String(rsa.ExportRSAPublicKey());
+	}
 
-		public static string EncryptToString(this RSA rsa, string data)
-		{
-			return Convert.ToBase64String(rsa.Encrypt(encoding.GetBytes(data), encryptionPadding));
-		}
+	public static string ExportRSAPrivateKeyString(this RSA rsa)
+	{
+		return Convert.ToBase64String(rsa.ExportRSAPrivateKey());
+	}
 
-		public static string SignDataToString(this RSA rsa, string data)
-		{
-			return Convert.ToBase64String(rsa.SignData(encoding.GetBytes(data), hashAlgorithm, signaturePadding));
-		}
+	public static string EncryptToString(this RSA rsa, string data)
+	{
+		return Convert.ToBase64String(rsa.Encrypt(encoding.GetBytes(data), encryptionPadding));
+	}
 
-		public static string DecryptToString(this RSA rsa, string encryptedData)
-		{
-			return encoding.GetString(rsa.Decrypt(Convert.FromBase64String(encryptedData), encryptionPadding));
-		}
+	public static string SignDataToString(this RSA rsa, string data)
+	{
+		return Convert.ToBase64String(rsa.SignData(encoding.GetBytes(data), hashAlgorithm, signaturePadding));
+	}
+
+	public static string DecryptToString(this RSA rsa, string encryptedData)
+	{
+		return encoding.GetString(rsa.Decrypt(Convert.FromBase64String(encryptedData), encryptionPadding));
 	}
 }

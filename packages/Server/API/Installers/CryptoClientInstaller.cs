@@ -1,14 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Solidarity.Application.Common;
-using Solidarity.Infrastructure.Crypto;
+﻿namespace Solidarity.Installers;
 
-namespace Solidarity.Installers
+public class CryptoClientInstaller : IInstaller
 {
-	public class CryptoClientInstaller : IInstaller
+	public void Install(IServiceCollection services)
 	{
-		public void Install(IServiceCollection services)
-		{
-			services.AddScoped<ICryptoClientFactory, CryptoClientFactory>();
-		}
+		services.AddScoped<ICryptoClientFactory, CryptoClientFactory>();
 	}
 }

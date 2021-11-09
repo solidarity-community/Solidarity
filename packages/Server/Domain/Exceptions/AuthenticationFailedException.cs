@@ -1,9 +1,6 @@
-using System;
+namespace Solidarity.Domain.Exceptions;
 
-namespace Solidarity.Domain.Exceptions
+public class AuthenticationFailedException : Exception
 {
-	public class AuthenticationFailedException : Exception
-	{
-		public AuthenticationFailedException(string message = "Authentication Failed") : base(message) { }
-	}
+	public AuthenticationFailedException(string message = "Authentication Failed") : base(message) { }
 }

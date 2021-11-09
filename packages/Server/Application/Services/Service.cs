@@ -1,41 +1,32 @@
-using NBitcoin;
-using Solidarity.Application.Common;
-using Solidarity.Core.Application;
-using Solidarity.Domain.Exceptions;
-using Solidarity.Domain.Models;
-using System.Collections.Generic;
-using System.Linq;
+namespace Solidarity.Application.Services;
 
-namespace Solidarity.Application.Services
+public abstract class Service
 {
-	public abstract class Service
+	protected readonly IDatabase database;
+	protected readonly ICryptoClientFactory cryptoClientFactory;
+	protected readonly ICurrentUserService currentUserService;
+	protected readonly ExtKey cryptoPrivateKey;
+
+	public Service(IDatabase database, ICryptoClientFactory cryptoClientFactory, ICurrentUserService currentUserService)
 	{
-		protected readonly IDatabase database;
-		protected readonly ICryptoClientFactory cryptoClientFactory;
-		protected readonly ICurrentUserService currentUserService;
-		protected readonly ExtKey cryptoPrivateKey;
+		this.database = database;
+		this.cryptoClientFactory = cryptoClientFactory;
+		this.currentUserService = currentUserService;
+		cryptoPrivateKey = new Mnemonic(GetMnemonic().Mnemonic, Wordlist.English).DeriveExtKey();
+	}
 
-		public Service(IDatabase database, ICryptoClientFactory cryptoClientFactory, ICurrentUserService currentUserService)
+	private CryptoMnemonic GetMnemonic()
+	{
+		if (database.CryptoMnemonics.Any())
 		{
-			this.database = database;
-			this.cryptoClientFactory = cryptoClientFactory;
-			this.currentUserService = currentUserService;
-			cryptoPrivateKey = new Mnemonic(GetMnemonic().Mnemonic, Wordlist.English).DeriveExtKey();
+			return database.CryptoMnemonics.First();
 		}
-
-		private CryptoMnemonic GetMnemonic()
+		else
 		{
-			if (database.CryptoMnemonics.Any())
-			{
-				return database.CryptoMnemonics.First();
-			}
-			else
-			{
-				var mnemonics = new CryptoMnemonic(new Mnemonic(Wordlist.English, WordCount.TwentyFour).ToString());
-				database.CryptoMnemonics.Add(mnemonics);
-				database.CommitChanges();
-				return mnemonics;
-			}
+			var mnemonics = new CryptoMnemonic(new Mnemonic(Wordlist.English, WordCount.TwentyFour).ToString());
+			database.CryptoMnemonics.Add(mnemonics);
+			database.CommitChanges();
+			return mnemonics;
 		}
 	}
 }

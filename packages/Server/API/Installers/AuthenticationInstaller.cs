@@ -1,28 +1,22 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+﻿namespace Solidarity.Installers;
 
-namespace Solidarity.Installers
+public class AuthenticationInstaller : IInstaller
 {
-	public class AuthenticationInstaller : IInstaller
+	public void Install(IServiceCollection services)
 	{
-		public void Install(IServiceCollection services)
+		services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 		{
-			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+			var secretKey = Program.Configuration!["JWT_KEY"];
+			options.TokenValidationParameters = new TokenValidationParameters
 			{
-				var secretKey = Program.Configuration!["JWT_KEY"];
-				options.TokenValidationParameters = new TokenValidationParameters
-				{
-					ValidateIssuer = true,
-					ValidateAudience = true,
-					ValidateLifetime = true,
-					ValidateIssuerSigningKey = true,
-					ValidIssuer = "Solidarity",
-					ValidAudience = "Solidarity",
-					IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
-				};
-			});
-		}
+				ValidateIssuer = true,
+				ValidateAudience = true,
+				ValidateLifetime = true,
+				ValidateIssuerSigningKey = true,
+				ValidIssuer = "Solidarity",
+				ValidAudience = "Solidarity",
+				IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secretKey)),
+			};
+		});
 	}
 }

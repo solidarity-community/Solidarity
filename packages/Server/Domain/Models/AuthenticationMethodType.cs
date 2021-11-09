@@ -1,4 +1,3 @@
-﻿namespace Solidarity.Domain.Models
-{
-	public enum AuthenticationMethodType { Password }
-}
+﻿namespace Solidarity.Domain.Models;
+
+public enum AuthenticationMethodType { Password }
