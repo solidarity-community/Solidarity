@@ -1,34 +1,89 @@
 version: "3"
 services:
-  sqlserver:
+  crypto_bitcoin_mainnet:
+    container_name: solidarity_crypto_bitcoin_mainnet
+    image: ruimarinho/bitcoin-core
+    restart: always
+    command:
+      -testnet=0
+      -server=1
+      -rpcuser=solidarity
+      -rpcpassword=DevPassw0rd
+      -rpcallowip=::/0
+      -rpcport=8332
+      -printtoconsole=1
+      -maxconnections=8
+      -maxuploadtarget=144
+      -disablewallet=0
+      -txindex=0
+      -prune=10000
+      -dbcache=512
+      -zmqpubrawblock=tcp://0.0.0.0:28333
+      -zmqpubrawtx=tcp://0.0.0.0:28333
+      -zmqpubhashtx=tcp://0.0.0.0:28333
+      -zmqpubhashblock=tcp://0.0.0.0:28333
+    ports:
+      - "8332:8332"
+    volumes:
+      - ~/bitcoin-mainnet:/home/bitcoin/.bitcoin
+
+  crypto_bitcoin_testnet:
+    container_name: solidarity_crypto_bitcoin_testnet
+    image: ruimarinho/bitcoin-core
+    restart: always
+    command:
+      -testnet=1
+      -server=1
+      -rpcuser=solidarity
+      -rpcpassword=DevPassw0rd
+      -rpcallowip=::/0
+      -rpcport=18332
+      -printtoconsole=1
+      -maxconnections=8
+      -maxuploadtarget=144
+      -disablewallet=0
+      -txindex=0
+      -prune=10000
+      -dbcache=512
+      -zmqpubrawblock=tcp://0.0.0.0:28333
+      -zmqpubrawtx=tcp://0.0.0.0:28333
+      -zmqpubhashtx=tcp://0.0.0.0:28333
+      -zmqpubhashblock=tcp://0.0.0.0:28333
+    ports:
+      - "18332:18332"
+    volumes:
+      - ~/bitcoin-testnet:/home/bitcoin/.bitcoin
+
+  database:
     container_name: solidarity_database
     image: mcr.microsoft.com/mssql/server
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=DevPa$$w0rd
+      - SA_PASSWORD=DevPassw0rd
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
+
   server:
     container_name: solidarity_server
     build:
       context: ./packages/Server
       dockerfile: Dockerfile.prod
-    ports: 
+    ports:
       - "5000:80"
     environment:
       - ASPNETCORE_URLS=http://+:80
-      - Database:Server=solidarity_database,1433
-      - Database:User=SA
-      - Database:Password=DevPa$$w0rd
-      - Jwt:SecretKey=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
-      # TODO: Crypto Note conainers
-      - CryptoNodes.Bitcoin.MainNet.Server=http://0.0.0.0:8000/
-      - CryptoNodes.Bitcoin.MainNet.Username=bitcoin
-      - CryptoNodes.Bitcoin.MainNet.Password=xxxxxxxxxxxxxx
-      - CryptoNodes.Bitcoin.TestNet.Server=http://0.0.0.0:8001/
-      - CryptoNodes.Bitcoin.TestNet.Username=bitcoin
-      - CryptoNodes.Bitcoin.TestNet.Password=xxxxxxxxxxxxxx
+      - DATABASE_SERVER=solidarity_database,1433
+      - DATABASE_USER=SA
+      - DATABASE_PASSWORD=DevPa$$w0rd
+      - JWT_KEY=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
+      - CRYPTO_BITCOIN_MAINNET_SERVER=solidarity_crypto_bitcoin_mainnet
+      - CRYPTO_BITCOIN_MAINNET_USERNAME=bitcoin
+      - CRYPTO_BITCOIN_MAINNET_PASSWORD=xxxxxxxxxxxxxx
+      - CRYPTO_BITCOIN_TESTNET_SERVER=solidarity_crypto_bitcoin_testnet
+      - CRYPTO_BITCOIN_TESTNET_USERNAME=bitcoin
+      - CRYPTO_BITCOIN_TESTNET_PASSWORD=xxxxxxxxxxxxxx
+
   client:
     container_name: solidarity_client
     build:
