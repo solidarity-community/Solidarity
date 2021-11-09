@@ -876,7 +876,6 @@
           "salt": {
             "type": "integer",
             "format": "int32",
-            "nullable": true,
             "readOnly": true
           },
           "data": {
@@ -976,6 +975,10 @@
           },
           "coordinateValue": {
             "$ref": "#/components/schemas/Coordinate"
+          },
+          "isValid": {
+            "type": "boolean",
+            "readOnly": true
           }
         },
         "additionalProperties": false
@@ -1022,6 +1025,12 @@
             "type": "integer",
             "format": "int32",
             "readOnly": true
+          },
+          "first": {
+            "$ref": "#/components/schemas/Coordinate"
+          },
+          "last": {
+            "$ref": "#/components/schemas/Coordinate"
           },
           "count": {
             "type": "integer",
@@ -1261,8 +1270,7 @@
           },
           "srid": {
             "type": "integer",
-            "format": "int32",
-            "readOnly": true
+            "format": "int32"
           },
           "geometryServices": {
             "$ref": "#/components/schemas/NtsGeometryServices"
@@ -1479,8 +1487,7 @@
             "items": {
               "$ref": "#/components/schemas/Coordinate"
             },
-            "nullable": true,
-            "readOnly": true
+            "nullable": true
           },
           "numPoints": {
             "type": "integer",
