@@ -1,10 +1,6 @@
-using System;
+namespace Solidarity.Domain.Exceptions;
 
-namespace Solidarity.Domain.Exceptions
+public class EntityNotFoundException<TEntity> : Exception
 {
-	public class EntityNotFoundException<TEntity> : Exception
-	{
-		// Convert "Entity" to $"{nameof(TEntity)}" in C# 10
-		public EntityNotFoundException(string message = "Entity was not found") : base(message) { }
-	}
+	public EntityNotFoundException(string message = $"{nameof(TEntity)} was not found") : base(message) { }
 }

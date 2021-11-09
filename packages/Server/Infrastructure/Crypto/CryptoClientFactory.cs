@@ -1,58 +1,51 @@
-﻿using Solidarity.Application.Common;
-using Solidarity.Domain.Enums;
-using System;
-using System.Collections.Generic;
-using System.Net;
+﻿namespace Solidarity.Infrastructure.Crypto;
 
-namespace Solidarity.Infrastructure.Crypto
+public class CryptoClientFactory : ICryptoClientFactory
 {
-	public class CryptoClientFactory : ICryptoClientFactory
+	private CoinType Coin { get; set; }
+	private NetworkType Network { get; set; }
+
+	private static readonly Dictionary<(CoinType coinType, NetworkType networkType), CryptoClient> clients = new() { };
+
+	private string? Server => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_SERVER"];
+	private string? Username => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_USERNAME"];
+	private string? Password => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_Password"];
+
+	public CryptoClient GetClient(CoinType coinType, NetworkType networkType)
 	{
-		private CoinType Coin { get; set; }
-		private NetworkType Network { get; set; }
+		CryptoClient client;
+		return !clients.TryGetValue((coinType, networkType), out client!) ? CreateClient(coinType, networkType) : client;
+	}
 
-		private static readonly Dictionary<(CoinType coinType, NetworkType networkType), CryptoClient> clients = new() { };
+	private CryptoClient CreateClient(CoinType coinType, NetworkType networkType)
+	{
+		Coin = coinType;
+		Network = networkType;
 
-		private string? Server => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_SERVER"];
-		private string? Username => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_USERNAME"];
-		private string? Password => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_Password"];
-
-		public CryptoClient GetClient(CoinType coinType, NetworkType networkType)
+		if (Server == null)
 		{
-			CryptoClient client;
-			return !clients.TryGetValue((coinType, networkType), out client!) ? CreateClient(coinType, networkType) : client;
+			throw new Exception();
 		}
 
-		private CryptoClient CreateClient(CoinType coinType, NetworkType networkType)
+		var server = new Uri(Server);
+		var credentials = new NetworkCredential(Username, Password);
+		var network = Network switch
 		{
-			Coin = coinType;
-			Network = networkType;
-
-			if (Server == null)
+			NetworkType.MainNet => NBitcoin.Network.Main,
+			NetworkType.TestNet => NBitcoin.Network.TestNet,
+			_ => throw new NotImplementedException()
+		};
+		var bip44CoinType = Network switch
+		{
+			NetworkType.MainNet => coinType switch
 			{
-				throw new Exception();
-			}
-
-			var server = new Uri(Server);
-			var credentials = new NetworkCredential(Username, Password);
-			var network = Network switch
-			{
-				NetworkType.MainNet => NBitcoin.Network.Main,
-				NetworkType.TestNet => NBitcoin.Network.TestNet,
+				CoinType.Bitcoin => 0,
 				_ => throw new NotImplementedException()
-			};
-			var bip44CoinType = Network switch
-			{
-				NetworkType.MainNet => coinType switch
-				{
-					CoinType.Bitcoin => 0,
-					_ => throw new NotImplementedException()
-				},
-				NetworkType.TestNet => 1,
-				_ => throw new NotImplementedException()
-			};
+			},
+			NetworkType.TestNet => 1,
+			_ => throw new NotImplementedException()
+		};
 
-			return new CryptoClient(server, credentials, network, bip44CoinType);
-		}
+		return new CryptoClient(server, credentials, network, bip44CoinType);
 	}
 }

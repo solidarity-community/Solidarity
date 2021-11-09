@@ -1,11 +1,8 @@
-﻿using Solidarity.Application.Extensions;
+﻿namespace Solidarity.Domain.Models;
 
-namespace Solidarity.Domain.Models
+public class PasswordAuthentication : AuthenticationMethod
 {
-	public class PasswordAuthentication : AuthenticationMethod
-	{
-		public override AuthenticationMethodType Type => AuthenticationMethodType.Password;
-		public override bool SupportsMultiple => true;
-		protected override string GetEncrypted(string data) => data.GetSha256Hash();
-	}
+	public override AuthenticationMethodType Type => AuthenticationMethodType.Password;
+	public override bool SupportsMultiple => true;
+	protected override string GetEncrypted(string data) => data.GetSha256Hash();
 }

@@ -1,12 +1,11 @@
-namespace Solidarity.Domain.Models
-{
-	public class CryptoMnemonic : Model
-	{
-		public CryptoMnemonic(string mnemonic)
-		{
-			Mnemonic = mnemonic;
-		}
+namespace Solidarity.Domain.Models;
 
-		public string Mnemonic { get; set; }
+public class CryptoMnemonic : Model
+{
+	public CryptoMnemonic(string mnemonic)
+	{
+		Mnemonic = mnemonic;
 	}
+
+	public string Mnemonic { get; set; }
 }

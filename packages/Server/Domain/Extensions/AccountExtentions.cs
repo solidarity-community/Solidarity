@@ -1,24 +1,20 @@
-﻿using Solidarity.Domain.Models;
-using System.Collections.Generic;
+﻿namespace Solidarity.Domain.Extensions;
 
-namespace Solidarity.Domain.Extensions
+public static class AccountExtentions
 {
-	public static class AccountExtentions
+	public static Account WithoutAuthenticationData(this Account account)
 	{
-		public static Account WithoutAuthenticationData(this Account account)
+		account.AuthenticationMethods = new();
+		return account;
+	}
+
+	public static IEnumerable<Account> WithoutAuthenticationData(this IEnumerable<Account> accounts)
+	{
+		foreach (var account in accounts)
 		{
-			account.AuthenticationMethods = new();
-			return account;
+			account.WithoutAuthenticationData();
 		}
 
-		public static IEnumerable<Account> WithoutAuthenticationData(this IEnumerable<Account> accounts)
-		{
-			foreach (var account in accounts)
-			{
-				account.WithoutAuthenticationData();
-			}
-
-			return accounts;
-		}
+		return accounts;
 	}
 }

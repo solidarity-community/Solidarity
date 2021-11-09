@@ -1,9 +1,6 @@
-using System;
+namespace Solidarity.Domain.Exceptions;
 
-namespace Solidarity.Domain.Exceptions
+public class AccountIdentityException : Exception
 {
-	public class AccountIdentityException : Exception
-	{
-		public AccountIdentityException(string message) : base(message) { }
-	}
+	public AccountIdentityException(string message) : base(message) { }
 }

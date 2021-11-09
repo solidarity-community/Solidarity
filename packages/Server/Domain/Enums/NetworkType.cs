@@ -1,8 +1,7 @@
-namespace Solidarity.Domain.Enums
+namespace Solidarity.Domain.Enums;
+
+public enum NetworkType
 {
-	public enum NetworkType
-	{
-		MainNet = 0,
-		TestNet = 1
-	}
+	MainNet = 0,
+	TestNet = 1
 }

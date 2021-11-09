@@ -1,9 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿namespace Solidarity.Installers;
 
-namespace Solidarity.Installers
+internal interface IInstaller
 {
-	internal interface IInstaller
-	{
-		void Install(IServiceCollection services);
-	}
+	void Install(IServiceCollection services);
 }

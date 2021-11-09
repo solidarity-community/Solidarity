@@ -1,7 +1,6 @@
-namespace Solidarity.Domain.Enums
+namespace Solidarity.Domain.Enums;
+
+public enum CoinType
 {
-	public enum CoinType
-	{
-		Bitcoin = 0
-	}
+	Bitcoin = 0
 }

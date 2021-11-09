@@ -1,13 +1,10 @@
-﻿using Xunit;
+﻿namespace Solidarity.Domain.Models;
 
-namespace Solidarity.Domain.Models
+public class AccountTest
 {
-	public class AccountTest
+	[Fact]
+	public void App_Is_Sane()
 	{
-		[Fact]
-		public void App_Is_Sane()
-		{
-			Assert.True(true);
-		}
+		Assert.True(true);
 	}
 }

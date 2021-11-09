@@ -1,15 +1,12 @@
-﻿using System;
+﻿namespace Solidarity.Domain.Models;
 
-namespace Solidarity.Domain.Models
+public class Handshake : Model
 {
-	public class Handshake : Model
-	{
-		public int AccountId { get; set; }
+	public int AccountId { get; set; }
 
-		public Account Account { get; set; } = null!;
+	public Account Account { get; set; } = null!;
 
-		public string Phrase { get; set; } = null!;
+	public string Phrase { get; set; } = null!;
 
-		public DateTime Expiration { get; set; }
-	}
+	public DateTime Expiration { get; set; }
 }
