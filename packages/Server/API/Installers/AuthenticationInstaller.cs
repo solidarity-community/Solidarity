@@ -6,7 +6,7 @@ public class AuthenticationInstaller : IInstaller
 	{
 		services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
 		{
-			var secretKey = Program.Configuration!["JWT_KEY"];
+			var secretKey = Environment.GetEnvironmentVariable("JWT_KEY")!;
 			options.TokenValidationParameters = new TokenValidationParameters
 			{
 				ValidateIssuer = true,

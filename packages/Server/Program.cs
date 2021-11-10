@@ -8,7 +8,6 @@ global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.ChangeTracking;
 global using Microsoft.EntityFrameworkCore.Metadata;
-global using Microsoft.Extensions.Configuration;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.IdentityModel.Tokens;
@@ -34,24 +33,53 @@ global using System;
 global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
 global using System.IdentityModel.Tokens.Jwt;
-global using System.IO.Ports;
 global using System.Linq;
-global using System.Linq.Expressions;
 global using System.Net;
-global using System.Runtime.InteropServices;
-global using System.Security.Authentication;
 global using System.Security.Claims;
 global using System.Security.Cryptography;
 global using System.Text;
-global using System.Threading.Tasks;
 global using Xunit;
 
-namespace Solidarity;
+WebApplication.CreateBuilder(args)
+	.ConfigureServices().Build()
+	.ConfigureApplication().Run();
 
-public class Program
+public static class ConfigurationExtensions
 {
-	public static IConfiguration? Configuration { get; set; }
+	public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
+	{
+		builder.Services.AddHttpContextAccessor();
+		builder.Services.AddCors();
+		builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+		builder.Services.AddMvc();
+		builder.Services.InstallSolidarity();
+		return builder;
+	}
 
-	public static void Main(string[] args) =>
-		Host.CreateDefaultBuilder(args).ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<Startup>()).Build().Run();
+	private static void InstallSolidarity(this IServiceCollection services)
+	{
+		new AuthenticationInstaller().Install(services);
+		new CryptoClientInstaller().Install(services);
+		new DatabaseInstaller().Install(services);
+		new OpenApiInstaller().Install(services);
+		new UserServiceInstaller().Install(services);
+		new ServiceInstaller().Install(services);
+	}
+
+	public static WebApplication ConfigureApplication(this WebApplication application)
+	{
+		if (application.Environment.IsDevelopment())
+		{
+			application.UseDeveloperExceptionPage();
+			application.UseCors(policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+		}
+		application.UseHttpsRedirection();
+		application.UseRouting();
+		application.UseAuthentication();
+		application.UseAuthorization();
+		application.ConfigureExceptionHandler();
+		application.UseEndpoints(endpoints => endpoints.MapControllers());
+		application.UseSwagger();
+		return application;
+	}
 }

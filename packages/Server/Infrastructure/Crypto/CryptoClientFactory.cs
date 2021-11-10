@@ -7,9 +7,9 @@ public class CryptoClientFactory : ICryptoClientFactory
 
 	private static readonly Dictionary<(CoinType coinType, NetworkType networkType), CryptoClient> clients = new() { };
 
-	private string? Server => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_SERVER"];
-	private string? Username => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_USERNAME"];
-	private string? Password => Program.Configuration?[$"CRYPTO_{Coin}_{Network}_Password"];
+	private string? Server => Environment.GetEnvironmentVariable($"CRYPTO_{Coin}_{Network}_SERVER");
+	private string? Username => Environment.GetEnvironmentVariable($"CRYPTO_{Coin}_{Network}_USERNAME");
+	private string? Password => Environment.GetEnvironmentVariable($"CRYPTO_{Coin}_{Network}_Password");
 
 	public CryptoClient GetClient(CoinType coinType, NetworkType networkType)
 	{

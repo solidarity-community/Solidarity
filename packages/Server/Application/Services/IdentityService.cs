@@ -24,12 +24,9 @@ public class IdentityService : CrudService<Identity>
 
 	public override Identity Update(Identity identity)
 	{
-		if (Get(identity.Id).AccountId != identity.AccountId)
-		{
-			throw new AccountIdentityException("This identity does not belong to this account");
-		}
-
-		return base.Update(identity);
+		return Get(identity.Id).AccountId != identity.AccountId
+			? throw new AccountIdentityException("This identity does not belong to this account")
+			: base.Update(identity);
 	}
 
 	public Identity CreateOrUpdate(Identity identity)
