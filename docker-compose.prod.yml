@@ -66,6 +66,7 @@ services:
 
   server:
     container_name: solidarity_server
+    image: solidarity-server:latest
     build:
       context: ./packages/Server
       dockerfile: Dockerfile.prod
@@ -86,6 +87,7 @@ services:
 
   client:
     container_name: solidarity_client
+    image: solidarity-client:latest
     build:
       context: ./packages/Client
       dockerfile: Dockerfile.prod

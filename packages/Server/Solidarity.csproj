@@ -8,7 +8,7 @@
 	</PropertyGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="dotnet tool restore" IgnoreExitCode="true" />
-		<Exec Command="swagger tofile --output solidarity.api.json $(OutputPath)\$(AssemblyName).dll v1" IgnoreExitCode="true" />
+		<!-- Causes dotnet test to fail: <Exec Command="swagger tofile output solidarity.api.json $(OutputPath)\$(AssemblyName).dll v1" IgnoreExitCode="true" /> -->
 	</Target>
 	<PropertyGroup>
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -33,15 +33,13 @@
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.0" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.2.3" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
+		<PackageReference Include="xunit" Version="2.4.1" />
+		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
 	</ItemGroup>
 	<!-- Tests -->
 	<ItemGroup Condition="'$(Configuration)' == 'Release'">
 		<Compile Remove="**\*.test.cs" />
-	</ItemGroup>
-	<ItemGroup Condition="'$(Configuration)' != 'Release'">
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.0.0" />
-		<PackageReference Include="xunit" Version="2.4.1" />
-		<PackageReference Include="xunit.runner.visualstudio" Version="2.4.3" />
 	</ItemGroup>
 	<PropertyGroup Condition="'$(Configuration)' != 'Release'">
 		<GenerateProgramFile>false</GenerateProgramFile>
