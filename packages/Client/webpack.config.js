@@ -19,6 +19,14 @@ module.exports = (_, arguments) => MoDeLWebpackConfigFactory(arguments.mode, {
 		port: 8080,
 		contentBase: path.join(__dirname, 'dist'),
 		historyApiFallback: true,
+		proxy: {
+			'/api': {
+				target: 'http://solidarity_server',
+				pathRewrite: { '^/api': '' },
+				secure: false,
+				changeOrigin: true,
+			},
+		},
 		watchOptions: {
 			poll: true // enable polling since "fsevents" are not supported in docker
 		}

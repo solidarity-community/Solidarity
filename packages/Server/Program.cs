@@ -71,8 +71,8 @@ public static class ConfigurationExtensions
 		if (application.Environment.IsDevelopment())
 		{
 			application.UseDeveloperExceptionPage();
-			application.UseCors(policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 		}
+		application.UseCors(policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 		application.UseHttpsRedirection();
 		application.UseRouting();
 		application.UseAuthentication();

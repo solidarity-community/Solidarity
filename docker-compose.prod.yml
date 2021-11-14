@@ -66,10 +66,7 @@ services:
 
   server:
     container_name: solidarity_server
-    image: solidarity-server:latest
-    build:
-      context: ./packages/Server
-      dockerfile: Dockerfile.prod
+    image: solidarity_server:latest
     ports:
       - "5000:80"
     environment:
@@ -87,9 +84,6 @@ services:
 
   client:
     container_name: solidarity_client
-    image: solidarity-client:latest
-    build:
-      context: ./packages/Client
-      dockerfile: Dockerfile.prod
+    image: solidarity_client:latest
     ports:
       - "80:80"
