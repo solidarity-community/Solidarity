@@ -63,6 +63,8 @@ services:
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
+    volumes:
+      - "~/solidarity-database:/var/opt/mssql"
 
   server:
     container_name: solidarity_server
