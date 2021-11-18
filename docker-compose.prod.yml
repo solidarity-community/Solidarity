@@ -59,7 +59,7 @@ services:
     image: mcr.microsoft.com/mssql/server
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=DevPassw0rd
+      - SA_PASSWORD=Dev_Passw0rd
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
@@ -73,7 +73,7 @@ services:
       - ASPNETCORE_URLS=http://+:80
       - DATABASE_SERVER=solidarity_database,1433
       - DATABASE_USER=SA
-      - DATABASE_PASSWORD=DevPa$$w0rd
+      - DATABASE_PASSWORD=Dev_Passw0rd
       - JWT_KEY=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
       - CRYPTO_BITCOIN_MAINNET_SERVER=solidarity_crypto_bitcoin_mainnet
       - CRYPTO_BITCOIN_MAINNET_USERNAME=bitcoin
