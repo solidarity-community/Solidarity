@@ -1,5 +1,3 @@
-using System;
-
 namespace Solidarity.Domain.Exceptions;
 
 public class IncorrectCredentialsException : Exception

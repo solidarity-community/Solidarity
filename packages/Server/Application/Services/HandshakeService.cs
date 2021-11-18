@@ -1,7 +1,3 @@
-using Solidarity.Application.Common;
-using Solidarity.Core.Application;
-using Solidarity.Domain.Exceptions;
-using Solidarity.Domain.Models;
 namespace Solidarity.Application.Services;
 
 public class HandshakeService : Service
