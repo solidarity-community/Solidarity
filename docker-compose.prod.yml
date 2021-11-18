@@ -8,7 +8,7 @@ services:
       -testnet=0
       -server=1
       -rpcuser=solidarity
-      -rpcpassword=DevPassw0rd
+      -rpcpassword=\${CRYPTO_PASSWORD}
       -rpcallowip=::/0
       -rpcport=8332
       -printtoconsole=1
@@ -35,7 +35,7 @@ services:
       -testnet=1
       -server=1
       -rpcuser=solidarity
-      -rpcpassword=DevPassw0rd
+      -rpcpassword=\${CRYPTO_PASSWORD}
       -rpcallowip=::/0
       -rpcport=18332
       -printtoconsole=1
@@ -60,7 +60,7 @@ services:
     user: root
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=Dev_Passw0rd
+      - SA_PASSWORD=\${DATABASE_PASSWORD}
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
@@ -76,14 +76,14 @@ services:
       - ASPNETCORE_URLS=http://+:80
       - DATABASE_SERVER=solidarity_database,1433
       - DATABASE_USER=SA
-      - DATABASE_PASSWORD=Dev_Passw0rd
-      - JWT_KEY=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
+      - DATABASE_PASSWORD=\${DATABASE_PASSWORD}
+      - JWT_KEY=\${JWT_KEY}
       - CRYPTO_BITCOIN_MAINNET_SERVER=solidarity_crypto_bitcoin_mainnet
-      - CRYPTO_BITCOIN_MAINNET_USERNAME=bitcoin
-      - CRYPTO_BITCOIN_MAINNET_PASSWORD=xxxxxxxxxxxxxx
+      - CRYPTO_BITCOIN_MAINNET_USERNAME=solidarity
+      - CRYPTO_BITCOIN_MAINNET_PASSWORD=\${CRYPTO_PASSWORD}
       - CRYPTO_BITCOIN_TESTNET_SERVER=solidarity_crypto_bitcoin_testnet
-      - CRYPTO_BITCOIN_TESTNET_USERNAME=bitcoin
-      - CRYPTO_BITCOIN_TESTNET_PASSWORD=xxxxxxxxxxxxxx
+      - CRYPTO_BITCOIN_TESTNET_USERNAME=solidarity
+      - CRYPTO_BITCOIN_TESTNET_PASSWORD=\${CRYPTO_PASSWORD}
 
   client:
     container_name: solidarity_client
