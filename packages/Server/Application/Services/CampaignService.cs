@@ -17,7 +17,7 @@ public class CampaignService : CrudService<Campaign>
 	public decimal GetBalance(int id)
 	{
 		var campaign = Get(id);
-		var client = cryptoClientFactory.GetClient(CoinType.Bitcoin, Domain.Enums.NetworkType.TestNet);
+		var client = cryptoClientFactory.GetClient(CoinType.Bitcoin, NetworkType.TestNet);
 		var balance = campaign.DonationChannels
 			.Select(dc => client.GetBalance(dc.WalletAddress))
 			.Sum();
@@ -30,7 +30,7 @@ public class CampaignService : CrudService<Campaign>
 
 		base.Create(campaign);
 
-		var cryptoClient = cryptoClientFactory.GetClient(CoinType.Bitcoin, Domain.Enums.NetworkType.TestNet);
+		var cryptoClient = cryptoClientFactory.GetClient(CoinType.Bitcoin, NetworkType.TestNet);
 		var address = cryptoClient.GetAddress(cryptoClient.DeriveKey(cryptoPrivateKey, campaign.Id));
 		var addressText = address.ToString();
 		if (addressText == null)

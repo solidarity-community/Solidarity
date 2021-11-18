@@ -6,9 +6,9 @@ public class DatabaseInstaller : IInstaller
 	{
 		services.AddDbContext<IDatabase, DatabaseContext>(options =>
 		{
-			var server = Program.Configuration?["DATABASE_SERVER"];
-			var user = Program.Configuration?["DATABASE_USER"];
-			var password = Program.Configuration?["DATABASE_PASSWORD"];
+			var server = Environment.GetEnvironmentVariable("DATABASE_SERVER");
+			var user = Environment.GetEnvironmentVariable("DATABASE_USER");
+			var password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD");
 
 			var connectionString = server is null || user is null || password is null
 				? "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;"

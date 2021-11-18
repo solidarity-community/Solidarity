@@ -1,4 +1,4 @@
-﻿namespace Solidarity.Installers;
+namespace Solidarity.Installers;
 
 internal interface IInstaller
 {

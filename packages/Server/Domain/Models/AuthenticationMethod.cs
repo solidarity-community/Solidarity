@@ -10,7 +10,7 @@ public abstract class AuthenticationMethod : Model
 
 	public virtual bool SupportsMultiple => false;
 
-	public virtual int Salt { get; private set; }
+	public int Salt { get; private set; }
 
 	public string Data { get; set; } = null!;
 
@@ -19,7 +19,7 @@ public abstract class AuthenticationMethod : Model
 	public void Encrypt()
 	{
 		Data = GetEncrypted(Data);
-		Salt = SupportsMultiple ? 0 : new Random().Next(1, 99999);
+		Salt = SupportsMultiple ? new Random().Next(1, 99999) : 0;
 	}
 
 	protected abstract string GetEncrypted(string data);

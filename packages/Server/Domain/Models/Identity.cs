@@ -1,11 +1,5 @@
 ﻿namespace Solidarity.Domain.Models;
 
-public struct IdentityRoles
-{
-	public const string Admin = "Admin";
-	public const string Member = "Member";
-}
-
 public class Identity : Model
 {
 	public int AccountId { get; set; }

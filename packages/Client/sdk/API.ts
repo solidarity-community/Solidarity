@@ -3,7 +3,7 @@ import { HttpError } from 'sdk'
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD'
 
 export class API {
-	private static readonly url = 'http://localhost:5000'
+	private static readonly url = '/api'
 	private static readonly tokenStorageKey = 'Solidarity.Authentication.Token'
 
 	static get token() { return localStorage.getItem(API.tokenStorageKey) ?? undefined }

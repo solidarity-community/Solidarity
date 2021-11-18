@@ -1,14 +1,16 @@
 version: "3"
 services:
-  sqlserver:
+  database:
     container_name: solidarity_database
     image: mcr.microsoft.com/mssql/server
+    restart: always
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=DevPa$$w0rd
+      - SA_PASSWORD=Dev_Passw0rd
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
+
   server:
     container_name: solidarity_server
     build:
@@ -21,15 +23,16 @@ services:
       - ASPNETCORE_URLS=http://+:80
       - DATABASE_SERVER=solidarity_database,1433
       - DATABASE_USER=SA
-      - DATABASE_PASSWORD=DevPa$$w0rd
+      - DATABASE_PASSWORD=Dev_Passw0rd
       - JWT_KEY=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
       # TODO: Crypto Note conainers
       - CRYPTONODES_BITCOIN_MAINNET_SERVER=http://0.0.0.0:8000/
-      - CRYPTONODES_BITCOIN_MAINNET_USERNAME=bitcoin
+      - CRYPTONODES_BITCOIN_MAINNET_USERNAME=solidarity
       - CRYPTONODES_BITCOIN_MAINNET_PASSWORD=xxxxxxxxxxxxxx
       - CRYPTONODES_BITCOIN_TESTNET_SERVER=http://0.0.0.0:8001/
-      - CRYPTONODES_BITCOIN_TESTNET_USERNAME=bitcoin
+      - CRYPTONODES_BITCOIN_TESTNET_USERNAME=solidarity
       - CRYPTONODES_BITCOIN_TESTNET_PASSWORD=xxxxxxxxxxxxxx
+
   client:
     container_name: solidarity_client
     build:
