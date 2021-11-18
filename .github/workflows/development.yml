@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-      # - issue2-infra-deployment-via-docker-compose
+      - issue2-infra-deployment-via-docker-compose
 
 jobs:
   Server:

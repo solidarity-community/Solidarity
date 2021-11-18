@@ -10,7 +10,7 @@ export class DialogAccountReset extends DialogComponent {
 		return html`
 			<mo-dialog heading='Reset Account' primaryButtonText='Reset'>
 				<mo-flex gap='var(--mo-thickness-m)'>
-					<span>To reset your account enter the private key you were provided on account creation</span>
+					<span>To reset your account enter the private key you were provided during account creation</span>
 					<mo-text-area label='Private-Key' rows='10'
 						value=${ifDefined(this.idAndPrivateKey)}
 						@change=${(e: CustomEvent<string>) => this.idAndPrivateKey = e.detail}
