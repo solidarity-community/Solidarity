@@ -57,6 +57,7 @@ services:
   database:
     container_name: solidarity_database
     image: mcr.microsoft.com/mssql/server
+    user: root
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Dev_Passw0rd
