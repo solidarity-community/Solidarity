@@ -1,7 +1,8 @@
-import { component, PageComponent, html, route, state, PageError, HttpErrorCode, nothing } from '@3mo/model'
-import { DialogIdentity, DialogAuthenticationMethods } from 'application'
+import { component, PageComponent, html, route, state, PageError, HttpErrorCode, nothing, authentication } from '@3mo/model'
 import { Account, AccountService, AuthenticationMethodType, AuthenticationService, Identity, IdentityService } from 'sdk'
+import { DialogIdentity, DialogAuthenticationMethods, DialogAuthenticator } from 'application'
 
+@authentication()
 @route('/account')
 @component('solid-page-account')
 export class PageAccount extends PageComponent {
@@ -65,7 +66,7 @@ export class PageAccount extends PageComponent {
 		return html`
 			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center'>
 				<mo-flex alignItems='center' direction='horizontal' gap='12px'>
-					<mo-avatar width='50px' height='50px' fontSize='var(--mo-font-size-xl)' foreground='var(--mo-color-accessible)'>${(this.identity?.firstName || MoDeL.application.authenticatedUser?.name || '').charAt(0).toUpperCase()}</mo-avatar>
+					<mo-avatar width='50px' height='50px' fontSize='var(--mo-font-size-xl)' foreground='var(--mo-color-accessible)'>${(this.identity?.firstName || DialogAuthenticator.authenticatedUser.value?.name || '').charAt(0).toUpperCase()}</mo-avatar>
 					<mo-flex>
 						<mo-heading typography='heading3'>${hasName ? name : username}</mo-heading>
 						${!hasName ? nothing : html`<mo-heading typography='heading5' foreground='var(--mo-color-gray)'>${username}</mo-heading>`}

@@ -1,4 +1,4 @@
-import { component, DialogComponent, html, ifDefined, nothing, state } from '@3mo/model'
+import { component, DialogComponent, html, nothing, state } from '@3mo/model'
 import { AuthenticationMethodType, AuthenticationService } from 'sdk'
 
 @component('solid-dialog-authentication-methods')

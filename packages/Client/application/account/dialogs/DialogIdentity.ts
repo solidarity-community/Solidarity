@@ -1,5 +1,5 @@
 import { component, DialogComponent, html, state } from '@3mo/model'
-import { Account, AccountService, Identity, IdentityService } from 'sdk'
+import { Identity, IdentityService } from 'sdk'
 
 @component('solid-dialog-identity')
 export class DialogIdentity extends DialogComponent<{ readonly accountId: number }> {

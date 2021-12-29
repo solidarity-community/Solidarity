@@ -2,7 +2,7 @@ import { component, homePage, html, PageComponent, route, state } from '@3mo/mod
 import { PageCampaign } from 'application'
 import { Campaign, CampaignService } from 'sdk'
 
-@homePage
+@homePage()
 @route('/campaigns')
 @component('solid-page-campaigns')
 export class PageCampaigns extends PageComponent {

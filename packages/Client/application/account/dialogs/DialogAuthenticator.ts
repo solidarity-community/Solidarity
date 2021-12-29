@@ -2,12 +2,14 @@ import { component, DialogAuthenticator as DialogAuthenticatorBase, User, LocalS
 import { AccountService, AuthenticationService } from 'sdk'
 import { DialogAccountRegister, DialogAccountReset } from 'application'
 
-@authenticator
+@authenticator()
 @component('solid-dialog-authenticator')
 export class DialogAuthenticator extends DialogAuthenticatorBase {
 	protected async authenticateProcess() {
 		await AuthenticationService.authenticateWithPassword(this.username, this.password)
-		return await this.fetchUser()
+		const user = await this.fetchUser()
+		MoDeL.application.requestUpdate()
+		return user
 	}
 
 	private async fetchUser() {
