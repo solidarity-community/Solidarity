@@ -1,6 +1,6 @@
 import { Application, application, component, html, ThemeHelper, Color } from '@3mo/model'
 import { DialogAuthenticator, PageAccount } from 'application'
-import * as Pages from './campaign/pages'
+import * as Solid from '.'
 
 ThemeHelper.accent.value = new Color([105, 69, 130], [92, 119, 185])
 
@@ -9,7 +9,7 @@ ThemeHelper.accent.value = new Color([105, 69, 130], [92, 119, 185])
 export class Solidarity extends Application {
 	protected get drawerTemplate() {
 		return html`
-			<mo-navigation-list-item icon='campaign' .component=${new Pages.PageCampaigns}>Campaigns</mo-navigation-list-item>
+			<mo-navigation-list-item icon='campaign' .component=${new Solid.PageCampaigns}>Campaigns</mo-navigation-list-item>
 		`
 	}
 
