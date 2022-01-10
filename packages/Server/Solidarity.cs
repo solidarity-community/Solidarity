@@ -44,6 +44,7 @@ WebApplication.CreateBuilder(args)
 	.ConfigureServices().Build()
 	.ConfigureApplication().Run();
 
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1050:Declare types in namespaces", Justification = "This is a one-time extension method to use within top-level statements")]
 public static class ConfigurationExtensions
 {
 	public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)

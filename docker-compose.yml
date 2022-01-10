@@ -21,6 +21,7 @@ services:
       - "./packages/Server:/Solidarity"
     environment:
       - ASPNETCORE_URLS=http://+:80
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
       - DATABASE_SERVER=solidarity_database,1433
       - DATABASE_USER=SA
       - DATABASE_PASSWORD=Dev_Passw0rd
