@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
-using Solidarity.Infrastructure.Persistance;
+using Solidarity.Infrastructure.Persistence;
 
 namespace Solidarity.Infrastructure.Persistence.Migrations
 {

@@ -1,4 +1,4 @@
-namespace Solidarity.Infrastructure.Persistance;
+namespace Solidarity.Infrastructure.Persistence;
 
 public static class DatabaseSeeder
 {

@@ -27,7 +27,7 @@ global using Solidarity.Domain.Extensions;
 global using Solidarity.Domain.Models;
 global using Solidarity.Infrastructure.Crypto;
 global using Solidarity.Infrastructure.Identity;
-global using Solidarity.Infrastructure.Persistance;
+global using Solidarity.Infrastructure.Persistence;
 global using Solidarity.Installers;
 global using System;
 global using System.Collections.Generic;
