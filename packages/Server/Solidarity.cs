@@ -21,13 +21,12 @@ global using Solidarity.Application.Extensions;
 global using Solidarity.Application.Helpers;
 global using Solidarity.Application.Services;
 global using Solidarity.Core.Application;
-global using Solidarity.Domain.Enums;
 global using Solidarity.Domain.Exceptions;
 global using Solidarity.Domain.Extensions;
 global using Solidarity.Domain.Models;
-global using Solidarity.Infrastructure.Crypto;
 global using Solidarity.Infrastructure.Identity;
 global using Solidarity.Infrastructure.Persistence;
+global using Solidarity.Infrastructure.Payment;
 global using Solidarity.Installers;
 global using System;
 global using System.Collections.Generic;
@@ -38,6 +37,7 @@ global using System.Net;
 global using System.Security.Claims;
 global using System.Security.Cryptography;
 global using System.Text;
+global using System.Reflection;
 global using Xunit;
 
 WebApplication.CreateBuilder(args)
@@ -60,7 +60,7 @@ public static class ConfigurationExtensions
 	private static void InstallSolidarity(this IServiceCollection services)
 	{
 		new AuthenticationInstaller().Install(services);
-		new CryptoClientInstaller().Install(services);
+		new PaymentMethodsInstaller().Install(services);
 		new DatabaseInstaller().Install(services);
 		new OpenApiInstaller().Install(services);
 		new UserServiceInstaller().Install(services);

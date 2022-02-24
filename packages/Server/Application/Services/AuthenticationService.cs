@@ -2,23 +2,21 @@ namespace Solidarity.Application.Services;
 
 public class AuthenticationService : Service
 {
-	private readonly AccountService accountService;
+	private readonly AccountService _accountService;
 
-	public AuthenticationService(AccountService accountService, IDatabase database, ICryptoClientFactory cryptoClientFactory, ICurrentUserService currentUserService) : base(database, cryptoClientFactory, currentUserService)
-	{
-		this.accountService = accountService;
-	}
+	public AuthenticationService(AccountService accountService, IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService) : base(database, paymentMethodProvider, currentUserService)
+		=> _accountService = accountService;
 
 	public bool IsAuthenticated()
 	{
-		return currentUserService.Id is int id
-			&& accountService.Exists(id);
+		return _currentUserService.Id is int id
+			&& _accountService.Exists(id);
 	}
 
 	public Dictionary<AuthenticationMethodType, bool> GetAll()
 	{
-		var availableAuthenticationMethods = database.AuthenticationMethods
-			.Where(am => am.AccountId == currentUserService.Id)
+		var availableAuthenticationMethods = _database.AuthenticationMethods
+			.Where(am => am.AccountId == _currentUserService.Id)
 			.Select(am => am.Type);
 
 		return new Dictionary<AuthenticationMethodType, bool>
@@ -29,35 +27,35 @@ public class AuthenticationService : Service
 
 	public T AddOrUpdate<T>(T authentication) where T : AuthenticationMethod
 	{
-		var account = accountService.Get(authentication.AccountId);
+		var account = _accountService.Get(authentication.AccountId);
 		var existingAuthentication = account.AuthenticationMethods.SingleOrDefault(auth => auth is T) as T;
 		authentication.Encrypt();
 		if (existingAuthentication is null)
 		{
-			database.AuthenticationMethods.Add(authentication);
-			database.CommitChanges();
+			_database.AuthenticationMethods.Add(authentication);
+			_database.CommitChanges();
 			return authentication.WithoutData();
 		}
 		else
 		{
 			existingAuthentication.Data = authentication.Data;
-			database.CommitChanges();
+			_database.CommitChanges();
 			return existingAuthentication.WithoutData();
 		}
 	}
 
 	public string Login<T>(int accountId, string data) where T : AuthenticationMethod
 	{
-		var authMethod = database.AuthenticationMethods.SingleOrDefault(am => am is T && am.AccountId == accountId) as T;
+		var authMethod = _database.AuthenticationMethods.SingleOrDefault(am => am is T && am.AccountId == accountId) as T;
 		return authMethod == null || !authMethod.Authenticate(data)
 			? throw new IncorrectCredentialsException()
-			: accountService.Get(accountId).IssueToken(TimeSpan.FromDays(30));
+			: _accountService.Get(accountId).IssueToken(TimeSpan.FromDays(30));
 	}
 
 	public void UpdatePassword(string newPassword, string? oldPassword = null)
 	{
-		var accountId = currentUserService.Id ?? throw new NotAuthenticatedException();
-		var existingAuthentication = database.AuthenticationMethods.FirstOrDefault(am => am is PasswordAuthentication && am.AccountId == accountId);
+		var accountId = _currentUserService.Id ?? throw new NotAuthenticatedException();
+		var existingAuthentication = _database.AuthenticationMethods.FirstOrDefault(am => am is PasswordAuthentication && am.AccountId == accountId);
 
 		if (string.IsNullOrEmpty(oldPassword) == false && existingAuthentication?.Authenticate(oldPassword) == false)
 		{
@@ -73,7 +71,7 @@ public class AuthenticationService : Service
 
 	public string PasswordLogin(string username, string password)
 	{
-		var account = accountService.GetByUsername(username);
+		var account = _accountService.GetByUsername(username);
 		var token = Login<PasswordAuthentication>(account.Id, password);
 		return token;
 	}

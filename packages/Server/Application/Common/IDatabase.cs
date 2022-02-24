@@ -10,7 +10,7 @@ public interface IDatabase
 	DbSet<Validation> Validations { get; set; }
 	DbSet<Vote> Votes { get; set; }
 	DbSet<DonationChannel> DonationChannels { get; set; }
-	DbSet<CryptoMnemonic> CryptoMnemonics { get; set; }
+	DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; }
 
 	DbSet<TEntity> GetSet<TEntity>() where TEntity : class;
 	EntityEntry GetEntry(object entity);

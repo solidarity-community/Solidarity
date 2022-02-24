@@ -3,24 +3,24 @@
 [ApiController, Route("[controller]"), Authorize]
 public class CampaignController : ControllerBase
 {
-	private readonly CampaignService campaignService;
+	private readonly CampaignService _campaignService;
 
-	public CampaignController(CampaignService campainService) => campaignService = campainService;
+	public CampaignController(CampaignService campainService) => _campaignService = campainService;
 
 	[HttpGet, AllowAnonymous]
-	public ActionResult<IEnumerable<Campaign>> GetAll() => Ok(campaignService.GetAll());
+	public ActionResult<IEnumerable<Campaign>> GetAll() => Ok(_campaignService.GetAll());
 
 	[HttpGet("{id}"), AllowAnonymous]
-	public ActionResult<string> Get([FromRoute] int id) => Ok(campaignService.Get(id));
+	public ActionResult<string> Get([FromRoute] int id) => Ok(_campaignService.Get(id));
 
 	[HttpGet("{id}/balance"), AllowAnonymous]
-	public ActionResult<decimal> GetBalance([FromRoute] int id) => Ok(campaignService.GetBalance(id));
+	public ActionResult<decimal> GetBalance([FromRoute] int id) => Ok(_campaignService.GetBalance(id));
 
 	[HttpPost]
 	public ActionResult<Campaign> Create([FromBody, Bind(nameof(Campaign.CreatorId), nameof(Campaign.Description), nameof(Campaign.Title))] Campaign campaign)
-		=> Ok(campaignService.Create(campaign));
+		=> Ok(_campaignService.Create(campaign));
 
 	[HttpPut("{id}")]
 	public ActionResult<Campaign> Update([FromBody, Bind(nameof(Campaign.Id), nameof(Campaign.Description), nameof(Campaign.Title))] Campaign campaign)
-		=> Ok(campaignService.Update(campaign));
+		=> Ok(_campaignService.Update(campaign));
 }

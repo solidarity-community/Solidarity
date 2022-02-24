@@ -26,13 +26,15 @@ services:
       - DATABASE_USER=SA
       - DATABASE_PASSWORD=Dev_Passw0rd
       - JWT_KEY=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
+      # TODO: activated payment methods 
+      - PAYMENT_METHODS=BTC_MAINNET,BTC_TESTNET
       # TODO: Crypto Note conainers
-      - CRYPTONODES_BITCOIN_MAINNET_SERVER=http://0.0.0.0:8000/
-      - CRYPTONODES_BITCOIN_MAINNET_USERNAME=solidarity
-      - CRYPTONODES_BITCOIN_MAINNET_PASSWORD=xxxxxxxxxxxxxx
-      - CRYPTONODES_BITCOIN_TESTNET_SERVER=http://0.0.0.0:8001/
-      - CRYPTONODES_BITCOIN_TESTNET_USERNAME=solidarity
-      - CRYPTONODES_BITCOIN_TESTNET_PASSWORD=xxxxxxxxxxxxxx
+      - PAYMENT_METHOD_BTC_MAINNET_SERVER=http://0.0.0.0:8000/
+      - PAYMENT_METHOD_BTC_MAINNET_USERNAME=solidarity
+      - PAYMENT_METHOD_BTC_MAINNET_PASSWORD=xxxxxxxxxxxxxx
+      - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://0.0.0.0:8001/
+      - PAYMENT_METHOD_BTC_TESTNET_USERNAME=solidarity
+      - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=xxxxxxxxxxxxxx
 
   client:
     container_name: solidarity_client

@@ -39,8 +39,8 @@ export class API {
 
 	private static async fetch<T = void>(method: HTTPMethod, route: string, body: BodyInit | null = null) {
 		const headers: HeadersInit = {
-			'Accept': 'application/json',
-			'Authorization': `Bearer ${this.token}`
+			Accept: 'application/json',
+			Authorization: `Bearer ${this.token}`
 		}
 
 		const isForm = body instanceof FormData

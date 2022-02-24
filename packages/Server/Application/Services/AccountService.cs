@@ -2,16 +2,14 @@ namespace Solidarity.Application.Services;
 
 public class AccountService : CrudService<Account>
 {
-	private readonly HandshakeService handshakeService;
+	private readonly HandshakeService _handshakeService;
 
-	public AccountService(IDatabase database, ICryptoClientFactory cryptoClientFactory, ICurrentUserService currentUserService, HandshakeService handshakeService) : base(database, cryptoClientFactory, currentUserService)
-	{
-		this.handshakeService = handshakeService;
-	}
+	public AccountService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService, HandshakeService handshakeService) : base(database, paymentMethodProvider, currentUserService)
+		=> _handshakeService = handshakeService;
 
 	public Account Get()
 	{
-		return base.Get(currentUserService.Id ?? throw new NotAuthenticatedException());
+		return base.Get(_currentUserService.Id ?? throw new NotAuthenticatedException());
 	}
 
 	public Account GetWithoutAuthentication(int? id)
@@ -24,13 +22,13 @@ public class AccountService : CrudService<Account>
 
 	public Account GetByUsername(string username)
 	{
-		return database.Accounts.SingleOrDefault(account => account.Username == username)
+		return _database.Accounts.SingleOrDefault(account => account.Username == username)
 			?? throw new EntityNotFoundException<Account>();
 	}
 
 	public bool IsUsernameAvailable(string username)
 	{
-		return database.Accounts.SingleOrDefault(a => a.Username == username.ToLower()) == null;
+		return _database.Accounts.SingleOrDefault(a => a.Username == username.ToLower()) == null;
 	}
 
 	public override Account Create(Account account)
@@ -51,7 +49,7 @@ public class AccountService : CrudService<Account>
 
 	public override Account Update(Account account)
 	{
-		account.Id = currentUserService.Id ?? throw new NotAuthenticatedException();
+		account.Id = _currentUserService.Id ?? throw new NotAuthenticatedException();
 		base.Update(account);
 		return account.WithoutAuthenticationData();
 	}
@@ -72,8 +70,8 @@ public class AccountService : CrudService<Account>
 			Phrase = RandomStringGenerator.Generate(64),
 			Expiration = DateTime.Now.AddMinutes(10)
 		};
-		database.Handshakes.Add(handshake);
-		database.CommitChanges();
+		_database.Handshakes.Add(handshake);
+		_database.CommitChanges();
 
 		var publicRsaKey = RSA.Create();
 		// TODO This fails
@@ -85,12 +83,12 @@ public class AccountService : CrudService<Account>
 
 	public string Recover(string phrase)
 	{
-		var handshake = handshakeService.GetByPhrase(phrase);
+		var handshake = _handshakeService.GetByPhrase(phrase);
 		var token = handshake.Account.IssueToken(TimeSpan.FromDays(30));
 		handshake.Account.AuthenticationMethods = new();
-		database.AuthenticationMethods.RemoveRange(database.AuthenticationMethods.Where(e => e.AccountId == handshake.Account.Id));
-		database.Handshakes.Remove(handshake);
-		database.CommitChanges();
+		_database.AuthenticationMethods.RemoveRange(_database.AuthenticationMethods.Where(e => e.AccountId == handshake.Account.Id));
+		_database.Handshakes.Remove(handshake);
+		_database.CommitChanges();
 		return token;
 	}
 }

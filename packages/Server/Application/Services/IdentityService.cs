@@ -2,23 +2,21 @@ namespace Solidarity.Application.Services;
 
 public class IdentityService : CrudService<Identity>
 {
-	private readonly AccountService accountService;
+	private readonly AccountService _accountService;
 
-	public IdentityService(IDatabase database, ICryptoClientFactory cryptoClientFactory, ICurrentUserService currentUserService, AccountService accountService) : base(database, cryptoClientFactory, currentUserService)
-	{
-		this.accountService = accountService;
-	}
+	public IdentityService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService, AccountService accountService) : base(database, paymentMethodProvider, currentUserService)
+		=> _accountService = accountService;
 
 	public Identity GetByAccountId(int? id)
 	{
-		id ??= currentUserService.Id;
-		return database.Identities.FirstOrDefault(i => i.AccountId == id)
+		id ??= _currentUserService.Id;
+		return _database.Identities.FirstOrDefault(i => i.AccountId == id)
 			?? throw new EntityNotFoundException<Identity>();
 	}
 
 	public Identity GetByUsername(string username)
 	{
-		var account = accountService.GetByUsername(username);
+		var account = _accountService.GetByUsername(username);
 		return GetByAccountId(account.Id);
 	}
 
@@ -31,7 +29,7 @@ public class IdentityService : CrudService<Identity>
 
 	public Identity CreateOrUpdate(Identity identity)
 	{
-		return database.Identities.Any(i => i.AccountId == identity.AccountId)
+		return _database.Identities.Any(i => i.AccountId == identity.AccountId)
 			? Update(identity)
 			: Create(identity);
 	}

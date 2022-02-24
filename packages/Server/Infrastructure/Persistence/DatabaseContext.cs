@@ -2,11 +2,11 @@
 
 public class DatabaseContext : DbContext, IDatabase
 {
-	private readonly ICurrentUserService currentUserService;
+	private readonly ICurrentUserService _currentUserService;
 
 	public DatabaseContext(DbContextOptions<DatabaseContext> options, ICurrentUserService currentUserService) : base(options)
 	{
-		this.currentUserService = currentUserService;
+		_currentUserService = currentUserService;
 		if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
 		{
 			Database.Migrate();
@@ -22,7 +22,7 @@ public class DatabaseContext : DbContext, IDatabase
 	public DbSet<Validation> Validations { get; set; } = null!;
 	public DbSet<Vote> Votes { get; set; } = null!;
 	public DbSet<DonationChannel> DonationChannels { get; set; } = null!;
-	public DbSet<CryptoMnemonic> CryptoMnemonics { get; set; } = null!;
+	public DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; } = null!;
 
 	public DbSet<TEntity> GetSet<TEntity>() where TEntity : class => Set<TEntity>();
 	public EntityEntry GetEntry(object entity) => Entry(entity);
@@ -45,12 +45,14 @@ public class DatabaseContext : DbContext, IDatabase
 		modelBuilder.Entity<Campaign>().HasOne(c => c.Validation).WithOne(v => v.Campaign);
 		modelBuilder.Entity<Campaign>().HasMany(c => c.DonationChannels).WithOne(dc => dc.Campaign);
 
+		modelBuilder.Entity<PaymentMethodKey>().HasKey(pmk => pmk.PaymentMethodIdentifier);
+
 		modelBuilder.Entity<Validation>().HasMany(v => v.Votes).WithOne(v => v.Validation);
 	}
 
 	public override int SaveChanges()
 	{
-		var userId = currentUserService.Id ?? 0;
+		var userId = _currentUserService.Id ?? 0;
 		foreach (var entry in ChangeTracker.Entries<Model>())
 		{
 			switch (entry.State)

@@ -2,31 +2,14 @@ namespace Solidarity.Application.Services;
 
 public abstract class Service
 {
-	protected readonly IDatabase database;
-	protected readonly ICryptoClientFactory cryptoClientFactory;
-	protected readonly ICurrentUserService currentUserService;
-	protected readonly ExtKey cryptoPrivateKey;
+	protected readonly IDatabase _database;
+	protected readonly IPaymentMethodProvider _paymentMethodProvider;
+	protected readonly ICurrentUserService _currentUserService;
 
-	public Service(IDatabase database, ICryptoClientFactory cryptoClientFactory, ICurrentUserService currentUserService)
+	public Service(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService)
 	{
-		this.database = database;
-		this.cryptoClientFactory = cryptoClientFactory;
-		this.currentUserService = currentUserService;
-		cryptoPrivateKey = new Mnemonic(GetMnemonic().Mnemonic, Wordlist.English).DeriveExtKey();
-	}
-
-	private CryptoMnemonic GetMnemonic()
-	{
-		if (database.CryptoMnemonics.Any())
-		{
-			return database.CryptoMnemonics.First();
-		}
-		else
-		{
-			var mnemonics = new CryptoMnemonic(new Mnemonic(Wordlist.English, WordCount.TwentyFour).ToString());
-			database.CryptoMnemonics.Add(mnemonics);
-			database.CommitChanges();
-			return mnemonics;
-		}
+		_database = database;
+		_paymentMethodProvider = paymentMethodProvider;
+		_currentUserService = currentUserService;
 	}
 }

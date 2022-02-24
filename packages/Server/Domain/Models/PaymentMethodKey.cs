@@ -1,7 +1,7 @@
 namespace Solidarity.Domain.Models;
 
-public class DonationChannel : Model
+public class PaymentMethodKey : Model
 {
 	public string PaymentMethodIdentifier { get; set; } = null!;
-	public Campaign Campaign { get; set; } = null!;
+	public string Key { get; set; } = null!;
 }
