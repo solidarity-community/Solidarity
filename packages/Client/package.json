@@ -9,6 +9,7 @@
 	},
 	"dependencies": {
 		"@3mo/model": "git+https://github.com/3mo-esolutions/model.git",
+		"@lit-labs/task": "*",
 		"jsencrypt": "3.*"
 	},
 	"devDependencies": {

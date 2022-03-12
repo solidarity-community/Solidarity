@@ -1,8 +1,8 @@
-﻿namespace Solidarity.Domain.Models;
+namespace Solidarity.Domain.Models;
 
 public class Campaign : Model
 {
-	public Account Creator { get; set; } = null!;
+	public Account? Creator { get; set; }
 
 	[MaxLength(50), Required(ErrorMessage = "Title cannot be empty")]
 	public string Title { get; set; } = string.Empty;
@@ -16,9 +16,9 @@ public class Campaign : Model
 
 	public List<DonationChannel> DonationChannels { get; set; } = new();
 
-	public int ValidationId { get; set; }
+	public int? ValidationId { get; set; }
 
-	public Validation Validation { get; set; } = null!;
+	public Validation? Validation { get; set; } = null!;
 
 	// public List<Milestone> Milestones { get; set; }
 }

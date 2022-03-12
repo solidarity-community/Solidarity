@@ -1,39 +1,64 @@
-import { component, homePage, html, PageComponent, route, state } from '@3mo/model'
-import { Campaign } from 'sdk'
-import { PageCampaign } from 'application'
+import { component, ContextMenuHost, DialogAuthenticator, homePage, html, PageComponent, route, Task } from '@3mo/model'
+import { DialogCampaign, PageCampaign } from 'application'
+import { Campaign, CampaignService } from 'sdk'
 
 @homePage()
 @route('/campaigns')
 @component('solid-page-campaigns')
 export class PageCampaigns extends PageComponent {
-	@state() private campaigns = new Array<Campaign>(
-		{
-			id: 1, title: 'Title', location: { x: 10, y: 10, z: 10 }, validationId: 10,
-			description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only.',
-		},
-		{
-			id: 2, title: 'Title', location: { x: 10, y: 10, z: 10 }, validationId: 10,
-			description: 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only.',
-		},
-	)
-
-	protected override async initialized() {
-		// this.campaigns = await CampaignService.getAll()
-	}
+	private readonly fetchCampaignsTask = new Task(this, CampaignService.getAll, () => [])
 
 	protected override get template() {
+		const fabTemplate = html`
+			<mo-fab position='fixed' right='16px' bottom='16px' icon='add'
+				?hidden=${!DialogAuthenticator.authenticatedUser.value}
+				@click=${() => this.open()}
+			>New Campaign</mo-fab>
+		`
 		return html`
-			<mo-page heading='Campaigns'>
-				<mo-grid columns='repeat(auto-fill, minmax(250px, 1fr))' columnGap='var(--mo-thickness-xl)' rowGap='var(--mo-thickness-xl)'>
-					${this.campaigns.map(campaign => html`
-						<solid-campaign-card
-							tabIndex='0'
-							.campaign=${campaign}
-							@click=${() => new PageCampaign({ id: campaign.id! }).navigate()}
-						></solid-campaign-card>
-					`)}
-				</mo-grid>
+			<mo-page heading='Campaigns' fullHeight>
+				${this.fetchCampaignsTask.render({
+			pending: () => html`
+						<mo-flex alignItems='center' justifyContent='center'>
+							<mo-circular-progress indeterminate></mo-circular-progress>
+							${fabTemplate}
+						</mo-flex>
+					`,
+			complete: campaigns => html`
+						${campaigns.length === 0 ? html`
+							<mo-flex justifyContent='center'>
+								<mo-error icon='youtube_searched_for'>No campaigns found</mo-error>
+								${fabTemplate}
+							</mo-flex>
+						` : html`
+							<mo-grid columns='repeat(auto-fill, minmax(250px, 1fr))' gap='var(--mo-thickness-xxl)'>
+								${campaigns.map(campaign => html`
+									<solid-campaign-card
+										tabIndex='0'
+										.campaign=${campaign}
+										@click=${() => new PageCampaign({ id: campaign.id! }).navigate()}
+										@contextmenu=${(event: MouseEvent) => ContextMenuHost.openMenu(event, html`
+											<mo-context-menu-item icon='edit' @click=${() => this.open(campaign.id)}>Edit</mo-context-menu-item>
+											<mo-context-menu-item icon='delete' @click=${() => this.delete(campaign.id!)}>Delete</mo-context-menu-item>
+										`)}
+									></solid-campaign-card>
+								`)}
+								${fabTemplate}
+							</mo-grid>
+						`}
+					`
+		})}
 			</mo-page>
 		`
+	}
+
+	private async open(id?: number) {
+		await new DialogCampaign(!id ? undefined : { id }).confirm()
+		await this.fetchCampaignsTask.run()
+	}
+
+	private delete = async (campaignId: number) => {
+		await CampaignService.delete(campaignId)
+		await this.fetchCampaignsTask.run()
 	}
 }
