@@ -14,9 +14,10 @@ export class Solidarity extends Application {
 	}
 
 	protected override get userAvatarMenuItemsTemplate() {
-		return html`
-			<mo-navigation-list-item icon='login' ?hidden=${!!DialogAuthenticator.authenticatedUser.value} .component=${new DialogAuthenticator}>Login or Register</mo-navigation-list-item>
-			<mo-navigation-list-item icon='account_circle' ?hidden=${!DialogAuthenticator.authenticatedUser.value} .component=${new PageAccount()}>Account</mo-navigation-list-item>
+		return !DialogAuthenticator.authenticatedUser.value ? html`
+			<mo-navigation-list-item icon='login' .component=${new DialogAuthenticator}>Login or Register</mo-navigation-list-item>
+		` : html`
+			<mo-navigation-list-item icon='account_circle' .component=${new PageAccount}>Account</mo-navigation-list-item>
 		`
 	}
 }

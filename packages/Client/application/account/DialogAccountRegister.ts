@@ -21,7 +21,7 @@ export class DialogAccountRegister extends DialogComponent {
 	protected override get template() {
 		return html`
 			<mo-dialog heading='Register Account'>
-				<mo-button slot='primaryAction' raised ?disabled=${this.securityConfirmation === false}>Register & Continue</mo-button>
+				<mo-button slot='primaryAction' type='raised' ?disabled=${this.securityConfirmation === false}>Register & Continue</mo-button>
 
 				<style>
 					code {

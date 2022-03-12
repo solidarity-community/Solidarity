@@ -11,7 +11,7 @@ public class DatabaseInstaller : IInstaller
 			var password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD");
 
 			var connectionString = server is null || user is null || password is null
-				? "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=master;Integrated Security=True;"
+				? "Data Source=localhost\\SQLEXPRESS;Initial Catalog=master;Integrated Security=True;"
 				: $"Server={server};Initial Catalog=Solidarity;User ID={user};Password={password};";
 
 			options.UseSqlServer(connectionString, x => x.UseNetTopologySuite());

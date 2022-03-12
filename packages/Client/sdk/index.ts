@@ -1,4 +1,5 @@
 export * from './HttpError'
 export * from './API'
+export * from './DateValueConverter'
 export * from './services'
 export * from './models'

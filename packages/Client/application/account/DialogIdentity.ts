@@ -26,8 +26,8 @@ export class DialogIdentity extends DialogComponent<{ readonly accountId: number
 					></mo-field-text>
 
 					<mo-field-date label='Birth date'
-						.value=${this.identity.birthDate ? new Date(this.identity.birthDate) : undefined}
-						@change=${(e: CustomEvent<Date | undefined>) => this.identity.birthDate = e.detail?.toJSON()}
+						.value=${this.identity.birthDate}
+						@change=${(e: CustomEvent<Date | undefined>) => this.identity.birthDate = e.detail}
 					></mo-field-date>
 				</mo-flex>
 			</mo-dialog>

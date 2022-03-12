@@ -51,7 +51,11 @@ public static class ConfigurationExtensions
 	{
 		builder.Services.AddHttpContextAccessor();
 		builder.Services.AddCors();
-		builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
+		builder.Services.AddControllers().AddNewtonsoftJson(options =>
+		{
+			options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+			options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+		});
 		builder.Services.AddMvc();
 		builder.Services.InstallSolidarity();
 		return builder;

@@ -73,7 +73,7 @@ export class PageAccount extends PageComponent {
 					</mo-flex>
 				</mo-flex>
 
-				<mo-button raised icon='person' @click=${this.editProfile}>Edit Profile</mo-button>
+				<mo-button type='raised' icon='person' @click=${this.editProfile}>Edit Profile</mo-button>
 			</mo-flex>
 		`
 	}

@@ -2,7 +2,22 @@ import { HttpError } from 'sdk'
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD'
 
+export type ApiValueConverter<TConstructed, TDeconstructed> = {
+	shallConvertFrom(value: unknown): boolean
+	convertFrom(value: TConstructed): TDeconstructed
+
+	shallConvertTo(text: unknown): boolean
+	convertTo(text: TDeconstructed): TConstructed
+}
+
+export const apiValueConverter = () => {
+	return (Constructor: Constructor<ApiValueConverter<unknown, unknown>>) => {
+		API.valueConverters.add(new Constructor)
+	}
+}
+
 export class API {
+	static readonly valueConverters = new Set<ApiValueConverter<unknown, unknown>>()
 	private static readonly url = '/api'
 	private static readonly tokenStorageKey = 'Solidarity.Authentication.Token'
 
@@ -20,7 +35,7 @@ export class API {
 	}
 
 	static post<T = void, TData = unknown>(route: string, data?: TData) {
-		return this.fetch<T>('POST', route, JSON.stringify(data))
+		return this.fetch<T>('POST', route, JSON.stringify(API.deconstruct(data)))
 	}
 
 	static postFile<T = void>(route: string, fileList: FileList) {
@@ -30,7 +45,7 @@ export class API {
 	}
 
 	static put<T = void, TData = unknown>(route: string, data?: TData) {
-		return this.fetch<T>('PUT', route, JSON.stringify(data))
+		return this.fetch<T>('PUT', route, JSON.stringify(API.deconstruct(data)))
 	}
 
 	static delete<T = void>(route: string) {
@@ -61,9 +76,41 @@ export class API {
 		}
 
 		try {
-			return await response.json() as T
+			return API.construct<T>(
+				await response.json()
+			)
 		} catch (error) {
 			return undefined!
 		}
+	}
+
+	private static construct<T>(response: any): T {
+		return typeof response !== 'object' ? response : response instanceof Array
+			? response.map(item => API.construct(item)) as unknown as T
+			: Object.fromEntries(
+				Object.entries(response).map(([key, value]) => [
+					key,
+					API.isPrimitiveObject(value)
+						? API.construct(value)
+						: [...API.valueConverters].find(converter => converter.shallConvertTo(value))?.convertTo(value) ?? value
+				])
+			) as unknown as T
+	}
+
+	private static deconstruct<T>(data: T): any {
+		return typeof data !== 'object' ? data : data instanceof Array
+			? data.map(item => API.deconstruct(item))
+			: Object.fromEntries(
+				Object.entries(data).map(([key, value]) => [
+					key,
+					[...API.valueConverters].find(converter => converter.shallConvertFrom(value))?.convertFrom(value) ?? value
+				])
+			)
+	}
+
+	private static isPrimitiveObject(value: unknown): value is object {
+		return typeof value === 'object'
+			&& value !== null
+			&& Object.getPrototypeOf(value) === Object.prototype
 	}
 }

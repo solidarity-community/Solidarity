@@ -10,5 +10,5 @@ export interface Identity extends Model {
 	account?: Account
 	firstName?: string
 	lastName?: string
-	birthDate?: string
+	birthDate?: Date
 }

@@ -48,5 +48,6 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 		await new DialogAccountRegister().confirm()
 		await this.fetchUser()
 		this.close()
+		MoDeL.application.requestUpdate()
 	}
 }

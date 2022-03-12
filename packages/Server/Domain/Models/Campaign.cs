@@ -4,13 +4,13 @@ public class Campaign : Model
 {
 	public Account Creator { get; set; } = null!;
 
-	public Point Location { get; set; } = null!;
-
 	[MaxLength(50), Required(ErrorMessage = "Title cannot be empty")]
 	public string Title { get; set; } = string.Empty;
 
 	[Required(ErrorMessage = "Description cannot be empty")]
 	public string Description { get; set; } = null!;
+
+	public Point Location { get; set; } = null!;
 
 	public DateTime? Completion { get; set; }
 
