@@ -23,4 +23,8 @@ public class CampaignController : ControllerBase
 	[HttpPut("{id}")]
 	public ActionResult<Campaign> Update([FromBody, Bind(nameof(Campaign.Id), nameof(Campaign.Description), nameof(Campaign.Title))] Campaign campaign)
 		=> Ok(_campaignService.Update(campaign));
+
+	[HttpDelete("{id}")]
+	public ActionResult<Campaign> Delete([FromRoute] int id)
+		=> Ok(_campaignService.Delete(id));
 }

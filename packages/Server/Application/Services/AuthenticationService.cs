@@ -28,9 +28,8 @@ public class AuthenticationService : Service
 	public T AddOrUpdate<T>(T authentication) where T : AuthenticationMethod
 	{
 		var account = _accountService.Get(authentication.AccountId);
-		var existingAuthentication = account.AuthenticationMethods.SingleOrDefault(auth => auth is T) as T;
 		authentication.Encrypt();
-		if (existingAuthentication is null)
+		if (account.AuthenticationMethods.SingleOrDefault(auth => auth is T) is not T existingAuthentication)
 		{
 			_database.AuthenticationMethods.Add(authentication);
 			_database.CommitChanges();
@@ -46,8 +45,7 @@ public class AuthenticationService : Service
 
 	public string Login<T>(int accountId, string data) where T : AuthenticationMethod
 	{
-		var authMethod = _database.AuthenticationMethods.SingleOrDefault(am => am is T && am.AccountId == accountId) as T;
-		return authMethod == null || !authMethod.Authenticate(data)
+		return _database.AuthenticationMethods.SingleOrDefault(am => am is T && am.AccountId == accountId) is not T authMethod || !authMethod.Authenticate(data)
 			? throw new IncorrectCredentialsException()
 			: _accountService.Get(accountId).IssueToken(TimeSpan.FromDays(30));
 	}

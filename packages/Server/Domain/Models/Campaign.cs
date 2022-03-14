@@ -1,4 +1,4 @@
-namespace Solidarity.Domain.Models;
+﻿namespace Solidarity.Domain.Models;
 
 public class Campaign : Model
 {
@@ -10,7 +10,7 @@ public class Campaign : Model
 	[Required(ErrorMessage = "Description cannot be empty")]
 	public string Description { get; set; } = null!;
 
-	public Point Location { get; set; } = null!;
+	public Geometry Location { get; set; } = null!;
 
 	public DateTime? Completion { get; set; }
 

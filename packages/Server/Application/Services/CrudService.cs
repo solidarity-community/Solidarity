@@ -8,7 +8,7 @@ public abstract class CrudService<TModel> : Service where TModel : Model
 		=> _database.GetSet<TModel>().Find(id) != null;
 
 	public virtual TModel Get(int id)
-		=> _database.GetSet<TModel>().Find(id) ?? throw new EntityNotFoundException<TModel>();
+		=> _database.GetSet<TModel>().IncludeAll().First(x => x.Id == id) ?? throw new EntityNotFoundException<TModel>();
 
 	public virtual IEnumerable<TModel> GetAll()
 		=> _database.GetSet<TModel>().IncludeAll();
@@ -23,6 +23,14 @@ public abstract class CrudService<TModel> : Service where TModel : Model
 	public virtual TModel Update(TModel model)
 	{
 		_database.GetEntry(Get(model.Id)).CurrentValues.SetValues(model);
+		_database.CommitChanges();
+		return model;
+	}
+
+	public virtual TModel Delete(int id)
+	{
+		var model = Get(id);
+		_database.GetSet<TModel>().Remove(model);
 		_database.CommitChanges();
 		return model;
 	}

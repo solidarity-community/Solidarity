@@ -9,8 +9,8 @@ public class DatabaseContext : DbContext, IDatabase
 		_currentUserService = currentUserService;
 		if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
 		{
-			Database.Migrate();
-			DatabaseSeeder.Seed(this);
+			// Database.Migrate();
+			// DatabaseSeeder.Seed(this);
 		}
 	}
 

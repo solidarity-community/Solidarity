@@ -9,10 +9,13 @@
 	},
 	"dependencies": {
 		"@3mo/model": "git+https://github.com/3mo-esolutions/model.git",
+		"@geoman-io/leaflet-geoman-free": "2.*",
 		"@lit-labs/task": "*",
-		"jsencrypt": "3.*"
+		"jsencrypt": "3.*",
+		"leaflet": "1.*"
 	},
 	"devDependencies": {
+		"@types/leaflet": "1.*",
 		"copy-webpack-plugin": "9.*",
 		"download-file": "*",
 		"favicons-webpack-plugin": "5.*",
