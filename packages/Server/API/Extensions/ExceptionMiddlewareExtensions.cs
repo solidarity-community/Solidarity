@@ -6,7 +6,7 @@ public static class ExceptionMiddlewareExtensions
 	{
 		application.UseExceptionHandler(error => error.Run(async context =>
 		{
-			Exception exception = context.Features.Get<IExceptionHandlerPathFeature>().Error;
+			var exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
 			context.Response.StatusCode = exception switch
 			{
 				EntityNotFoundException<object> => (int)HttpStatusCode.NotFound,
@@ -14,8 +14,6 @@ public static class ExceptionMiddlewareExtensions
 				IncorrectCredentialsException or NotAuthenticatedException or AuthenticationFailedException => (int)HttpStatusCode.Unauthorized,
 				_ => (int)HttpStatusCode.InternalServerError
 			};
-				// TODO the output does not contain the error message
-				await context.Response.WriteAsync(exception.Message);
 		}));
 		return application;
 	}
