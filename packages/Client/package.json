@@ -5,8 +5,7 @@
 	"scripts": {
 		"start": "webpack serve --mode=development",
 		"lint": "eslint **/*.ts",
-		"build": "webpack --mode=production",
-		"generate": "openapi-generator-cli generate"
+		"build": "webpack --mode=production"
 	},
 	"dependencies": {
 		"@3mo/model": "git+https://github.com/3mo-esolutions/model.git",
