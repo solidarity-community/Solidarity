@@ -1,5 +1,6 @@
 import { component, PageComponent, html, route, state, PageError, HttpErrorCode, DialogAuthenticator, nothing } from '@3mo/model'
 import { Task, TaskStatus } from '@lit-labs/task'
+import { DialogDonate } from 'application'
 import { CampaignService } from 'sdk'
 import { DialogCampaign, PageCampaigns } from '.'
 
@@ -33,13 +34,18 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 								Funds Raised Graph
 							</mo-div>
 							<mo-flex width='*' direction='horizontal' gap='10px' justifyContent='flex-end'>
-								<mo-button icon='share'>Share</mo-button>
-								<mo-button type=${DialogAuthenticator.authenticatedUser.value ? 'normal' : 'raised'} icon='volunteer_activism'>Donate</mo-button>
+								<mo-button icon='share' @click=${() => this.share()}>Share</mo-button>
+
+								<mo-button icon='volunteer_activism'
+									type=${DialogAuthenticator.authenticatedUser.value ? 'normal' : 'raised'}
+									@click=${() => !this.fetchCampaignTask.value ? void 0 : new DialogDonate({ campaign: this.fetchCampaignTask.value }).confirm()}
+								>Donate</mo-button>
+
 								${this.manageButtonTemplate}
 							</mo-flex>
 						</mo-flex>
 
-						<mo-grid columns='2* *' rows='500px *'>
+						<mo-grid columns='2* *' rows='435px *' gap='25px'>
 							<mo-section heading='Gallery'>Gallery</mo-section>
 							<mo-section heading='Location'>
 								<solid-map readOnly .selectedArea=${campaign.location}></solid-map>
@@ -63,6 +69,17 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 				<mo-list-item slot='more' icon='delete' @click=${this.delete}>Delete</mo-list-item>
 			</mo-split-button>
 		`
+	}
+
+	private async share() {
+		const campaign = this.fetchCampaignTask.value
+		if (campaign && 'share' in navigator) {
+			await navigator.share({
+				title: campaign.title,
+				text: campaign.description,
+				url: window.location.href
+			})
+		}
 	}
 
 	private async edit() {

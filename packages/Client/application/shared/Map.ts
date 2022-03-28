@@ -1,4 +1,4 @@
-import { Component, component, css, html, property, query, event } from '@3mo/model'
+import { Component, component, css, html, property, query, event, ThemeHelper, Background } from '@3mo/model'
 import { Map as LMap, TileLayer, Circle, PM, Layer, geoJSON, FeatureGroup } from 'leaflet'
 import { GeometryCollection, Feature } from 'geojson'
 import { ResizeController } from './utilities'
@@ -6,7 +6,8 @@ import { ResizeController } from './utilities'
 /** @fires selectedAreaChange CustomEvent<Geography | undefined> */
 @component('solid-map')
 export class Map extends Component {
-	private static readonly tileLayerUrl = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'
+	private static readonly tileLayerUrlDark = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'
+	private static readonly tileLayerUrlLight = 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png'
 	private static readonly polygonSidesForCircleConversion = 100
 
 	@event() readonly selectedAreaChange!: EventDispatcher<GeometryCollection | undefined>
@@ -20,6 +21,7 @@ export class Map extends Component {
 				this.map.pm.addControls({
 					position: 'topleft',
 					drawMarker: false,
+					drawCircleMarker: false,
 				})
 			}
 		}
@@ -77,6 +79,11 @@ export class Map extends Component {
 	}
 
 	protected override initialized() {
+		ThemeHelper.background.changed.subscribe(() => this.initializeMap())
+		this.initializeMap()
+	}
+
+	protected initializeMap() {
 		// @ts-expect-error
 		const styleLayers = () => this.layers.forEach(layer => layer.setStyle({ color: 'var(--mo-accent)' }))
 
@@ -96,8 +103,7 @@ export class Map extends Component {
 						// @ts-expect-error - The layer has a toGeoJSON method
 						return layer.toGeoJSON()
 				}
-			}).filter((geo): geo is Feature => geo !== undefined)
-				.map(feature => feature.geometry)
+			}).filter((geo): geo is Feature => geo !== undefined).map(feature => feature.geometry)
 
 			const geometryCollection: GeometryCollection | undefined = geometries.length === 0 ? undefined : {
 				type: 'GeometryCollection',
@@ -107,9 +113,11 @@ export class Map extends Component {
 			this.selectedAreaChange.dispatch(geometryCollection)
 		}
 
+		const url = ThemeHelper.background.calculatedValue === Background.Dark ? Map.tileLayerUrlDark : Map.tileLayerUrlLight
+
 		this.map = new LMap(this.mapElement)
 			.setView([0, 0], 2)
-			.addLayer(new TileLayer(Map.tileLayerUrl, { minZoom: 2 }))
+			.addLayer(new TileLayer(url, { minZoom: 2 }))
 
 		this.map
 			.on('pm:create', dispatchChange).on('pm:create', styleLayers)
@@ -118,7 +126,6 @@ export class Map extends Component {
 			.on('pm:resize', dispatchChange)
 			.on('pm:remove', dispatchChange)
 			.on('pm:drag', dispatchChange)
-
 	}
 
 	private get layers() {

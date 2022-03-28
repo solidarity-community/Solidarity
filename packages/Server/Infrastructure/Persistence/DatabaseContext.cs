@@ -59,11 +59,11 @@ public class DatabaseContext : DbContext, IDatabase
 			{
 				case EntityState.Added:
 					entry.Entity.CreatorId = userId;
-					entry.Entity.Creation = System.DateTime.Now;
+					entry.Entity.Creation = DateTime.Now;
 					break;
 				case EntityState.Modified:
 					entry.Entity.LastModifierId = userId;
-					entry.Entity.LastModification = System.DateTime.Now;
+					entry.Entity.LastModification = DateTime.Now;
 					break;
 			}
 		}
