@@ -1,6 +1,6 @@
 import { component, homePage, html, PageComponent, route, state } from '@3mo/model'
+import { Campaign } from 'sdk'
 import { PageCampaign } from 'application'
-import { Campaign, CampaignService } from 'sdk'
 
 @homePage()
 @route('/campaigns')

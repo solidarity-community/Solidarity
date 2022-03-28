@@ -1,7 +1,19 @@
 import { HttpErrorCode } from '@3mo/model'
 
+export type AspNetError = {
+	readonly title: string,
+	readonly status: HttpErrorCode
+	readonly errors: Array<Record<string, Array<string>>>
+	readonly traceId: string
+	readonly type: string
+}
+
 export class HttpError extends Error {
-	constructor(public readonly errorCode: HttpErrorCode) {
-		super()
+	get status() { return this.error.status }
+	get traceId() { return this.error.traceId }
+	get type() { return this.error.type }
+
+	constructor(protected readonly error: AspNetError) {
+		super(`${error.title}\n${Object.values(error.errors).map(error => error[0]).join('\n')}`)
 	}
 }

@@ -72,13 +72,11 @@ export class API {
 		})
 
 		if (response.status >= 400) {
-			throw new HttpError(response.status)
+			throw new HttpError(await response.json())
 		}
 
 		try {
-			return API.construct<T>(
-				await response.json()
-			)
+			return API.construct<T>(await response.json())
 		} catch (error) {
 			return undefined!
 		}
