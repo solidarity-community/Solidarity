@@ -1,2 +1,2 @@
-export * from './Map'
+export * from './FileUpload'
 export * from './ButtonFileUpload'

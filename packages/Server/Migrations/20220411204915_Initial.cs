@@ -18,9 +18,9 @@ namespace Solidarity.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PublicKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -35,9 +35,9 @@ namespace Solidarity.Migrations
                     PaymentMethodIdentifier = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -52,9 +52,9 @@ namespace Solidarity.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Expiration = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -71,9 +71,9 @@ namespace Solidarity.Migrations
                     Salt = table.Column<int>(type: "int", nullable: false),
                     Data = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -96,9 +96,9 @@ namespace Solidarity.Migrations
                     AccountId = table.Column<int>(type: "int", nullable: false),
                     Phrase = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Expiration = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -122,9 +122,9 @@ namespace Solidarity.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -149,9 +149,9 @@ namespace Solidarity.Migrations
                     Location = table.Column<Geometry>(type: "geography", nullable: false),
                     Completion = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ValidationId = table.Column<int>(type: "int", nullable: true),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -161,8 +161,7 @@ namespace Solidarity.Migrations
                         name: "FK_Campaigns_Accounts_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Campaigns_Validations_ValidationId",
                         column: x => x.ValidationId,
@@ -179,9 +178,9 @@ namespace Solidarity.Migrations
                     ValidationId = table.Column<int>(type: "int", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<bool>(type: "bit", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -202,6 +201,31 @@ namespace Solidarity.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CampaignMedia",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CampaignId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Uri = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
+                    Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
+                    LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CampaignMedia", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CampaignMedia_Campaigns_CampaignId",
+                        column: x => x.CampaignId,
+                        principalTable: "Campaigns",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "DonationChannels",
                 columns: table => new
                 {
@@ -209,9 +233,9 @@ namespace Solidarity.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PaymentMethodIdentifier = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -230,6 +254,11 @@ namespace Solidarity.Migrations
                 table: "Accounts",
                 column: "Username",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CampaignMedia_CampaignId",
+                table: "CampaignMedia",
+                column: "CampaignId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Campaigns_CreatorId",
@@ -274,6 +303,9 @@ namespace Solidarity.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AuthenticationMethods");
+
+            migrationBuilder.DropTable(
+                name: "CampaignMedia");
 
             migrationBuilder.DropTable(
                 name: "DonationChannels");

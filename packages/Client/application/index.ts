@@ -1,6 +1,7 @@
 import '@3mo/model'
 import 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
+import '@a11d/lit-slider'
 export * from './Solidarity'
 export * from './shared'
 export * from './account'

@@ -34,13 +34,13 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.Property<string>("PublicKey")
@@ -73,7 +73,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("Data")
@@ -86,7 +86,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.HasKey("AccountId", "Type", "Salt");
@@ -110,7 +110,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -120,7 +120,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.Property<Geometry>("Location")
@@ -146,6 +146,43 @@ namespace Solidarity.Migrations
                     b.ToTable("Campaigns");
                 });
 
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignMedia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Uri")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
+
+                    b.ToTable("CampaignMedia");
+                });
+
             modelBuilder.Entity("Solidarity.Domain.Models.DonationChannel", b =>
                 {
                     b.Property<int>("Id")
@@ -160,13 +197,13 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.Property<string>("PaymentMethodIdentifier")
@@ -194,7 +231,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Expiration")
@@ -203,7 +240,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.Property<string>("Phrase")
@@ -234,7 +271,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
@@ -245,7 +282,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
@@ -269,7 +306,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<int>("Id")
@@ -282,7 +319,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.HasKey("PaymentMethodIdentifier");
@@ -301,7 +338,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Expiration")
@@ -310,7 +347,7 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -332,13 +369,13 @@ namespace Solidarity.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.Property<int>("ValidationId")
@@ -378,9 +415,7 @@ namespace Solidarity.Migrations
                 {
                     b.HasOne("Solidarity.Domain.Models.Account", "Creator")
                         .WithMany("Campaigns")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("Solidarity.Domain.Models.Validation", "Validation")
                         .WithOne("Campaign")
@@ -389,6 +424,15 @@ namespace Solidarity.Migrations
                     b.Navigation("Creator");
 
                     b.Navigation("Validation");
+                });
+
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignMedia", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Campaign", null)
+                        .WithMany("Media")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Solidarity.Domain.Models.DonationChannel", b =>
@@ -455,6 +499,8 @@ namespace Solidarity.Migrations
             modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
                 {
                     b.Navigation("DonationChannels");
+
+                    b.Navigation("Media");
                 });
 
             modelBuilder.Entity("Solidarity.Domain.Models.Validation", b =>

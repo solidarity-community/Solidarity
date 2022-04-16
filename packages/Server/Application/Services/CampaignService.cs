@@ -36,11 +36,12 @@ public class CampaignService : CrudService<Campaign>
 
 	public override Campaign Update(Campaign campaign)
 	{
-		if (Get(campaign.Id).CreatorId != _currentUserService.Id)
+		var entity = Get(campaign.Id);
+		if (entity.CreatorId != _currentUserService.Id)
 		{
 			throw new Exception("You are not allowed to edit this campaign");
 		}
-		base.Update(campaign);
-		return campaign.WithoutAuthenticationData();
+		entity.Media = campaign.Media;
+		return base.Update(campaign).WithoutAuthenticationData();
 	}
 }

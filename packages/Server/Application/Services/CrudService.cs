@@ -11,7 +11,7 @@ public abstract class CrudService<TModel> : Service where TModel : Model
 		=> _database.GetSet<TModel>().IncludeAll().First(x => x.Id == id) ?? throw new EntityNotFoundException<TModel>();
 
 	public virtual IEnumerable<TModel> GetAll()
-		=> _database.GetSet<TModel>().IncludeAll();
+		=> _database.GetSet<TModel>().IncludeAll().AsNoTracking();
 
 	public virtual TModel Create(TModel model)
 	{

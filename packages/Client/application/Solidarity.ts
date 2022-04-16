@@ -7,7 +7,7 @@ ThemeHelper.accent.value = new Color([105, 69, 130], [92, 119, 185])
 @application()
 @component('solid-application')
 export class Solidarity extends Application {
-	protected get drawerTemplate() {
+	protected override get drawerTemplate() {
 		return html`
 			<mo-navigation-list-item icon='campaign' .component=${new Solid.PageCampaigns}>Campaigns</mo-navigation-list-item>
 		`

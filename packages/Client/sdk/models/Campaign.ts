@@ -1,4 +1,4 @@
-import { Model, Account, Validation, DonationChannel } from 'sdk'
+import { Model, Account, Validation, DonationChannel, CampaignMedia } from 'sdk'
 import { GeometryCollection } from 'geojson'
 
 export interface Campaign extends Model {
@@ -8,6 +8,7 @@ export interface Campaign extends Model {
 	creator?: Account
 	completion?: string
 	donationChannels?: Array<DonationChannel>
+	media: Array<CampaignMedia>
 	validationId?: number
 	validation?: Validation
 }

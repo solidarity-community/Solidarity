@@ -14,6 +14,8 @@ public class Campaign : Model
 
 	public DateTime? Completion { get; set; }
 
+	public List<CampaignMedia> Media { get; set; } = new();
+
 	public List<DonationChannel> DonationChannels { get; set; } = new();
 
 	public int? ValidationId { get; set; }

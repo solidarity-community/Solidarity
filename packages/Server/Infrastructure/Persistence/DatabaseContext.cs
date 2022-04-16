@@ -9,7 +9,7 @@ public class DatabaseContext : DbContext, IDatabase
 		_currentUserService = currentUserService;
 		if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
 		{
-			// Database.Migrate();
+			Database.Migrate();
 			// DatabaseSeeder.Seed(this);
 		}
 	}
@@ -19,6 +19,7 @@ public class DatabaseContext : DbContext, IDatabase
 	public DbSet<AuthenticationMethod> AuthenticationMethods { get; set; } = null!;
 	public DbSet<Handshake> Handshakes { get; set; } = null!;
 	public DbSet<Campaign> Campaigns { get; set; } = null!;
+	public DbSet<CampaignMedia> CampaignMedia { get; set; } = null!;
 	public DbSet<Validation> Validations { get; set; } = null!;
 	public DbSet<Vote> Votes { get; set; } = null!;
 	public DbSet<DonationChannel> DonationChannels { get; set; } = null!;
@@ -40,9 +41,11 @@ public class DatabaseContext : DbContext, IDatabase
 
 		modelBuilder.Entity<AuthenticationMethod>().Ignore(am => am.SupportsMultiple);
 		modelBuilder.Entity<AuthenticationMethod>().HasKey(am => new { am.AccountId, am.Type, am.Salt });
-		modelBuilder.Entity<AuthenticationMethod>().HasDiscriminator(am => am.Type).HasValue<PasswordAuthentication>(AuthenticationMethodType.Password);
+		modelBuilder.Entity<AuthenticationMethod>().HasDiscriminator(am => am.Type)
+			.HasValue<PasswordAuthentication>(AuthenticationMethodType.Password);
 
 		modelBuilder.Entity<Campaign>().HasOne(c => c.Validation).WithOne(v => v.Campaign);
+		modelBuilder.Entity<Campaign>().HasMany(c => c.Media).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.DonationChannels).WithOne(dc => dc.Campaign);
 
 		modelBuilder.Entity<PaymentMethodKey>().HasKey(pmk => pmk.PaymentMethodIdentifier);
@@ -52,7 +55,7 @@ public class DatabaseContext : DbContext, IDatabase
 
 	public override int SaveChanges()
 	{
-		var userId = _currentUserService.Id ?? 0;
+		var userId = _currentUserService.Id;
 		foreach (var entry in ChangeTracker.Entries<Model>())
 		{
 			switch (entry.State)

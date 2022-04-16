@@ -4,7 +4,7 @@ public static class ExceptionMiddlewareExtensions
 {
 	public static IApplicationBuilder ConfigureExceptionHandler(this IApplicationBuilder application)
 	{
-		application.UseExceptionHandler(error => error.Run(async context =>
+		application.UseExceptionHandler(error => error.Run(context =>
 		{
 			var exception = context.Features.Get<IExceptionHandlerPathFeature>()?.Error;
 			context.Response.StatusCode = exception switch
@@ -14,6 +14,7 @@ public static class ExceptionMiddlewareExtensions
 				IncorrectCredentialsException or NotAuthenticatedException or AuthenticationFailedException => (int)HttpStatusCode.Unauthorized,
 				_ => (int)HttpStatusCode.InternalServerError
 			};
+			return Task.CompletedTask;
 		}));
 		return application;
 	}

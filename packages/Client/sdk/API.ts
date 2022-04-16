@@ -18,7 +18,7 @@ export const apiValueConverter = () => {
 
 export class API {
 	static readonly valueConverters = new Set<ApiValueConverter<unknown, unknown>>()
-	private static readonly url = '/api'
+	static readonly url = '/api'
 	private static readonly tokenStorageKey = 'Solidarity.Authentication.Token'
 
 	static get token() { return localStorage.getItem(API.tokenStorageKey) ?? undefined }
@@ -38,9 +38,9 @@ export class API {
 		return this.fetch<T>('POST', route, JSON.stringify(API.deconstruct(data)))
 	}
 
-	static postFile<T = void>(route: string, fileList: FileList) {
+	static postFile<T = void>(route: string, file: File) {
 		const form = new FormData()
-		form.set('formFile', fileList[0], fileList[0].name)
+		form.set('file', file, file.name)
 		return this.fetch<T>('POST', route, form)
 	}
 

@@ -9,8 +9,8 @@
 	},
 	"dependencies": {
 		"@3mo/model": "git+https://github.com/3mo-esolutions/model.git",
+		"@a11d/lit-slider": "*",
 		"@geoman-io/leaflet-geoman-free": "2.*",
-		"@lit-labs/task": "*",
 		"jsencrypt": "3.*",
 		"leaflet": "1.*"
 	},
@@ -20,6 +20,8 @@
 		"download-file": "*",
 		"favicons-webpack-plugin": "5.*",
 		"ts-lit-plugin": "1.*",
+		"ts-loader": "*",
+		"tsconfig-paths-webpack-plugin": "*",
 		"typescript": "4.*",
 		"webpack": "5.*",
 		"webpack-cli": "4.*",

@@ -9,5 +9,7 @@ public class ServiceInstaller : IInstaller
 		services.AddTransient<AuthenticationService>();
 		services.AddTransient<CampaignService>();
 		services.AddTransient<HandshakeService>();
+		services.AddTransient<FileService>();
+		services.AddTransient<CampaignMediaService>();
 	}
 }

@@ -11,6 +11,7 @@ public interface IDatabase
 	DbSet<Vote> Votes { get; set; }
 	DbSet<DonationChannel> DonationChannels { get; set; }
 	DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; }
+	DbSet<CampaignMedia> CampaignMedia { get; set; }
 
 	DbSet<TEntity> GetSet<TEntity>() where TEntity : class;
 	EntityEntry GetEntry(object entity);

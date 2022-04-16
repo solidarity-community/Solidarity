@@ -1,6 +1,6 @@
 import { component, ContextMenuHost, DialogAuthenticator, homePage, html, PageComponent, route, Task } from '@3mo/model'
 import { DialogCampaign, PageCampaign } from 'application'
-import { Campaign, CampaignService } from 'sdk'
+import { CampaignService } from 'sdk'
 
 @homePage()
 @route('/campaigns')
@@ -18,13 +18,13 @@ export class PageCampaigns extends PageComponent {
 		return html`
 			<mo-page heading='Campaigns' fullHeight>
 				${this.fetchCampaignsTask.render({
-			pending: () => html`
+					pending: () => html`
 						<mo-flex alignItems='center' justifyContent='center'>
 							<mo-circular-progress indeterminate></mo-circular-progress>
 							${fabTemplate}
 						</mo-flex>
 					`,
-			complete: campaigns => html`
+					complete: campaigns => html`
 						${campaigns.length === 0 ? html`
 							<mo-flex justifyContent='center'>
 								<mo-error icon='youtube_searched_for'>No campaigns found</mo-error>
@@ -47,7 +47,7 @@ export class PageCampaigns extends PageComponent {
 							</mo-grid>
 						`}
 					`
-		})}
+				})}
 			</mo-page>
 		`
 	}

@@ -1,4 +1,4 @@
-import { component, PageComponent, html, route, state, PageError, HttpErrorCode, DialogAuthenticator, nothing } from '@3mo/model'
+import { component, PageComponent, html, route, PageError, HttpErrorCode, DialogAuthenticator, nothing } from '@3mo/model'
 import { Task, TaskStatus } from '@lit-labs/task'
 import { DialogDonate } from 'application'
 import { CampaignService } from 'sdk'
@@ -18,7 +18,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 
 	protected override get template() {
 		return html`
-			<mo-page heading=${`Campaign "${this.fetchCampaignTask.value?.title}"`} ?fullHeight=${this.fetchCampaignTask.status !== TaskStatus.COMPLETE}>
+			<mo-page heading=${`Campaign ${!this.fetchCampaignTask.value ? '' : `"${this.fetchCampaignTask.value?.title}"`}`} ?fullHeight=${this.fetchCampaignTask.status !== TaskStatus.COMPLETE}>
 				${this.fetchCampaignTask.render({
 					pending: () => html`
 						<mo-flex alignItems='center' justifyContent='center'>
@@ -46,13 +46,18 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 						</mo-flex>
 
 						<mo-grid columns='2* *' rows='435px *' gap='25px'>
-							<mo-section heading='Gallery'>Gallery</mo-section>
+							<mo-section heading='Gallery'>
+								<solid-campaign-slider readOnly .campaign=${campaign}></solid-campaign-slider>
+							</mo-section>
+
 							<mo-section heading='Location'>
 								<solid-map readOnly .selectedArea=${campaign.location}></solid-map>
 							</mo-section>
+
 							<mo-section heading='Overview'>
 								${campaign.description}
 							</mo-section>
+
 							<mo-section heading='Expenditure'>Expenditure</mo-section>
 						</mo-grid>
 					`
