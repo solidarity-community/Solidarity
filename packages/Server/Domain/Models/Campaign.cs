@@ -16,6 +16,10 @@ public class Campaign : Model
 
 	public List<CampaignMedia> Media { get; set; } = new();
 
+	public List<CampaignExpenditure> Expenditures { get; set; } = new();
+
+	public long TotalExpenditure => Expenditures.Sum(e => e.TotalPrice);
+
 	public List<DonationChannel> DonationChannels { get; set; } = new();
 
 	public int? ValidationId { get; set; }

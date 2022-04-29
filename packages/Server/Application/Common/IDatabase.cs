@@ -12,6 +12,7 @@ public interface IDatabase
 	DbSet<DonationChannel> DonationChannels { get; set; }
 	DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; }
 	DbSet<CampaignMedia> CampaignMedia { get; set; }
+	DbSet<CampaignExpenditure> CampaignExpenditures { get; set; }
 
 	DbSet<TEntity> GetSet<TEntity>() where TEntity : class;
 	EntityEntry GetEntry(object entity);

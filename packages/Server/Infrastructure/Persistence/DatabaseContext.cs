@@ -24,6 +24,7 @@ public class DatabaseContext : DbContext, IDatabase
 	public DbSet<Vote> Votes { get; set; } = null!;
 	public DbSet<DonationChannel> DonationChannels { get; set; } = null!;
 	public DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; } = null!;
+	public DbSet<CampaignExpenditure> CampaignExpenditures { get; set; } = null!;
 
 	public DbSet<TEntity> GetSet<TEntity>() where TEntity : class => Set<TEntity>();
 	public EntityEntry GetEntry(object entity) => Entry(entity);
@@ -46,6 +47,7 @@ public class DatabaseContext : DbContext, IDatabase
 
 		modelBuilder.Entity<Campaign>().HasOne(c => c.Validation).WithOne(v => v.Campaign);
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Media).WithOne();
+		modelBuilder.Entity<Campaign>().HasMany(c => c.Expenditures).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.DonationChannels).WithOne(dc => dc.Campaign);
 
 		modelBuilder.Entity<PaymentMethodKey>().HasKey(pmk => pmk.PaymentMethodIdentifier);

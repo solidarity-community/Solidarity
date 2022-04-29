@@ -34,7 +34,7 @@ export class FileUpload extends Component {
 			this.inputElement.value = ''
 			this.change.dispatch(undefined)
 		} catch (error) {
-			Snackbar.show('Upload ist fehlgeschlagen. Versuche erneut.')
+			Snackbar.show('Upload has failed. Try again.')
 		}
 	}
 

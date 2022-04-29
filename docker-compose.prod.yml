@@ -17,7 +17,7 @@ services:
       -disablewallet=0
       -txindex=0
       -prune=10000
-      -dbcache=512
+      -dbcache=1024
       -zmqpubrawblock=tcp://0.0.0.0:28333
       -zmqpubrawtx=tcp://0.0.0.0:28333
       -zmqpubhashtx=tcp://0.0.0.0:28333
@@ -44,7 +44,7 @@ services:
       -disablewallet=0
       -txindex=0
       -prune=10000
-      -dbcache=512
+      -dbcache=1024
       -zmqpubrawblock=tcp://0.0.0.0:28333
       -zmqpubrawtx=tcp://0.0.0.0:28333
       -zmqpubhashtx=tcp://0.0.0.0:28333

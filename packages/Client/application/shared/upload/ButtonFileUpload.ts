@@ -28,7 +28,7 @@ export class ButtonFileUpload extends Component {
 
 			<solid-file-upload
 				@change=${(e: CustomEvent<string | undefined>) => this.fileName = e.detail}
-				@uploading=${(e: CustomEvent) => this.isUploading = true}
+				@uploading=${() => this.isUploading = true}
 				@upload=${(e: CustomEvent<string>) => { this.isUploading = false; this.upload.dispatch(e.detail) }}
 			></solid-file-upload>
 		`

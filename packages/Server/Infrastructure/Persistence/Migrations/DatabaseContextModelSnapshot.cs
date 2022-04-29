@@ -146,6 +146,46 @@ namespace Solidarity.Migrations
                     b.ToTable("Campaigns");
                 });
 
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignExpenditure", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<long>("UnitPrice")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
+
+                    b.ToTable("CampaignExpenditures");
+                });
+
             modelBuilder.Entity("Solidarity.Domain.Models.CampaignMedia", b =>
                 {
                     b.Property<int>("Id")
@@ -426,6 +466,15 @@ namespace Solidarity.Migrations
                     b.Navigation("Validation");
                 });
 
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignExpenditure", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Campaign", null)
+                        .WithMany("Expenditures")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Solidarity.Domain.Models.CampaignMedia", b =>
                 {
                     b.HasOne("Solidarity.Domain.Models.Campaign", null)
@@ -499,6 +548,8 @@ namespace Solidarity.Migrations
             modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
                 {
                     b.Navigation("DonationChannels");
+
+                    b.Navigation("Expenditures");
 
                     b.Navigation("Media");
                 });

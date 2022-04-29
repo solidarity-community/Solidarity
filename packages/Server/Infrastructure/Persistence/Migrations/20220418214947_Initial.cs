@@ -201,6 +201,32 @@ namespace Solidarity.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "CampaignExpenditures",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CampaignId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    UnitPrice = table.Column<long>(type: "bigint", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
+                    Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
+                    LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CampaignExpenditures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CampaignExpenditures_Campaigns_CampaignId",
+                        column: x => x.CampaignId,
+                        principalTable: "Campaigns",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CampaignMedia",
                 columns: table => new
                 {
@@ -256,6 +282,11 @@ namespace Solidarity.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CampaignExpenditures_CampaignId",
+                table: "CampaignExpenditures",
+                column: "CampaignId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_CampaignMedia_CampaignId",
                 table: "CampaignMedia",
                 column: "CampaignId");
@@ -303,6 +334,9 @@ namespace Solidarity.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AuthenticationMethods");
+
+            migrationBuilder.DropTable(
+                name: "CampaignExpenditures");
 
             migrationBuilder.DropTable(
                 name: "CampaignMedia");

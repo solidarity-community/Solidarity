@@ -1,4 +1,4 @@
-import { component, PageComponent, html, route, PageError, HttpErrorCode, DialogAuthenticator, nothing } from '@3mo/model'
+import { component, PageComponent, html, route, PageError, HttpErrorCode, DialogAuthenticator, nothing, DialogAlert } from '@3mo/model'
 import { Task, TaskStatus } from '@lit-labs/task'
 import { DialogDonate } from 'application'
 import { CampaignService } from 'sdk'
@@ -15,6 +15,10 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 			throw error
 		}
 	}, () => [])
+
+	private get campaign() {
+		return this.fetchCampaignTask.value
+	}
 
 	protected override get template() {
 		return html`
@@ -58,7 +62,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 								${campaign.description}
 							</mo-section>
 
-							<mo-section heading='Expenditure'>Expenditure</mo-section>
+							<solid-section-campaign-expenditure .expenditures=${campaign.expenditures}></solid-section-campaign-expenditure>
 						</mo-grid>
 					`
 				})}
@@ -69,7 +73,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 	private get manageButtonTemplate() {
 		return !DialogAuthenticator.authenticatedUser.value ? nothing : html`
 			<mo-split-button>
-				<mo-button icon='manage_accounts'>Manage</mo-button>
+				<mo-button icon='manage_accounts' @click=${this.edit}>Manage</mo-button>
 				<mo-list-item slot='more' icon='edit' @click=${this.edit}>Edit</mo-list-item>
 				<mo-list-item slot='more' icon='delete' @click=${this.delete}>Delete</mo-list-item>
 			</mo-split-button>
@@ -77,11 +81,10 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 	}
 
 	private async share() {
-		const campaign = this.fetchCampaignTask.value
-		if (campaign && 'share' in navigator) {
+		if (this.campaign && 'share' in navigator) {
 			await navigator.share({
-				title: campaign.title,
-				text: campaign.description,
+				title: this.campaign.title,
+				text: this.campaign.description,
 				url: window.location.href
 			})
 		}
@@ -96,6 +99,11 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 	}
 
 	private delete = async () => {
+		await new DialogAlert({
+			heading: 'Delete Campaign',
+			content: 'Are you sure you want to delete this campaign irreversibly? All donations will be refunded.',
+			primaryButtonText: 'Delete'
+		}).confirm()
 		await CampaignService.delete(this.parameters.id)
 		new PageCampaigns().navigate()
 	}
