@@ -11,11 +11,11 @@ public class AccountController : ControllerBase
 	public ActionResult<Account> Get() => Ok(_accountService.GetWithoutAuthentication(null));
 
 	[HttpPost, AllowAnonymous]
-	public ActionResult<string> Create([FromBody, Bind(nameof(Account.Username))] Account account)
+	public ActionResult<string> Create([FromBody] Account account)
 		=> Ok(_accountService.CreateAndIssueToken(account));
 
 	[HttpPut]
-	public ActionResult<Account> Update([FromBody, Bind(nameof(Account.Id), nameof(Account.Username))] Account account)
+	public ActionResult<Account> Update([FromBody] Account account)
 		=> Ok(_accountService.Update(account));
 
 	[HttpGet("{id}/reset"), AllowAnonymous]
