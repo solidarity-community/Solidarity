@@ -42,7 +42,15 @@ module.exports = (_, arguments) => MoDeLWebpackConfigFactory(arguments.mode, {
 			{
 				from: 'assets',
 				to: 'assets',
-			}
+			},
+			{
+				from: 'node_modules/@geoman-io/leaflet-geoman-free/dist/leaflet-geoman.css',
+				to: 'leaflet-geoman.css',
+			},
+			{
+				from: 'node_modules/leaflet/dist/leaflet.css',
+				to: 'leaflet.css',
+			},
 		]
 	})
 ])

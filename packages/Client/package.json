@@ -9,13 +9,19 @@
 	},
 	"dependencies": {
 		"@3mo/model": "git+https://github.com/3mo-esolutions/model.git",
-		"jsencrypt": "3.*"
+		"@a11d/lit-slider": "*",
+		"@geoman-io/leaflet-geoman-free": "2.*",
+		"jsencrypt": "3.*",
+		"leaflet": "1.*"
 	},
 	"devDependencies": {
+		"@types/leaflet": "1.*",
 		"copy-webpack-plugin": "9.*",
 		"download-file": "*",
 		"favicons-webpack-plugin": "5.*",
 		"ts-lit-plugin": "1.*",
+		"ts-loader": "*",
+		"tsconfig-paths-webpack-plugin": "*",
 		"typescript": "4.*",
 		"webpack": "5.*",
 		"webpack-cli": "4.*",

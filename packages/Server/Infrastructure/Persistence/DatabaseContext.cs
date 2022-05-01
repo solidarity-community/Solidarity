@@ -10,7 +10,7 @@ public class DatabaseContext : DbContext, IDatabase
 		if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
 		{
 			Database.Migrate();
-			DatabaseSeeder.Seed(this);
+			// DatabaseSeeder.Seed(this);
 		}
 	}
 
@@ -19,10 +19,12 @@ public class DatabaseContext : DbContext, IDatabase
 	public DbSet<AuthenticationMethod> AuthenticationMethods { get; set; } = null!;
 	public DbSet<Handshake> Handshakes { get; set; } = null!;
 	public DbSet<Campaign> Campaigns { get; set; } = null!;
+	public DbSet<CampaignMedia> CampaignMedia { get; set; } = null!;
 	public DbSet<Validation> Validations { get; set; } = null!;
 	public DbSet<Vote> Votes { get; set; } = null!;
 	public DbSet<DonationChannel> DonationChannels { get; set; } = null!;
 	public DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; } = null!;
+	public DbSet<CampaignExpenditure> CampaignExpenditures { get; set; } = null!;
 
 	public DbSet<TEntity> GetSet<TEntity>() where TEntity : class => Set<TEntity>();
 	public EntityEntry GetEntry(object entity) => Entry(entity);
@@ -40,9 +42,12 @@ public class DatabaseContext : DbContext, IDatabase
 
 		modelBuilder.Entity<AuthenticationMethod>().Ignore(am => am.SupportsMultiple);
 		modelBuilder.Entity<AuthenticationMethod>().HasKey(am => new { am.AccountId, am.Type, am.Salt });
-		modelBuilder.Entity<AuthenticationMethod>().HasDiscriminator(am => am.Type).HasValue<PasswordAuthentication>(AuthenticationMethodType.Password);
+		modelBuilder.Entity<AuthenticationMethod>().HasDiscriminator(am => am.Type)
+			.HasValue<PasswordAuthentication>(AuthenticationMethodType.Password);
 
 		modelBuilder.Entity<Campaign>().HasOne(c => c.Validation).WithOne(v => v.Campaign);
+		modelBuilder.Entity<Campaign>().HasMany(c => c.Media).WithOne();
+		modelBuilder.Entity<Campaign>().HasMany(c => c.Expenditures).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.DonationChannels).WithOne(dc => dc.Campaign);
 
 		modelBuilder.Entity<PaymentMethodKey>().HasKey(pmk => pmk.PaymentMethodIdentifier);
@@ -52,18 +57,18 @@ public class DatabaseContext : DbContext, IDatabase
 
 	public override int SaveChanges()
 	{
-		var userId = _currentUserService.Id ?? 0;
+		var userId = _currentUserService.Id;
 		foreach (var entry in ChangeTracker.Entries<Model>())
 		{
 			switch (entry.State)
 			{
 				case EntityState.Added:
 					entry.Entity.CreatorId = userId;
-					entry.Entity.Creation = System.DateTime.Now;
+					entry.Entity.Creation = DateTime.Now;
 					break;
 				case EntityState.Modified:
 					entry.Entity.LastModifierId = userId;
-					entry.Entity.LastModification = System.DateTime.Now;
+					entry.Entity.LastModification = DateTime.Now;
 					break;
 			}
 		}

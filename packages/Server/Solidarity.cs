@@ -39,6 +39,9 @@ global using System.Security.Cryptography;
 global using System.Text;
 global using System.Reflection;
 global using Xunit;
+global using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
+using NetTopologySuite.IO;
 
 WebApplication.CreateBuilder(args)
 	.ConfigureServices().Build()
@@ -55,8 +58,15 @@ public static class ConfigurationExtensions
 		{
 			options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
 			options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
+			var geometryFactory = new GeometryFactoryEx(precisionModel: new PrecisionModel(), srid: 4326) { OrientationOfExteriorRing = LinearRingOrientation.CCW };
+			var geographyConverters = GeoJsonSerializer.Create(geometryFactory).Converters;
+			foreach (var converter in geographyConverters)
+			{
+				options.SerializerSettings.Converters.Add(converter);
+			}
 		});
-		builder.Services.AddMvc();
+		var validator = new SuppressChildValidationMetadataProvider(typeof(Geometry));
+		builder.Services.AddMvc(options => options.ModelMetadataDetailsProviders.Add(validator));
 		builder.Services.InstallSolidarity();
 		return builder;
 	}

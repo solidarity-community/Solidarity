@@ -25,6 +25,11 @@ public class CampaignService : CrudService<Campaign>
 
 	public override Campaign Create(Campaign campaign)
 	{
+		if (campaign.TotalExpenditure == 0)
+		{
+			throw new CampaignExpenditureTooLowException();
+		}
+
 		campaign.Completion = null;
 		campaign.DonationChannels = _paymentMethodProvider
 			.GetAll()
@@ -36,11 +41,20 @@ public class CampaignService : CrudService<Campaign>
 
 	public override Campaign Update(Campaign campaign)
 	{
-		if (Get(campaign.Id).CreatorId != _currentUserService.Id)
+		var entity = Get(campaign.Id);
+
+		if (entity.CreatorId != _currentUserService.Id)
 		{
 			throw new Exception("You are not allowed to edit this campaign");
 		}
-		base.Update(campaign);
-		return campaign.WithoutAuthenticationData();
+
+		if (campaign.TotalExpenditure == 0)
+		{
+			throw new CampaignExpenditureTooLowException();
+		}
+
+		entity.Media = campaign.Media;
+		entity.Expenditures = campaign.Expenditures;
+		return base.Update(campaign).WithoutAuthenticationData();
 	}
 }

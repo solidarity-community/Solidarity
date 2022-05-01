@@ -26,9 +26,9 @@ services:
       - DATABASE_USER=SA
       - DATABASE_PASSWORD=Dev_Passw0rd
       - JWT_KEY=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
-      # TODO: activated payment methods 
+      # TODO: activated payment methods
       - PAYMENT_METHODS=BTC_MAINNET,BTC_TESTNET
-      # TODO: Crypto Note conainers
+      # TODO: Crypto Node conainers
       - PAYMENT_METHOD_BTC_MAINNET_SERVER=http://0.0.0.0:8000/
       - PAYMENT_METHOD_BTC_MAINNET_USERNAME=solidarity
       - PAYMENT_METHOD_BTC_MAINNET_PASSWORD=xxxxxxxxxxxxxx

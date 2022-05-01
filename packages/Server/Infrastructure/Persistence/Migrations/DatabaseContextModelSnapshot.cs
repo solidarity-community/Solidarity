@@ -7,7 +7,9 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NetTopologySuite.Geometries;
 using Solidarity.Infrastructure.Persistence;
 
-namespace Solidarity.Infrastructure.Persistence.Migrations
+#nullable disable
+
+namespace Solidarity.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
     partial class DatabaseContextModelSnapshot : ModelSnapshot
@@ -16,27 +18,29 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.8")
-                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                .HasAnnotation("ProductVersion", "6.0.3")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
+
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
             modelBuilder.Entity("Solidarity.Domain.Models.Account", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.Property<string>("PublicKey")
@@ -63,13 +67,13 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
-                    b.Property<int?>("Salt")
+                    b.Property<int>("Salt")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("Data")
@@ -82,7 +86,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.HasKey("AccountId", "Type", "Salt");
@@ -96,8 +100,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<DateTime?>("Completion")
                         .HasColumnType("datetime2");
@@ -105,7 +110,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
@@ -115,10 +120,10 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
-                    b.Property<Point>("Location")
+                    b.Property<Geometry>("Location")
                         .IsRequired()
                         .HasColumnType("geography");
 
@@ -127,7 +132,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("ValidationId")
+                    b.Property<int?>("ValidationId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -135,45 +140,19 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.HasIndex("CreatorId");
 
                     b.HasIndex("ValidationId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[ValidationId] IS NOT NULL");
 
                     b.ToTable("Campaigns");
                 });
 
-            modelBuilder.Entity("Solidarity.Domain.Models.CryptoMnemonic", b =>
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignExpenditure", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<DateTime>("Creation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CreatorId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("LastModification")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("LastModifierId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Mnemonic")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("CryptoMnemonics");
-                });
-
-            modelBuilder.Entity("Solidarity.Domain.Models.DonationChannel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("CampaignId")
                         .HasColumnType("int");
@@ -181,19 +160,59 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("DonorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
-                    b.Property<string>("WalletAddress")
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<long>("UnitPrice")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
+
+                    b.ToTable("CampaignExpenditures");
+                });
+
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignMedia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Uri")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -201,7 +220,39 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("CampaignId");
 
-                    b.HasIndex("DonorId");
+                    b.ToTable("CampaignMedia");
+                });
+
+            modelBuilder.Entity("Solidarity.Domain.Models.DonationChannel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethodIdentifier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
 
                     b.ToTable("DonationChannels");
                 });
@@ -210,8 +261,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
@@ -219,7 +271,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Expiration")
@@ -228,7 +280,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.Property<string>("Phrase")
@@ -246,8 +298,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
@@ -258,7 +311,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<string>("FirstName")
@@ -269,7 +322,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.Property<string>("LastName")
@@ -285,17 +338,47 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.ToTable("Identities");
                 });
 
-            modelBuilder.Entity("Solidarity.Domain.Models.Validation", b =>
+            modelBuilder.Entity("Solidarity.Domain.Models.PaymentMethodKey", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                    b.Property<string>("PaymentMethodIdentifier")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PaymentMethodIdentifier");
+
+                    b.ToTable("PaymentMethodKeys");
+                });
+
+            modelBuilder.Entity("Solidarity.Domain.Models.Validation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("Expiration")
@@ -304,7 +387,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
@@ -316,8 +399,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
@@ -325,13 +409,13 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.Property<DateTime>("Creation")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreatorId")
+                    b.Property<int?>("CreatorId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("LastModification")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("LastModifierId")
+                    b.Property<int?>("LastModifierId")
                         .HasColumnType("int");
 
                     b.Property<int>("ValidationId")
@@ -371,19 +455,33 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 {
                     b.HasOne("Solidarity.Domain.Models.Account", "Creator")
                         .WithMany("Campaigns")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("CreatorId");
 
                     b.HasOne("Solidarity.Domain.Models.Validation", "Validation")
                         .WithOne("Campaign")
-                        .HasForeignKey("Solidarity.Domain.Models.Campaign", "ValidationId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("Solidarity.Domain.Models.Campaign", "ValidationId");
 
                     b.Navigation("Creator");
 
                     b.Navigation("Validation");
+                });
+
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignExpenditure", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Campaign", null)
+                        .WithMany("Expenditures")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignMedia", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Campaign", null)
+                        .WithMany("Media")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Solidarity.Domain.Models.DonationChannel", b =>
@@ -394,13 +492,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Solidarity.Domain.Models.Account", "Donor")
-                        .WithMany()
-                        .HasForeignKey("DonorId");
-
                     b.Navigation("Campaign");
-
-                    b.Navigation("Donor");
                 });
 
             modelBuilder.Entity("Solidarity.Domain.Models.Handshake", b =>
@@ -456,6 +548,10 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
             modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
                 {
                     b.Navigation("DonationChannels");
+
+                    b.Navigation("Expenditures");
+
+                    b.Navigation("Media");
                 });
 
             modelBuilder.Entity("Solidarity.Domain.Models.Validation", b =>

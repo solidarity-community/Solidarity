@@ -14,6 +14,13 @@ public static class ExceptionMiddlewareExtensions
 				IncorrectCredentialsException or NotAuthenticatedException or AuthenticationFailedException => (int)HttpStatusCode.Unauthorized,
 				_ => (int)HttpStatusCode.InternalServerError
 			};
+			await context.Response.WriteAsJsonAsync(new
+			{
+				Status = context.Response.StatusCode,
+				Title = exception?.Message ?? "Unknown error",
+				TraceId = context.TraceIdentifier,
+				Type = exception?.GetType().Name,
+			});
 		}));
 		return application;
 	}

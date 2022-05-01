@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore.Migrations;
 using NetTopologySuite.Geometries;
 
-namespace Solidarity.Infrastructure.Persistence.Migrations
+#nullable disable
+
+namespace Solidarity.Migrations
 {
     public partial class Initial : Migration
     {
@@ -16,9 +18,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Username = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     PublicKey = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -27,20 +29,20 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CryptoMnemonics",
+                name: "PaymentMethodKeys",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Mnemonic = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethodIdentifier = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Key = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CryptoMnemonics", x => x.Id);
+                    table.PrimaryKey("PK_PaymentMethodKeys", x => x.PaymentMethodIdentifier);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,9 +52,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Expiration = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -69,9 +71,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     Salt = table.Column<int>(type: "int", nullable: false),
                     Data = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Id = table.Column<int>(type: "int", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -94,9 +96,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     AccountId = table.Column<int>(type: "int", nullable: false),
                     Phrase = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Expiration = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -120,9 +122,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     BirthDate = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -142,14 +144,14 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Location = table.Column<Point>(type: "geography", nullable: false),
                     Title = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Location = table.Column<Geometry>(type: "geography", nullable: false),
                     Completion = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    ValidationId = table.Column<int>(type: "int", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    ValidationId = table.Column<int>(type: "int", nullable: true),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -159,14 +161,12 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                         name: "FK_Campaigns_Accounts_CreatorId",
                         column: x => x.CreatorId,
                         principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Campaigns_Validations_ValidationId",
                         column: x => x.ValidationId,
                         principalTable: "Validations",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -178,9 +178,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     ValidationId = table.Column<int>(type: "int", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false),
                     Value = table.Column<bool>(type: "bit", nullable: false),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
@@ -201,28 +201,72 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DonationChannels",
+                name: "CampaignExpenditures",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CampaignId = table.Column<int>(type: "int", nullable: false),
-                    WalletAddress = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    DonorId = table.Column<int>(type: "int", nullable: true),
-                    CreatorId = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    UnitPrice = table.Column<long>(type: "bigint", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
                     Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    LastModifierId = table.Column<int>(type: "int", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
+                    LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CampaignExpenditures", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CampaignExpenditures_Campaigns_CampaignId",
+                        column: x => x.CampaignId,
+                        principalTable: "Campaigns",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CampaignMedia",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CampaignId = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: false),
+                    Uri = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
+                    Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
+                    LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CampaignMedia", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_CampaignMedia_Campaigns_CampaignId",
+                        column: x => x.CampaignId,
+                        principalTable: "Campaigns",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DonationChannels",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    PaymentMethodIdentifier = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CampaignId = table.Column<int>(type: "int", nullable: false),
+                    CreatorId = table.Column<int>(type: "int", nullable: true),
+                    Creation = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    LastModifierId = table.Column<int>(type: "int", nullable: true),
                     LastModification = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DonationChannels", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_DonationChannels_Accounts_DonorId",
-                        column: x => x.DonorId,
-                        principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_DonationChannels_Campaigns_CampaignId",
                         column: x => x.CampaignId,
@@ -238,6 +282,16 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_CampaignExpenditures_CampaignId",
+                table: "CampaignExpenditures",
+                column: "CampaignId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_CampaignMedia_CampaignId",
+                table: "CampaignMedia",
+                column: "CampaignId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Campaigns_CreatorId",
                 table: "Campaigns",
                 column: "CreatorId");
@@ -246,17 +300,13 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 name: "IX_Campaigns_ValidationId",
                 table: "Campaigns",
                 column: "ValidationId",
-                unique: true);
+                unique: true,
+                filter: "[ValidationId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_DonationChannels_CampaignId",
                 table: "DonationChannels",
                 column: "CampaignId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_DonationChannels_DonorId",
-                table: "DonationChannels",
-                column: "DonorId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Handshakes_AccountId",
@@ -286,7 +336,10 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                 name: "AuthenticationMethods");
 
             migrationBuilder.DropTable(
-                name: "CryptoMnemonics");
+                name: "CampaignExpenditures");
+
+            migrationBuilder.DropTable(
+                name: "CampaignMedia");
 
             migrationBuilder.DropTable(
                 name: "DonationChannels");
@@ -296,6 +349,9 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
 
             migrationBuilder.DropTable(
                 name: "Identities");
+
+            migrationBuilder.DropTable(
+                name: "PaymentMethodKeys");
 
             migrationBuilder.DropTable(
                 name: "Votes");

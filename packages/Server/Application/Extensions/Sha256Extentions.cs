@@ -6,7 +6,7 @@ public static class Sha256Extentions
 	{
 		if (value == null)
 		{
-			return null;
+			return null!;
 		}
 		HashAlgorithm algorithm = SHA256.Create();
 		var hashedArr = algorithm.ComputeHash(Encoding.UTF8.GetBytes(value));
