@@ -8,24 +8,24 @@ public class CampaignMediaService : CrudService<CampaignMedia>
 		_fileService = fileService;
 	}
 
-	public CampaignMedia CreateOrUpdate(CampaignMedia media)
+	public async Task<CampaignMedia> CreateOrUpdate(CampaignMedia media)
 	{
 		return media.IsValid() == false
 			? throw new InvalidMediaException()
-			: media.Id is not 0 && Get(media.Id) is not null
-				? Update(media)
-				: Create(media);
+			: media.Id is not 0 && await Get(media.Id) is not null
+				? await Update(media)
+				: await Create(media);
 	}
 
-	public override CampaignMedia Delete(int id)
+	public override async Task<CampaignMedia> Delete(int id)
 	{
-		var media = Get(id);
+		var media = await Get(id);
 
 		if (media.Type == CampaignMediaType.File)
 		{
 			_fileService.Delete(media.Uri);
 		}
 
-		return base.Delete(id);
+		return await base.Delete(id);
 	}
 }

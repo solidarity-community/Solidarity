@@ -30,7 +30,7 @@ public abstract class PaymentMethod
 				});
 			}
 
-			_database.CommitChanges();
+			_database.CommitChangesAsync();
 		}
 	}
 }

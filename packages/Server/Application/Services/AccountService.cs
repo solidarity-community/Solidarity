@@ -7,62 +7,57 @@ public class AccountService : CrudService<Account>
 	public AccountService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService, HandshakeService handshakeService) : base(database, paymentMethodProvider, currentUserService)
 		=> _handshakeService = handshakeService;
 
-	public Account Get()
+	public Task<Account> Get()
 	{
 		return base.Get(_currentUserService.Id ?? throw new NotAuthenticatedException());
 	}
 
-	public Account GetWithoutAuthentication(int? id)
+	public async Task<Account> GetWithoutAuthentication(int? id)
 	{
-		var account = id.HasValue
-			? Get(id.Value)
-			: Get();
+		var account = id.HasValue ? await Get(id.Value) : await Get();
 		return account.WithoutAuthenticationData();
 	}
 
-	public Account GetByUsername(string username)
+	public async Task<Account> GetByUsername(string username)
 	{
-		return _database.Accounts.SingleOrDefault(account => account.Username == username)
+		return await _database.Accounts.SingleOrDefaultAsync(account => account.Username == username)
 			?? throw new EntityNotFoundException<Account>();
 	}
 
-	public bool IsUsernameAvailable(string username)
+	public async Task<bool> IsUsernameAvailable(string username)
 	{
-		return _database.Accounts.SingleOrDefault(a => a.Username == username.ToLower()) == null;
+		return await _database.Accounts.SingleOrDefaultAsync(a => a.Username == username.ToLower()) == null;
 	}
 
-	public override Account Create(Account account)
+	public override async Task<Account> Create(Account account)
 	{
-		if (string.IsNullOrWhiteSpace(account.Username) == false && IsUsernameAvailable(account.Username) == false)
-		{
-			throw new AccountTakenException("This username is not available");
-		}
-
-		return base.Create(account);
+		return string.IsNullOrWhiteSpace(account.Username) == false && await IsUsernameAvailable(account.Username) == false
+			? throw new AccountTakenException("This username is not available")
+			: await base.Create(account);
 	}
 
-	public string CreateAndIssueToken(Account account)
+	public async Task<string> CreateAndIssueToken(Account account)
 	{
-		Create(account);
+		await Create(account);
 		return account.IssueToken(TimeSpan.FromDays(30));
 	}
 
-	public override Account Update(Account account)
+	public override async Task<Account> Update(Account account)
 	{
 		account.Id = _currentUserService.Id ?? throw new NotAuthenticatedException();
-		base.Update(account);
+		await base.Update(account);
 		return account.WithoutAuthenticationData();
 	}
 
-	public string ResetByUsername(string username)
+	public async Task<string> ResetByUsername(string username)
 	{
-		var account = GetByUsername(username);
-		return Reset(account.Id);
+		var account = await GetByUsername(username);
+		return await Reset(account.Id);
 	}
 
-	public string Reset(int id)
+	public async Task<string> Reset(int id)
 	{
-		var account = Get(id);
+		var account = await Get(id);
 
 		var handshake = new Handshake
 		{
@@ -71,7 +66,7 @@ public class AccountService : CrudService<Account>
 			Expiration = DateTime.Now.AddMinutes(10)
 		};
 		_database.Handshakes.Add(handshake);
-		_database.CommitChanges();
+		await _database.CommitChangesAsync();
 
 		var publicRsaKey = RSA.Create();
 		// TODO This fails
@@ -81,14 +76,14 @@ public class AccountService : CrudService<Account>
 		return encryptedHandshake;
 	}
 
-	public string Recover(string phrase)
+	public async Task<string> Recover(string phrase)
 	{
-		var handshake = _handshakeService.GetByPhrase(phrase);
+		var handshake = await _handshakeService.GetByPhrase(phrase);
 		var token = handshake.Account.IssueToken(TimeSpan.FromDays(30));
 		handshake.Account.AuthenticationMethods = new();
 		_database.AuthenticationMethods.RemoveRange(_database.AuthenticationMethods.Where(e => e.AccountId == handshake.Account.Id));
 		_database.Handshakes.Remove(handshake);
-		_database.CommitChanges();
+		await _database.CommitChangesAsync();
 		return token;
 	}
 }

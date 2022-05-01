@@ -20,17 +20,17 @@ public class IdentityService : CrudService<Identity>
 		return GetByAccountId(account.Id);
 	}
 
-	public override Identity Update(Identity identity)
+	public override async Task<Identity> Update(Identity identity)
 	{
-		return Get(identity.Id).AccountId != identity.AccountId
+		return (await Get(identity.Id)).AccountId != identity.AccountId
 			? throw new AccountIdentityException("This identity does not belong to this account")
-			: base.Update(identity);
+			: await base.Update(identity);
 	}
 
-	public Identity CreateOrUpdate(Identity identity)
+	public async Task<Identity> CreateOrUpdate(Identity identity)
 	{
-		return _database.Identities.Any(i => i.AccountId == identity.AccountId)
-			? Update(identity)
-			: Create(identity);
+		return await _database.Identities.AnyAsync(i => i.AccountId == identity.AccountId)
+			? await Update(identity)
+			: await Create(identity);
 	}
 }

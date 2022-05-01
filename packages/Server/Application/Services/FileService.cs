@@ -25,7 +25,7 @@ public class FileService : Service
 	public FileStream Get(Guid guid)
 		=> File.OpenRead(GetPath(guid));
 
-	public Guid Save(IFormFile file, Guid? existingGuid)
+	public async Task<Guid> Save(IFormFile file, Guid? existingGuid)
 	{
 		if (file.Length / 1024 / 1024 > MaxFileSizeInMB)
 		{
@@ -39,7 +39,7 @@ public class FileService : Service
 
 		var guid = existingGuid ?? Guid.NewGuid();
 		using var stream = File.Create(GetUri(guid) + Path.GetExtension(file.FileName));
-		file.CopyTo(stream);
+		await file.CopyToAsync(stream);
 
 		return guid;
 	}

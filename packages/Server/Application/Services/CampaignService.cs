@@ -4,26 +4,26 @@ public class CampaignService : CrudService<Campaign>
 {
 	public CampaignService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService) : base(database, paymentMethodProvider, currentUserService) { }
 
-	public override Campaign Get(int id)
+	public override async Task<Campaign> Get(int id)
 	{
-		return base.Get(id).WithoutAuthenticationData();
+		return (await base.Get(id)).WithoutAuthenticationData();
 	}
 
-	public override IEnumerable<Campaign> GetAll()
+	public override async Task<IEnumerable<Campaign>> GetAll()
 	{
-		return base.GetAll().WithoutAuthenticationData();
+		return (await base.GetAll()).WithoutAuthenticationData();
 	}
 
 	public async Task<decimal> GetBalance(int id)
 	{
-		var campaign = Get(id);
+		var campaign = await Get(id);
 		var paymentChannels = campaign.DonationChannels
 			.Select(dc => _paymentMethodProvider.Get(dc.PaymentMethodIdentifier).GetChannel(dc.Id));
 		var balances = await Task.WhenAll(paymentChannels.Select(c => c.GetBalance()));
 		return balances.Sum();
 	}
 
-	public override Campaign Create(Campaign campaign)
+	public override async Task<Campaign> Create(Campaign campaign)
 	{
 		if (campaign.TotalExpenditure == 0)
 		{
@@ -35,13 +35,13 @@ public class CampaignService : CrudService<Campaign>
 			.GetAll()
 			.Select(pm => new DonationChannel { PaymentMethodIdentifier = pm.Identifier })
 			.ToList();
-		base.Create(campaign);
+		await base.Create(campaign);
 		return campaign.WithoutAuthenticationData();
 	}
 
-	public override Campaign Update(Campaign campaign)
+	public override async Task<Campaign> Update(Campaign campaign)
 	{
-		var entity = Get(campaign.Id);
+		var entity = await Get(campaign.Id);
 
 		if (entity.CreatorId != _currentUserService.Id)
 		{
@@ -55,6 +55,6 @@ public class CampaignService : CrudService<Campaign>
 
 		entity.Media = campaign.Media;
 		entity.Expenditures = campaign.Expenditures;
-		return base.Update(campaign).WithoutAuthenticationData();
+		return (await base.Update(campaign)).WithoutAuthenticationData();
 	}
 }
