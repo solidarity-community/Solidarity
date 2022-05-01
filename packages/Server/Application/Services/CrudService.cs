@@ -4,34 +4,35 @@ public abstract class CrudService<TModel> : Service where TModel : Model
 {
 	public CrudService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService) : base(database, paymentMethodProvider, currentUserService) { }
 
-	public virtual bool Exists(int id)
-		=> _database.GetSet<TModel>().Find(id) != null;
+	public virtual async Task<bool> Exists(int id)
+		=> await _database.GetSet<TModel>().FindAsync(id) != null;
 
-	public virtual TModel Get(int id)
-		=> _database.GetSet<TModel>().IncludeAll().First(x => x.Id == id) ?? throw new EntityNotFoundException<TModel>();
+	public virtual async Task<TModel> Get(int id)
+		=> await _database.GetSet<TModel>().IncludeAll().FirstAsync(x => x.Id == id) ?? throw new EntityNotFoundException<TModel>();
 
-	public virtual IEnumerable<TModel> GetAll()
-		=> _database.GetSet<TModel>().IncludeAll().AsNoTracking();
+	public virtual async Task<IEnumerable<TModel>> GetAll()
+		=> await _database.GetSet<TModel>().IncludeAll().AsNoTracking().ToArrayAsync();
 
-	public virtual TModel Create(TModel model)
+	public virtual async Task<TModel> Create(TModel model)
 	{
 		_database.GetSet<TModel>().Add(model);
-		_database.CommitChanges();
+		await _database.CommitChangesAsync();
 		return model;
 	}
 
-	public virtual TModel Update(TModel model)
+	public virtual async Task<TModel> Update(TModel model)
 	{
-		_database.GetEntry(Get(model.Id)).CurrentValues.SetValues(model);
-		_database.CommitChanges();
+		var m = await Get(model.Id);
+		_database.GetEntry(m).CurrentValues.SetValues(model);
+		await _database.CommitChangesAsync();
 		return model;
 	}
 
-	public virtual TModel Delete(int id)
+	public virtual async Task<TModel> Delete(int id)
 	{
-		var model = Get(id);
+		var model = await Get(id);
 		_database.GetSet<TModel>().Remove(model);
-		_database.CommitChanges();
+		await _database.CommitChangesAsync();
 		return model;
 	}
 }

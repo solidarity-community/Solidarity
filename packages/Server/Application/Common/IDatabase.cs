@@ -17,5 +17,5 @@ public interface IDatabase
 	DbSet<TEntity> GetSet<TEntity>() where TEntity : class;
 	EntityEntry GetEntry(object entity);
 	void CommitChanges();
-	// Task SaveChangesAsync();
+	Task CommitChangesAsync();
 }

@@ -17,8 +17,8 @@ public class FileController : ControllerBase
 	public FileStreamResult GetFile([FromRoute] Guid guid) => File(_fileService.Get(guid), "application/octet-stream");
 
 	[HttpPost, HttpPut]
-	public ActionResult<string> CreateOrUpdate([FromForm] IFormFile file)
-		=> Ok(_fileService.Save(file, null));
+	public async Task<ActionResult<string>> CreateOrUpdate([FromForm] IFormFile file)
+		=> Ok(await _fileService.Save(file, null));
 
 	[HttpDelete("{guid}")]
 	public ActionResult Delete([FromRoute] Guid guid)

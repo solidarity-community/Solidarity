@@ -7,17 +7,18 @@ public class AuthenticationService : Service
 	public AuthenticationService(AccountService accountService, IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService) : base(database, paymentMethodProvider, currentUserService)
 		=> _accountService = accountService;
 
-	public bool IsAuthenticated()
+	public async Task<bool> IsAuthenticated()
 	{
 		return _currentUserService.Id is int id
-			&& _accountService.Exists(id);
+			&& await _accountService.Exists(id);
 	}
 
-	public Dictionary<AuthenticationMethodType, bool> GetAll()
+	public async Task<Dictionary<AuthenticationMethodType, bool>> GetAll()
 	{
-		var availableAuthenticationMethods = _database.AuthenticationMethods
+		var availableAuthenticationMethods = await _database.AuthenticationMethods
 			.Where(am => am.AccountId == _currentUserService.Id)
-			.Select(am => am.Type);
+			.Select(am => am.Type)
+			.ToListAsync();
 
 		return new Dictionary<AuthenticationMethodType, bool>
 		{
@@ -25,32 +26,32 @@ public class AuthenticationService : Service
 		};
 	}
 
-	public T AddOrUpdate<T>(T authentication) where T : AuthenticationMethod
+	public async Task<T> AddOrUpdate<T>(T authentication) where T : AuthenticationMethod
 	{
-		var account = _accountService.Get(authentication.AccountId);
+		var account = await _accountService.Get(authentication.AccountId);
 		authentication.Encrypt();
 		if (account.AuthenticationMethods.SingleOrDefault(auth => auth is T) is not T existingAuthentication)
 		{
 			_database.AuthenticationMethods.Add(authentication);
-			_database.CommitChanges();
+			await _database.CommitChangesAsync();
 			return authentication.WithoutData();
 		}
 		else
 		{
 			existingAuthentication.Data = authentication.Data;
-			_database.CommitChanges();
+			await _database.CommitChangesAsync();
 			return existingAuthentication.WithoutData();
 		}
 	}
 
-	public string Login<T>(int accountId, string data) where T : AuthenticationMethod
+	public async Task<string> Login<T>(int accountId, string data) where T : AuthenticationMethod
 	{
 		return _database.AuthenticationMethods.SingleOrDefault(am => am is T && am.AccountId == accountId) is not T authMethod || !authMethod.Authenticate(data)
 			? throw new IncorrectCredentialsException()
-			: _accountService.Get(accountId).IssueToken(TimeSpan.FromDays(30));
+			: (await _accountService.Get(accountId)).IssueToken(TimeSpan.FromDays(30));
 	}
 
-	public void UpdatePassword(string newPassword, string? oldPassword = null)
+	public async Task UpdatePassword(string newPassword, string? oldPassword = null)
 	{
 		var accountId = _currentUserService.Id ?? throw new NotAuthenticatedException();
 		var existingAuthentication = _database.AuthenticationMethods.FirstOrDefault(am => am is PasswordAuthentication && am.AccountId == accountId);
@@ -60,17 +61,17 @@ public class AuthenticationService : Service
 			throw new IncorrectCredentialsException();
 		}
 
-		AddOrUpdate(new PasswordAuthentication
+		await AddOrUpdate(new PasswordAuthentication
 		{
 			AccountId = accountId,
 			Data = newPassword,
 		});
 	}
 
-	public string PasswordLogin(string username, string password)
+	public async Task<string> PasswordLogin(string username, string password)
 	{
-		var account = _accountService.GetByUsername(username);
-		var token = Login<PasswordAuthentication>(account.Id, password);
+		var account = await _accountService.GetByUsername(username);
+		var token = await Login<PasswordAuthentication>(account.Id, password);
 		return token;
 	}
 }

@@ -8,11 +8,11 @@ public class CampaignMediaController : ControllerBase
 	public CampaignMediaController(CampaignMediaService mediaService) => _campaignMediaService = mediaService;
 
 	[HttpGet("{id}")]
-	public ActionResult<CampaignMedia> Get([FromRoute] int id) => Ok(_campaignMediaService.Get(id));
+	public async Task<ActionResult<CampaignMedia>> Get([FromRoute] int id) => Ok(await _campaignMediaService.Get(id));
 
 	[HttpPost, HttpPut]
-	public ActionResult<CampaignMedia> CreateOrUpdate([FromBody] CampaignMedia media) => Ok(_campaignMediaService.CreateOrUpdate(media));
+	public async Task<ActionResult<CampaignMedia>> CreateOrUpdate([FromBody] CampaignMedia media) => Ok(await _campaignMediaService.CreateOrUpdate(media));
 
 	[HttpDelete]
-	public ActionResult<CampaignMedia> Delete([FromRoute] int id) => Ok(_campaignMediaService.Delete(id));
+	public async Task<ActionResult<CampaignMedia>> Delete([FromRoute] int id) => Ok(await _campaignMediaService.Delete(id));
 }

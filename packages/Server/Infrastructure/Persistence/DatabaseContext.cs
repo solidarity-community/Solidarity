@@ -28,7 +28,9 @@ public class DatabaseContext : DbContext, IDatabase
 
 	public DbSet<TEntity> GetSet<TEntity>() where TEntity : class => Set<TEntity>();
 	public EntityEntry GetEntry(object entity) => Entry(entity);
+
 	public void CommitChanges() => SaveChanges();
+	public Task CommitChangesAsync() => SaveChangesAsync();
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
@@ -57,6 +59,18 @@ public class DatabaseContext : DbContext, IDatabase
 
 	public override int SaveChanges()
 	{
+		HandleSaveChanges();
+		return base.SaveChanges();
+	}
+
+	public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+	{
+		HandleSaveChanges();
+		return base.SaveChangesAsync(cancellationToken);
+	}
+
+	private void HandleSaveChanges()
+	{
 		var userId = _currentUserService.Id;
 		foreach (var entry in ChangeTracker.Entries<Model>())
 		{
@@ -72,6 +86,5 @@ public class DatabaseContext : DbContext, IDatabase
 					break;
 			}
 		}
-		return base.SaveChanges();
 	}
 }

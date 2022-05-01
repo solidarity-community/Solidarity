@@ -8,23 +8,23 @@ public class CampaignController : ControllerBase
 	public CampaignController(CampaignService campainService) => _campaignService = campainService;
 
 	[HttpGet, AllowAnonymous]
-	public ActionResult<IEnumerable<Campaign>> GetAll() => Ok(_campaignService.GetAll());
+	public async Task<ActionResult<IEnumerable<Campaign>>> GetAll() => Ok(await _campaignService.GetAll());
 
 	[HttpGet("{id}"), AllowAnonymous]
-	public ActionResult<string> Get([FromRoute] int id) => Ok(_campaignService.Get(id));
+	public async Task<ActionResult<string>> Get([FromRoute] int id) => Ok(await _campaignService.Get(id));
 
 	[HttpGet("{id}/balance"), AllowAnonymous]
-	public ActionResult<decimal> GetBalance([FromRoute] int id) => Ok(_campaignService.GetBalance(id));
+	public async Task<ActionResult<decimal>> GetBalance([FromRoute] int id) => Ok(await _campaignService.GetBalance(id));
 
 	[HttpPost]
-	public ActionResult<Campaign> Create([FromBody] Campaign campaign)
-		=> Ok(_campaignService.Create(campaign));
+	public async Task<ActionResult<Campaign>> Create([FromBody] Campaign campaign)
+		=> Ok(await _campaignService.Create(campaign));
 
 	[HttpPut("{id}")]
-	public ActionResult<Campaign> Update([FromBody] Campaign campaign)
-		=> Ok(_campaignService.Update(campaign));
+	public async Task<ActionResult<Campaign>> Update([FromBody] Campaign campaign)
+		=> Ok(await _campaignService.Update(campaign));
 
 	[HttpDelete("{id}")]
-	public ActionResult<Campaign> Delete([FromRoute] int id)
-		=> Ok(_campaignService.Delete(id));
+	public async Task<ActionResult<Campaign>> Delete([FromRoute] int id)
+		=> Ok(await _campaignService.Delete(id));
 }
