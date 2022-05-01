@@ -7,17 +7,17 @@ public class IdentityService : CrudService<Identity>
 	public IdentityService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService, AccountService accountService) : base(database, paymentMethodProvider, currentUserService)
 		=> _accountService = accountService;
 
-	public Identity GetByAccountId(int? id)
+	public async Task<Identity> GetByAccountId(int? id)
 	{
 		id ??= _currentUserService.Id;
-		return _database.Identities.FirstOrDefault(i => i.AccountId == id)
+		return await _database.Identities.FirstOrDefaultAsync(i => i.AccountId == id)
 			?? throw new EntityNotFoundException<Identity>();
 	}
 
-	public Identity GetByUsername(string username)
+	public async Task<Identity> GetByUsername(string username)
 	{
 		var account = _accountService.GetByUsername(username);
-		return GetByAccountId(account.Id);
+		return await GetByAccountId(account.Id);
 	}
 
 	public override async Task<Identity> Update(Identity identity)

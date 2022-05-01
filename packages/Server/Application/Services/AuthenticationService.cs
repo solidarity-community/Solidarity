@@ -13,11 +13,12 @@ public class AuthenticationService : Service
 			&& await _accountService.Exists(id);
 	}
 
-	public Dictionary<AuthenticationMethodType, bool> GetAll()
+	public async Task<Dictionary<AuthenticationMethodType, bool>> GetAll()
 	{
-		var availableAuthenticationMethods = _database.AuthenticationMethods
+		var availableAuthenticationMethods = await _database.AuthenticationMethods
 			.Where(am => am.AccountId == _currentUserService.Id)
-			.Select(am => am.Type);
+			.Select(am => am.Type)
+			.ToListAsync();
 
 		return new Dictionary<AuthenticationMethodType, bool>
 		{

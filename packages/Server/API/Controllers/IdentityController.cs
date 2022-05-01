@@ -8,12 +8,12 @@ public class IdentityController : ControllerBase
 	public IdentityController(IdentityService identityService) => _identityService = identityService;
 
 	[HttpGet("{id}")]
-	public ActionResult<string> Get([FromRoute] int id) => Ok(_identityService.Get(id));
+	public async Task<ActionResult<string>> Get([FromRoute] int id) => Ok(await _identityService.Get(id));
 
 	[HttpGet]
-	public ActionResult<Identity> GetByAccountId([FromQuery] int? accountId) => Ok(_identityService.GetByAccountId(accountId));
+	public async Task<ActionResult<Identity>> GetByAccountId([FromQuery] int? accountId) => Ok(await _identityService.GetByAccountId(accountId));
 
 	[HttpPost, HttpPut]
-	public ActionResult<Identity> CreateOrUpdate([FromBody] Identity Identity)
-		=> Ok(_identityService.CreateOrUpdate(Identity));
+	public async Task<ActionResult<Identity>> CreateOrUpdate([FromBody] Identity Identity)
+		=> Ok(await _identityService.CreateOrUpdate(Identity));
 }
