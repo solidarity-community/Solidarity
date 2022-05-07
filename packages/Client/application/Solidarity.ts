@@ -1,6 +1,7 @@
 import { Application, application, component, html, ThemeHelper, Color } from '@3mo/model'
 import { DialogAuthenticator, PageAccount } from 'application'
 import * as Solid from '.'
+import './Logo.svg'
 
 ThemeHelper.accent.value = new Color([105, 69, 130], [92, 119, 185])
 
