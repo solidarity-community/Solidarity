@@ -3,7 +3,7 @@
 const path = require('path')
 const MoDeLWebpackConfigFactory = require('@3mo/model/build/WebpackConfig.ts')
 const CopyPlugin = require('copy-webpack-plugin')
-// const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
+const FaviconsWebpackPlugin = require('favicons-webpack-plugin')
 
 module.exports = (_, arguments) => MoDeLWebpackConfigFactory(arguments.mode, {
 	cache: false,
@@ -32,11 +32,6 @@ module.exports = (_, arguments) => MoDeLWebpackConfigFactory(arguments.mode, {
 		}
 	},
 }, [
-	// new FaviconsWebpackPlugin({
-	// 	logo: 'assets/solidarity.svg',
-	// 	logo: false,
-	// 	manifest: './assets/solidarity.webmanifest'
-	// }),
 	new CopyPlugin({
 		patterns: [
 			{
@@ -52,5 +47,9 @@ module.exports = (_, arguments) => MoDeLWebpackConfigFactory(arguments.mode, {
 				to: 'leaflet.css',
 			},
 		]
-	})
+	}),
+	new FaviconsWebpackPlugin({
+		logo: './assets/solidarity.svg',
+		manifest: './assets/solidarity.webmanifest',
+	}),
 ])

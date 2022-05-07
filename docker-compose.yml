@@ -13,6 +13,7 @@ services:
 
   server:
     container_name: solidarity_server
+    restart: always
     build:
       context: ./packages/Server
     ports: 
@@ -38,6 +39,7 @@ services:
 
   client:
     container_name: solidarity_client
+    restart: always
     build:
       context: ./packages/Client
     ports:

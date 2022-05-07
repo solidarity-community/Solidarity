@@ -1,12 +1,12 @@
 ## Solidarity
 
 # Client
-/node_modules/
-/build/
-/dist/
+**/node_modules/
+**/build/
+**/dist/
 
 # Server
-/uploads/
+/client/uploads/
 *.db
 
 ## Ignore Visual Studio temporary files, build results, and
