@@ -1,5 +1,5 @@
 import { component, css, DialogComponent, html } from '@3mo/model'
-import { Campaign, getDonationChannelLogo } from 'sdk'
+import { Campaign } from 'sdk'
 
 @component('solid-dialog-donate')
 export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign }> {
@@ -18,7 +18,7 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 					<mo-list>
 						${this.parameters.campaign.donationChannels?.map(donationChannel => html`
 							<mo-list-item>
-								<img slot='graphic' src=${getDonationChannelLogo(donationChannel)} />
+								<img slot='graphic' src=${donationChannel.logoSource} />
 								${donationChannel.paymentMethodIdentifier}
 							</mo-list-item>
 						`)}

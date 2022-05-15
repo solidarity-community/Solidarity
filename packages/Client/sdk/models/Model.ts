@@ -1,4 +1,4 @@
-export interface Model {
+export abstract class Model {
 	id?: number
 	creatorId?: number
 	creation?: string

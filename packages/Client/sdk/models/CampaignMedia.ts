@@ -1,8 +1,9 @@
-import { Model } from 'sdk'
+import { model, Model } from 'sdk'
 
 export const enum CampaignMediaType { File, YouTube, Twitch, }
 
-export interface CampaignMedia extends Model {
-	type: CampaignMediaType
+@model('CampaignMedia')
+export class CampaignMedia extends Model {
+	type!: CampaignMediaType
 	uri?: string
 }

@@ -1,3 +1,5 @@
+import { model } from 'sdk'
 import { AuthenticationMethod } from './AuthenticationMethod'
 
-export interface PasswordAuthentication extends AuthenticationMethod { }
+@model('PasswordAuthentication')
+export class PasswordAuthentication extends AuthenticationMethod { }

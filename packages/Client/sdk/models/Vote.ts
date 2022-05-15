@@ -1,7 +1,8 @@
-import { Model, Account, Validation } from 'sdk'
+import { Model, Account, Validation, model } from 'sdk'
 
-export interface Vote extends Model {
-	validation: Validation
-	account: Account
-	value: boolean
+@model('Vote')
+export class Vote extends Model {
+	validation!: Validation
+	account!: Account
+	value!: boolean
 }

@@ -1,8 +1,8 @@
 import { Model, Account, AuthenticationMethodType } from 'sdk'
 
-export interface AuthenticationMethod extends Model {
+export abstract class AuthenticationMethod extends Model {
 	type?: AuthenticationMethodType
-	accountId: number
+	accountId!: number
 	account?: Account
-	data: string
+	data!: string
 }

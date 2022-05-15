@@ -1,11 +1,12 @@
-import { Account, Model } from "sdk"
+import { Account, Model, model } from "sdk"
 
 export const enum IdentityRoles {
 	Admin = 'admin',
 	Member = 'member',
 }
 
-export interface Identity extends Model {
+@model('Identity')
+export class Identity extends Model {
 	accountId?: number
 	account?: Account
 	firstName?: string
