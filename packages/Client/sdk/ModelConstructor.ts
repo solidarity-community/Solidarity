@@ -35,6 +35,19 @@ export class ModelConstructor implements ApiValueConstructor<unknown, unknown> {
 		const csharpTypeNameKey = ModelConstructor.csharpTypeNameKeyName as keyof typeof object
 		const csharpTypeName = object[csharpTypeNameKey] as string
 		const Constructor = ModelConstructor.modelConstructorsByCsharpTypeName.get(csharpTypeName)
-		return !Constructor ? object : Object.assign(new Constructor, object)
+		return !Constructor ? object : safeAssign(new Constructor, object)
 	}
+}
+
+function safeAssign<T, U>(target: T, source: U) {
+	const safeSource = Object.fromEntries(
+		Object.entries(source).reduce((accumulator, currentValue) => {
+			const descriptor = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(target), currentValue[0])
+			if (!descriptor || descriptor.set) {
+				accumulator.push(currentValue)
+			}
+			return accumulator
+		}, new Array<[string, any]>())
+	)
+	return Object.assign(target, safeSource)
 }
