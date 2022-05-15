@@ -1,7 +1,10 @@
-import { Model } from './Model'
+import { Model, model } from 'sdk'
 
-export interface CampaignExpenditure extends Model {
-	quantity: number
-	name: string
-	unitPrice: number
+@model('CampaignExpenditure')
+export class CampaignExpenditure extends Model {
+	quantity!: number
+	name!: string
+	unitPrice!: number
+
+	get totalPrice() { return this.quantity * this.unitPrice }
 }

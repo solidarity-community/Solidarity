@@ -1,4 +1,3 @@
-export * from './Model'
 export * from './Account'
 export * from './Campaign'
 export * from './AuthenticationMethodType'

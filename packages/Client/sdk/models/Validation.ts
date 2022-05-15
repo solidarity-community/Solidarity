@@ -1,7 +1,8 @@
-import { Campaign, Model, Vote } from 'sdk'
+import { Campaign, model, Model, Vote } from 'sdk'
 
-export interface Validation extends Model {
-	campaign: Campaign
-	votes: Array<Vote>
-	expiration: Date
+@model('Validation')
+export class Validation extends Model {
+	campaign!: Campaign
+	votes = new Array<Vote>()
+	expiration!: Date
 }

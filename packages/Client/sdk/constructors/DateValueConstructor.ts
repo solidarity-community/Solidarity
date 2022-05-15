@@ -1,4 +1,4 @@
-import { apiValueConstructor, ApiValueConstructor } from './API'
+import { apiValueConstructor, ApiValueConstructor } from '../API'
 
 @apiValueConstructor()
 export class DateValueConstructor implements ApiValueConstructor<Date, string> {

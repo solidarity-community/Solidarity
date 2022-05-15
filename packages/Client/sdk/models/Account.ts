@@ -1,6 +1,7 @@
-import { Model, PasswordAuthentication, Identity, Campaign, Vote } from 'sdk'
+import { Model, model, PasswordAuthentication, Campaign, Vote } from 'sdk'
 
-export interface Account extends Model {
+@model('Account')
+export class Account extends Model {
 	username?: string
 	publicKey?: string
 	authenticationMethods?: Array<PasswordAuthentication>

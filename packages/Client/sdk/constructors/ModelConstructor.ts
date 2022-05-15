@@ -1,4 +1,4 @@
-import { apiValueConstructor, ApiValueConstructor } from './API'
+import { apiValueConstructor, ApiValueConstructor } from '../API'
 
 export const model = (csharpTypeName: string) => {
 	return (Constructor: Constructor<unknown>) => {
