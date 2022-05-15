@@ -31,12 +31,18 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 					`,
 					complete: campaign => html`
 						<mo-flex direction='horizontal' alignItems='center' gap='10px'>
-							<mo-div width='*' textAlign='center'>
-								Funds Raised Graph
-							</mo-div>
-							<mo-div width='*' textAlign='center'>
-								Funds Raised Graph
-							</mo-div>
+							<mo-flex width='*' alignItems='center'>
+								<solid-donation-progress width='*' .campaign=${campaign}></solid-donation-progress>
+								<mo-div>Fund Raised</mo-div>
+								<mo-div>${0.002} / ${campaign.totalExpenditure}</mo-div>
+							</mo-flex>
+
+							<mo-flex width='*' alignItems='center'>
+								<solid-campaign-time-progress width='*' .campaign=${campaign}></solid-campaign-time-progress>
+								<mo-div>Time Remaining</mo-div>
+								<mo-div><solid-timer .end=${new MoDate().addMonth(1)}></solid-timer></mo-div>
+							</mo-flex>
+
 							<mo-flex width='*' direction='horizontal' gap='10px' justifyContent='flex-end'>
 								<mo-button icon='share' @click=${() => this.share()}>Share</mo-button>
 
@@ -62,7 +68,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 								${campaign.description}
 							</mo-section>
 
-							<solid-section-campaign-expenditure .expenditures=${campaign.expenditures}></solid-section-campaign-expenditure>
+							<solid-section-campaign-expenditure .campaign=${campaign}></solid-section-campaign-expenditure>
 						</mo-grid>
 					`
 				})}

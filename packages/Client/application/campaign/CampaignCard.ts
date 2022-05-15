@@ -30,7 +30,7 @@ export class CampaignCard extends Component {
 		return html`
 			<mo-card cursor='pointer'>
 				${!this.campaign.coverImageUri ? html`
-					<mo-flex slot='media' alignItems='center' justifyContent='center' background='var(--mo-accent-transparent)'>
+					<mo-flex slot='media' alignItems='center' justifyContent='center' background='var(--mo-accent-gradient-transparent)'>
 						<mo-icon icon='campaign' foreground='var(--mo-color-gray)'></mo-icon>
 					</mo-flex>
 				` : html`
@@ -38,9 +38,9 @@ export class CampaignCard extends Component {
 				`}
 				<mo-div slot='heading' textAlign='center' fontSize='var(--mo-font-size-l)' fontWeight='bold'>${this.campaign.title}</mo-div>
 				<mo-div>${this.campaign.description}</mo-div>
-				<mo-flex slot='footer' direction='horizontal' justifyContent='space-around' padding='0 0 8px 0'>
-					<mo-div>Graph 1</mo-div>
-					<mo-div>Graph 2</mo-div>
+				<mo-flex slot='footer' direction='horizontal' justifyContent='space-around'>
+					<solid-donation-progress .campaign=${this.campaign}></solid-donation-progress>
+					<solid-campaign-time-progress .campaign=${this.campaign}></solid-campaign-time-progress>
 				</mo-flex>
 			</mo-card>
 		`
