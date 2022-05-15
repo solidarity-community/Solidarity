@@ -1,4 +1,4 @@
-import { Model, Account, AuthenticationMethodType, model } from 'sdk'
+import { Model, Account, AuthenticationMethodType } from 'sdk'
 
 export abstract class AuthenticationMethod extends Model {
 	type?: AuthenticationMethodType

@@ -78,7 +78,6 @@ export class API {
 		try {
 			return API.construct<T>(await response.json())
 		} catch (error) {
-			console.log(error)
 			return undefined!
 		}
 	}
