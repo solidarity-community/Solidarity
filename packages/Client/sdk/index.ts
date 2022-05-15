@@ -1,5 +1,6 @@
 export * from './HttpError'
 export * from './API'
 export * from './DateValueConstructor'
+export * from './ModelConstructor'
 export * from './services'
 export * from './models'
