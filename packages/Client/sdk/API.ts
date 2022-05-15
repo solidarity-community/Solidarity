@@ -39,7 +39,7 @@ export class API {
 	}
 
 	static postFile<T = void>(route: string, file: File) {
-		const form = new FormData()
+		const form = new FormData
 		form.set('file', file, file.name)
 		return this.fetch<T>('POST', route, form)
 	}
@@ -78,37 +78,36 @@ export class API {
 		try {
 			return API.construct<T>(await response.json())
 		} catch (error) {
+			console.log(error)
 			return undefined!
 		}
 	}
 
-	private static construct<T>(response: any): T {
-		return typeof response !== 'object' ? response : response instanceof Array
-			? response.map(item => API.construct(item)) as unknown as T
-			: Object.fromEntries(
-				Object.entries(response).map(([key, value]) => [
-					key,
-					API.isPrimitiveObject(value)
-						? API.construct(value)
-						: [...API.valueConstructors].find(converter => converter.shallConstruct(value))?.construct(value) ?? value
-				])
-			) as unknown as T
-	}
-
-	private static deconstruct<T>(data: T): any {
-		return typeof data !== 'object' ? data : data instanceof Array
-			? data.map(item => API.deconstruct(item))
-			: Object.fromEntries(
+	private static construct<T>(data: any, isChild = false): T {
+		data = isChild ? data : { ROOT: data }
+		const response = !data || typeof data !== 'object' ? data : Object.assign(
+			new data.constructor,
+			Object.fromEntries(
 				Object.entries(data).map(([key, value]) => [
 					key,
-					[...API.valueConstructors].find(converter => converter.shallDeconstruct?.(value) ?? false)?.deconstruct?.(value) ?? value
+					API.construct([...API.valueConstructors].find(converter => converter.shallConstruct(value))?.construct(value) ?? value, true)
 				])
 			)
+		)
+		return isChild ? response as T : response.ROOT
 	}
 
-	private static isPrimitiveObject(value: unknown): value is object {
-		return typeof value === 'object'
-			&& value !== null
-			&& Object.getPrototypeOf(value) === Object.prototype
+	private static deconstruct<T>(data: T, isChild = false): any {
+		data = (isChild ? data : { ROOT: data }) as T
+		const response = !data || typeof data !== 'object' ? data : Object.assign(
+			new (data as any).constructor,
+			Object.fromEntries(
+				Object.entries(data).map(([key, value]) => [
+					key,
+					API.deconstruct([...API.valueConstructors].find(converter => converter.shallDeconstruct?.(value) ?? false)?.deconstruct?.(value) ?? value, true)
+				])
+			)
+		)
+		return isChild ? response as T : response.ROOT
 	}
 }
