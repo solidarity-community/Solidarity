@@ -4,10 +4,7 @@ import { GeometryCollection } from 'geojson'
 
 @component('solid-dialog-campaign')
 export class DialogCampaign extends DialogComponent<undefined | { readonly id: number }, Campaign> {
-	@state() private campaign: Campaign = {
-		media: [],
-		expenditures: []
-	}
+	@state() private campaign = new Campaign
 
 	protected override async initialized() {
 		if (this.parameters?.id) {
