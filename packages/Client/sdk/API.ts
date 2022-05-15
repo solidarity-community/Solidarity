@@ -2,22 +2,22 @@ import { HttpError } from 'sdk'
 
 export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD'
 
-export type ApiValueConverter<TConstructed, TDeconstructed> = {
-	shallConvertFrom(value: unknown): boolean
-	convertFrom(value: TConstructed): TDeconstructed
+export type ApiValueConstructor<TConstructed, TDeconstructed> = {
+	shallConstruct(text: unknown): boolean
+	construct(text: TDeconstructed): TConstructed
 
-	shallConvertTo(text: unknown): boolean
-	convertTo(text: TDeconstructed): TConstructed
+	shallDeconstruct?(value: unknown): boolean
+	deconstruct?(value: TConstructed): TDeconstructed
 }
 
-export const apiValueConverter = () => {
-	return (Constructor: Constructor<ApiValueConverter<unknown, unknown>>) => {
-		API.valueConverters.add(new Constructor)
+export const apiValueConstructor = () => {
+	return (Constructor: Constructor<ApiValueConstructor<unknown, unknown>>) => {
+		API.valueConstructors.add(new Constructor)
 	}
 }
 
 export class API {
-	static readonly valueConverters = new Set<ApiValueConverter<unknown, unknown>>()
+	static readonly valueConstructors = new Set<ApiValueConstructor<unknown, unknown>>()
 	static readonly url = '/api'
 	private static readonly tokenStorageKey = 'Solidarity.Authentication.Token'
 
@@ -90,7 +90,7 @@ export class API {
 					key,
 					API.isPrimitiveObject(value)
 						? API.construct(value)
-						: [...API.valueConverters].find(converter => converter.shallConvertTo(value))?.convertTo(value) ?? value
+						: [...API.valueConstructors].find(converter => converter.shallConstruct(value))?.construct(value) ?? value
 				])
 			) as unknown as T
 	}
@@ -101,7 +101,7 @@ export class API {
 			: Object.fromEntries(
 				Object.entries(data).map(([key, value]) => [
 					key,
-					[...API.valueConverters].find(converter => converter.shallConvertFrom(value))?.convertFrom(value) ?? value
+					[...API.valueConstructors].find(converter => converter.shallDeconstruct?.(value) ?? false)?.deconstruct?.(value) ?? value
 				])
 			)
 	}
