@@ -32,7 +32,7 @@ export class SectionCampaignExpenditure extends Component {
 			<mo-section heading='Expenditure'>
 				${!this.editable ? nothing : html`
 					<mo-icon-button slot='action' icon='add'
-						@click=${() => { this.expenditures.push({ name: '', quantity: 1, unitPrice: 0 }); this.requestUpdate() }}
+						@click=${() => { this.expenditures.push(new CampaignExpenditure); this.requestUpdate() }}
 					></mo-icon-button>
 				`}
 
