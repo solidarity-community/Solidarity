@@ -62,7 +62,9 @@ export class CampaignSlider extends Component {
 			`}
 			${when(!this.readOnly, () => html`
 				<mo-fab icon='add' right='8px' @click=${() => this.create()}>Add</mo-fab>
-				<mo-fab icon='delete' left='8px' @click=${() => this.deleteSelectedMedia()}>Delete</mo-fab>
+				${when(!!this.campaign.media.length, () => html`
+					<mo-fab icon='delete' left='8px' @click=${() => this.deleteSelectedMedia()}>Delete</mo-fab>
+				`)}
 			`)}
 		`
 	}

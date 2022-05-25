@@ -4,10 +4,7 @@ import { GeometryCollection } from 'geojson'
 
 @component('solid-dialog-campaign')
 export class DialogCampaign extends DialogComponent<undefined | { readonly id: number }, Campaign> {
-	@state() private campaign: Campaign = {
-		media: [],
-		expenditures: []
-	}
+	@state() private campaign = new Campaign
 
 	protected override async initialized() {
 		if (this.parameters?.id) {
@@ -36,7 +33,7 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 						@selectedAreaChange=${(e: CustomEvent<GeometryCollection>) => this.campaign.location = e.detail}
 					></solid-map>
 
-					<solid-section-campaign-expenditure editable .expenditures=${this.campaign.expenditures}></solid-section-campaign-expenditure>
+					<solid-section-campaign-expenditure editable .campaign=${this.campaign}></solid-section-campaign-expenditure>
 				</mo-flex>
 			</mo-dialog>
 		`

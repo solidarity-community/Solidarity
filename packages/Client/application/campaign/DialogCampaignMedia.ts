@@ -11,7 +11,7 @@ export class DialogCampaignMedia extends DialogComponent<{ readonly campaign?: C
 
 	protected override get template() {
 		return html`
-			<mo-dialog heading='Add Media'>
+			<mo-dialog heading='Add Media' primaryButtonText=${this.mediaType === undefined ? 'Continue' : 'Save'}>
 				${cache(this.contentTemplate)}
 			</mo-dialog>
 		`
