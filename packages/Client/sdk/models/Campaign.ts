@@ -8,7 +8,7 @@ export class Campaign extends Model {
 	location?: GeometryCollection
 	creator?: Account
 	completion?: string
-	donationChannels?: Array<CampaignDonationChannel>
+	donationChannels = new Array<CampaignDonationChannel>()
 	media = new Array<CampaignMedia>()
 	validationId?: number
 	validation?: Validation

@@ -31,10 +31,6 @@ public class CampaignService : CrudService<Campaign>
 		}
 
 		campaign.Completion = null;
-		campaign.DonationChannels = _paymentMethodProvider
-			.GetAll()
-			.Select(pm => new DonationChannel { PaymentMethodIdentifier = pm.Identifier })
-			.ToList();
 		await base.Create(campaign);
 		return campaign.WithoutAuthenticationData();
 	}
@@ -55,6 +51,7 @@ public class CampaignService : CrudService<Campaign>
 
 		entity.Media = campaign.Media;
 		entity.Expenditures = campaign.Expenditures;
+		entity.DonationChannels = campaign.DonationChannels;
 		return (await base.Update(campaign)).WithoutAuthenticationData();
 	}
 }

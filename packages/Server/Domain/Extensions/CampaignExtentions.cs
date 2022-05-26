@@ -5,7 +5,6 @@ public static class CampaignExtentions
 	public static Campaign WithoutAuthenticationData(this Campaign campaign)
 	{
 		campaign.Validation?.WithoutAuthenticationData();
-		campaign.Creator?.WithoutAuthenticationData();
 		return campaign;
 	}
 

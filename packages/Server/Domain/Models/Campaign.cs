@@ -2,8 +2,6 @@
 
 public class Campaign : Model
 {
-	public Account? Creator { get; set; }
-
 	[MaxLength(50), Required(ErrorMessage = "Title cannot be empty")]
 	public string Title { get; set; } = string.Empty;
 

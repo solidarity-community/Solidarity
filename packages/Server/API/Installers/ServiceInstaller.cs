@@ -11,5 +11,6 @@ public class ServiceInstaller : IInstaller
 		services.AddTransient<HandshakeService>();
 		services.AddTransient<FileService>();
 		services.AddTransient<CampaignMediaService>();
+		services.AddTransient<PaymentMethodService>();
 	}
 }

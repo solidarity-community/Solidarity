@@ -16,7 +16,7 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 			<mo-dialog heading='Donate'>
 				<mo-flex>
 					<mo-list>
-						${this.parameters.campaign.donationChannels?.map(donationChannel => html`
+						${this.parameters.campaign.donationChannels.map(donationChannel => html`
 							<mo-list-item>
 								<img slot='graphic' src=${donationChannel.logoSource} />
 								${donationChannel.paymentMethodIdentifier}

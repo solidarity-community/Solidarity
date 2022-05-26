@@ -35,7 +35,7 @@ public class DatabaseContext : DbContext, IDatabase
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.Entity<Account>(a => a.HasIndex(e => e.Username).IsUnique());
-		modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne(c => c.Creator);
+		modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne().HasForeignKey(c => c.CreatorId);
 		modelBuilder.Entity<Account>().HasMany(a => a.Votes).WithOne(v => v.Account);
 
 		modelBuilder.Entity<Domain.Models.Identity>().HasOne(i => i.Account).WithOne();

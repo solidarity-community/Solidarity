@@ -1,4 +1,4 @@
-import { API, Campaign } from 'sdk'
+import { API, Campaign, PaymentMethodService, CampaignDonationChannel } from 'sdk'
 
 export class CampaignService {
 	static get(id: number) {
@@ -9,7 +9,11 @@ export class CampaignService {
 		return API.get<Array<Campaign>>('/campaign')
 	}
 
-	static save(campaign: Campaign) {
+	static async save(campaign: Campaign, includeAllDonationChannels = false) {
+		if (includeAllDonationChannels) {
+			const paymentMethodIdentifiers = await PaymentMethodService.getAllIdentifiers()
+			campaign.donationChannels = paymentMethodIdentifiers.map(identifier => new CampaignDonationChannel(identifier))
+		}
 		return campaign.id
 			? API.put<Campaign>(`/campaign/${campaign.id}`, campaign)
 			: API.post<Campaign>('/campaign', campaign)

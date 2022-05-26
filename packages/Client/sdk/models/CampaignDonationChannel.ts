@@ -1,11 +1,7 @@
-import { Campaign, Model, model } from 'sdk'
+import { Campaign, model } from 'sdk'
+import { DonationChannel } from './DonationChannel'
 
 @model('CampaignDonationChannel')
-export class CampaignDonationChannel extends Model {
-	campaign!: Campaign
-	paymentMethodIdentifier!: string
-
-	get logoSource() {
-		return `/assets/payment-methods/${this.paymentMethodIdentifier.toLowerCase()}.svg`
-	}
+export class CampaignDonationChannel extends DonationChannel {
+	readonly campaign!: Campaign
 }
