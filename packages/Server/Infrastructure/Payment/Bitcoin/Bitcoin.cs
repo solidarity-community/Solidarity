@@ -33,12 +33,21 @@ public abstract class Bitcoin : PaymentMethod
 		_extendedPrivateKey = new BitcoinExtKey(Key, _client.Network);
 	}
 
+	public override void EnsureChannelCreated(int channelId)
+	{
+		var address = GetAddress(channelId);
+		_client.ImportAddress(address);
+	}
+
 	public override PaymentChannel GetChannel(int channelId)
 	{
-		var bip44NetworkType = _client.Network == Network.Main ? "0" : "1";
-		var key = _extendedPrivateKey.Derive(new KeyPath($"m/44'/{bip44NetworkType}'/0'/0/{channelId}")).PrivateKey;
-		var address = key.PubKey.GetAddress(ScriptPubKeyType.Legacy, _client.Network);
-		_client.ImportAddress(address);
+		var key = GetKey(channelId);
 		return new BitcoinChannel(key, _client);
 	}
+
+	private Key GetKey(int channelId)
+		=> _extendedPrivateKey.Derive(new KeyPath($"m/44'/{(_client.Network == Network.Main ? 0 : 1)}'/0'/0/{channelId}")).PrivateKey;
+
+	private BitcoinAddress GetAddress(int channelId)
+		=> GetKey(channelId).PubKey.GetAddress(ScriptPubKeyType.Legacy, _client.Network);
 }

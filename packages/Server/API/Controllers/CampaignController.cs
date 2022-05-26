@@ -5,7 +5,7 @@ public class CampaignController : ControllerBase
 {
 	private readonly CampaignService _campaignService;
 
-	public CampaignController(CampaignService campainService) => _campaignService = campainService;
+	public CampaignController(CampaignService campaignService) => _campaignService = campaignService;
 
 	[HttpGet, AllowAnonymous]
 	public async Task<ActionResult<IEnumerable<Campaign>>> GetAll() => Ok(await _campaignService.GetAll());

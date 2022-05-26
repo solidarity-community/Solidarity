@@ -2,6 +2,7 @@ namespace Solidarity.Infrastructure.Payment;
 
 public abstract class PaymentMethod
 {
+	public abstract void EnsureChannelCreated(int channelId);
 	public abstract PaymentChannel GetChannel(int channelId);
 
 	protected readonly IDatabase _database;

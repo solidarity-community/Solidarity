@@ -1,4 +1,4 @@
-import { component, PageComponent, html, route, PageError, HttpErrorCode, DialogAuthenticator, nothing, DialogAlert } from '@3mo/model'
+import { component, PageComponent, html, route, PageError, HttpErrorCode, DialogAuthenticator, nothing, DialogAlert, state } from '@3mo/model'
 import { Task, TaskStatus } from '@lit-labs/task'
 import { DialogDonate } from 'application'
 import { CampaignService } from 'sdk'
@@ -16,6 +16,8 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 		}
 	}, () => [])
 
+	@state() private balance = 0
+
 	private get campaign() {
 		return this.fetchCampaignTask.value
 	}
@@ -32,9 +34,12 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 					complete: campaign => html`
 						<mo-flex direction='horizontal' alignItems='center' gap='10px'>
 							<mo-flex width='*' alignItems='center'>
-								<solid-donation-progress width='*' .campaign=${campaign}></solid-donation-progress>
+								<solid-donation-progress width='*'
+									.campaign=${campaign}
+									@balanceChange=${(e: CustomEvent<number>) => this.balance = e.detail}
+								></solid-donation-progress>
 								<mo-div>Fund Raised</mo-div>
-								<mo-div>${0.002} / ${campaign.totalExpenditure}</mo-div>
+								<mo-div>${this.balance} / ${campaign.totalExpenditure}</mo-div>
 							</mo-flex>
 
 							<mo-flex width='*' alignItems='center'>

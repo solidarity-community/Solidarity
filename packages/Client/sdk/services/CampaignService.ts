@@ -9,6 +9,10 @@ export class CampaignService {
 		return API.get<Array<Campaign>>('/campaign')
 	}
 
+	static getBalance(campaignId: number) {
+		return API.get<number>(`/campaign/${campaignId}/balance`)
+	}
+
 	static async save(campaign: Campaign, includeAllDonationChannels = false) {
 		if (includeAllDonationChannels) {
 			const paymentMethodIdentifiers = await PaymentMethodService.getAllIdentifiers()

@@ -17,33 +17,30 @@ public class BitcoinChannel : PaymentChannel
 		_client = client;
 	}
 
-	public override Task<decimal> GetBalance()
+	public override async Task<decimal> GetBalance()
 	{
-		var utxos = _client.ListUnspent(0, int.MaxValue, _address).ToList();
-		return Task.FromResult(GetUTxOs(_address)
+		var utxos = await GetUTxOs(_address);
+		return utxos
 			.Select(utxo => utxo.Amount)
-			.Aggregate(
-				seed: Money.Zero,
-				func: (a, b) => a + b
-			).ToDecimal(MoneyUnit.Satoshi)
-		);
+			.Aggregate(Money.Zero, (a, b) => a + b)
+			.ToDecimal(MoneyUnit.Satoshi);
 	}
 
-	public override Task Transfer(string destination, decimal amount)
+	public override async Task Transfer(string destination, decimal amount)
 	{
 		var destinationAddress = BitcoinAddress.Create(destination, Network.Main);
 		var builder = _client.Network.CreateTransactionBuilder();
-		var utxos = GetUTxOs(_address);
+		var utxos = await GetUTxOs(_address);
 		utxos.ForEach(utxo => builder.AddCoins(utxo.AsCoin()));
 		var feeRate = _client.TryEstimateSmartFee((int)Speed).FeeRate;
 		builder.AddKeys(_privateKey).SendEstimatedFeesSplit(feeRate).SendAll(destinationAddress);
 		var transaction = builder.BuildTransaction(true);
 		_client.SendRawTransaction(transaction);
-		return Task.CompletedTask;
 	}
 
-	private List<UnspentCoin> GetUTxOs(BitcoinAddress address)
+	private async Task<List<UnspentCoin>> GetUTxOs(BitcoinAddress address)
 	{
-		return _client.ListUnspent(0, int.MaxValue, address).ToList();
+		var utxos = await _client.ListUnspentAsync(0, int.MaxValue, address);
+		return utxos.ToList();
 	}
 }
