@@ -14,7 +14,7 @@ public class DatabaseInstaller : IInstaller
 				? "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Solidarity;Integrated Security=True;"
 				: $"Server={server};Initial Catalog=Solidarity;User ID={user};Password={password};";
 
-			options.UseSqlServer(connectionString, x => x.UseNetTopologySuite());
+			options.UseSqlServer(connectionString, options => options.UseNetTopologySuite());
 		});
 	}
 }

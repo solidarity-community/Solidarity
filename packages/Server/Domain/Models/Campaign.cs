@@ -20,7 +20,7 @@ public class Campaign : Model
 
 	public long TotalExpenditure => Expenditures.Sum(e => e.TotalPrice);
 
-	public List<DonationChannel> DonationChannels { get; set; } = new();
+	public List<CampaignDonationChannel> DonationChannels { get; set; } = new();
 
 	public int? ValidationId { get; set; }
 

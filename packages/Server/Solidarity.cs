@@ -95,6 +95,7 @@ public static class ConfigurationExtensions
 		application.ConfigureExceptionHandler();
 		application.UseEndpoints(endpoints => endpoints.MapControllers());
 		application.UseSwagger();
+		application.Services.GetRequiredService<IDatabase>().Initialize();
 		return application;
 	}
 }

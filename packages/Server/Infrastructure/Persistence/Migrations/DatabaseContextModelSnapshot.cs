@@ -146,6 +146,40 @@ namespace Solidarity.Migrations
                     b.ToTable("Campaigns");
                 });
 
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignDonationChannel", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentMethodIdentifier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CampaignId");
+
+                    b.ToTable("CampaignDonationChannels");
+                });
+
             modelBuilder.Entity("Solidarity.Domain.Models.CampaignExpenditure", b =>
                 {
                     b.Property<int>("Id")
@@ -221,40 +255,6 @@ namespace Solidarity.Migrations
                     b.HasIndex("CampaignId");
 
                     b.ToTable("CampaignMedia");
-                });
-
-            modelBuilder.Entity("Solidarity.Domain.Models.DonationChannel", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("CampaignId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Creation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("LastModification")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("LastModifierId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PaymentMethodIdentifier")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CampaignId");
-
-                    b.ToTable("DonationChannels");
                 });
 
             modelBuilder.Entity("Solidarity.Domain.Models.Handshake", b =>
@@ -466,6 +466,17 @@ namespace Solidarity.Migrations
                     b.Navigation("Validation");
                 });
 
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignDonationChannel", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Campaign", "Campaign")
+                        .WithMany("DonationChannels")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Campaign");
+                });
+
             modelBuilder.Entity("Solidarity.Domain.Models.CampaignExpenditure", b =>
                 {
                     b.HasOne("Solidarity.Domain.Models.Campaign", null)
@@ -482,17 +493,6 @@ namespace Solidarity.Migrations
                         .HasForeignKey("CampaignId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("Solidarity.Domain.Models.DonationChannel", b =>
-                {
-                    b.HasOne("Solidarity.Domain.Models.Campaign", "Campaign")
-                        .WithMany("DonationChannels")
-                        .HasForeignKey("CampaignId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Campaign");
                 });
 
             modelBuilder.Entity("Solidarity.Domain.Models.Handshake", b =>

@@ -4,13 +4,13 @@ public class DatabaseContext : DbContext, IDatabase
 {
 	private readonly ICurrentUserService _currentUserService;
 
-	public DatabaseContext(DbContextOptions<DatabaseContext> options, ICurrentUserService currentUserService) : base(options)
+	public DatabaseContext(DbContextOptions<DatabaseContext> options, ICurrentUserService currentUserService) : base(options) => _currentUserService = currentUserService;
+
+	public void Initialize()
 	{
-		_currentUserService = currentUserService;
 		if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
 		{
 			Database.Migrate();
-			// DatabaseSeeder.Seed(this);
 		}
 	}
 
@@ -20,11 +20,11 @@ public class DatabaseContext : DbContext, IDatabase
 	public DbSet<Handshake> Handshakes { get; set; } = null!;
 	public DbSet<Campaign> Campaigns { get; set; } = null!;
 	public DbSet<CampaignMedia> CampaignMedia { get; set; } = null!;
+	public DbSet<CampaignDonationChannel> CampaignDonationChannels { get; set; } = null!;
+	public DbSet<CampaignExpenditure> CampaignExpenditures { get; set; } = null!;
 	public DbSet<Validation> Validations { get; set; } = null!;
 	public DbSet<Vote> Votes { get; set; } = null!;
-	public DbSet<DonationChannel> DonationChannels { get; set; } = null!;
 	public DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; } = null!;
-	public DbSet<CampaignExpenditure> CampaignExpenditures { get; set; } = null!;
 
 	public DbSet<TEntity> GetSet<TEntity>() where TEntity : class => Set<TEntity>();
 	public EntityEntry GetEntry(object entity) => Entry(entity);
