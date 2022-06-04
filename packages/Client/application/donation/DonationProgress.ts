@@ -38,7 +38,7 @@ export class DonationProgress extends Progress {
 	}
 
 	protected get progress() { return this.balance / this.campaign.totalExpenditure }
-	protected get progressTemplate() { return `${this.progress * 100} %` }
+	protected get progressTemplate() { return `${(this.progress * 100).toFixed()} %` }
 
 	protected override get template() {
 		return !this.campaign ? nothing : super.template

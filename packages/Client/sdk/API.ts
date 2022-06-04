@@ -85,7 +85,7 @@ export class API {
 	private static construct<T>(data: any, isChild = false): T {
 		data = isChild ? data : { ROOT: data }
 		const response = !data || typeof data !== 'object' ? data : Object.assign(
-			new data.constructor,
+			data,
 			Object.fromEntries(
 				Object.entries(data).map(([key, value]) => [
 					key,
@@ -99,14 +99,14 @@ export class API {
 	private static deconstruct<T>(data: T, isChild = false): any {
 		data = (isChild ? data : { ROOT: data }) as T
 		const response = !data || typeof data !== 'object' ? data : Object.assign(
-			new (data as any).constructor,
+			data,
 			Object.fromEntries(
 				Object.entries(data).map(([key, value]) => [
 					key,
 					API.deconstruct([...API.valueConstructors].find(converter => converter.shallDeconstruct?.(value) ?? false)?.deconstruct?.(value) ?? value, true)
 				])
 			)
-		)
+		) as any
 		return isChild ? response as T : response.ROOT
 	}
 }

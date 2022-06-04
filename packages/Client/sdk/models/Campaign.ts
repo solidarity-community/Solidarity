@@ -7,7 +7,8 @@ export class Campaign extends Model {
 	description?: string
 	location?: GeometryCollection
 	creator?: Account
-	completion?: string
+	targetDate!: MoDate
+	completion?: MoDate
 	donationChannels = new Array<CampaignDonationChannel>()
 	media = new Array<CampaignMedia>()
 	validationId?: number
@@ -20,5 +21,13 @@ export class Campaign extends Model {
 
 	get totalExpenditure() {
 		return this.expenditures.map(e => e.totalPrice).reduce((a, acc) => a + acc, 0)
+	}
+
+	get remainingTimePercentage() {
+		const now = new MoDate
+		const untilTargetDate = now.until(this.targetDate)
+		const sinceCreation = now.since(this.creation)
+		return untilTargetDate.milliseconds /
+			(sinceCreation.milliseconds + untilTargetDate.milliseconds)
 	}
 }

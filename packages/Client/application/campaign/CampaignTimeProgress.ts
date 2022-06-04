@@ -6,10 +6,8 @@ import { Progress } from 'application'
 export class CampaignTimeProgress extends Progress {
 	@property({ type: Object }) campaign!: Campaign
 
-	private endDate = new MoDate().add({ hours: 1, minutes: 1 })
-
-	protected get progress() { return 0.35 }
-	protected get progressTemplate() { return html`<solid-timer .end=${this.endDate}></solid-timer>` }
+	protected get progress() { return this.campaign.remainingTimePercentage }
+	protected get progressTemplate() { return html`<solid-timer .end=${this.campaign.targetDate}></solid-timer>` }
 
 	protected override get template() {
 		return !this.campaign ? nothing : super.template

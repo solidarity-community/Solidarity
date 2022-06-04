@@ -11,6 +11,7 @@ export abstract class Progress extends Component {
 				width: 75px;
 				height: 75px;
 				aspect-ratio: 1 / 1;
+				--mdc-circular-progress-track-color: var(--mo-color-transparent-gray-3);
 			}
 
 			mo-div {
@@ -19,6 +20,7 @@ export abstract class Progress extends Component {
 				top: 50%;
 				transform: translate(-50%, -50%);
 				white-space: nowrap;
+				text-align: center;
 			}
 
 			mo-circular-progress {

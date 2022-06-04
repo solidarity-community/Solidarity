@@ -2,13 +2,13 @@
 
 public class Campaign : Model
 {
-	[MaxLength(50), Required(ErrorMessage = "Title cannot be empty")]
-	public string Title { get; set; } = string.Empty;
+	[MaxLength(50)] public string Title { get; set; } = string.Empty;
 
-	[Required(ErrorMessage = "Description cannot be empty")]
 	public string Description { get; set; } = null!;
 
 	public Geometry Location { get; set; } = null!;
+
+	public DateTime TargetDate { get; set; }
 
 	public DateTime? Completion { get; set; }
 

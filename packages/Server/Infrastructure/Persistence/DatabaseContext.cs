@@ -3,14 +3,37 @@
 public class DatabaseContext : DbContext, IDatabase
 {
 	private readonly ICurrentUserService _currentUserService;
+	private readonly ILogger _logger;
 
-	public DatabaseContext(DbContextOptions<DatabaseContext> options, ICurrentUserService currentUserService) : base(options) => _currentUserService = currentUserService;
+	public DatabaseContext(DbContextOptions<DatabaseContext> options, ICurrentUserService currentUserService, ILogger<DatabaseContext> logger) : base(options)
+	{
+		_currentUserService = currentUserService;
+		_logger = logger;
+	}
 
 	public void Initialize()
 	{
-		if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+		_logger.LogInformation(@"Initializing database with the provider name ""{providerName}""", Database.ProviderName);
+
+		var migrations = Database.GetAppliedMigrations();
+
+		if (migrations.Any() == false)
 		{
-			Database.Migrate();
+			_logger.LogInformation("No applied database migrations found. Recreating database");
+			Database.EnsureDeleted();
+			Database.EnsureCreated();
+		}
+
+		try
+		{
+			if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
+			{
+				Database.Migrate();
+			}
+		}
+		finally
+		{
+			Database.EnsureCreated();
 		}
 	}
 

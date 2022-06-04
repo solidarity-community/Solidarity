@@ -27,6 +27,11 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 								@change=${(e: CustomEvent<string>) => campaign.title = e.detail}
 							></mo-field-text>
 
+							<mo-field-date label='Target Date'
+								.value=${campaign.targetDate}
+								@change=${(e: CustomEvent<MoDate>) => campaign.targetDate = e.detail}
+							></mo-field-date>
+
 							<mo-field-text-area label='Description'
 								value=${campaign.description ?? ''}
 								@change=${(e: CustomEvent<string>) => campaign.description = e.detail}

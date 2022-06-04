@@ -45,7 +45,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 							<mo-flex width='*' alignItems='center'>
 								<solid-campaign-time-progress width='*' .campaign=${campaign}></solid-campaign-time-progress>
 								<mo-div>Time Remaining</mo-div>
-								<mo-div><solid-timer .end=${new MoDate().addMonth(1)}></solid-timer></mo-div>
+								<mo-div><solid-timer .end=${campaign.targetDate}></solid-timer></mo-div>
 							</mo-flex>
 
 							<mo-flex width='*' direction='horizontal' gap='10px' justifyContent='flex-end'>
