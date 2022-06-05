@@ -5,7 +5,7 @@ public abstract class Bitcoin : PaymentMethod
 	private readonly RPCClient _client;
 	private readonly BitcoinExtKey _extendedPrivateKey;
 
-	public Bitcoin(Network network, IDatabase database) : base(database)
+	public Bitcoin(Network network, IDatabase database, ICurrentUserService currentUserService) : base(database, currentUserService)
 	{
 		if (network != Network.Main && network != Network.TestNet)
 		{
@@ -46,7 +46,7 @@ public abstract class Bitcoin : PaymentMethod
 	}
 
 	private Key GetKey(int channelId)
-		=> _extendedPrivateKey.Derive(new KeyPath($"m/44'/{(_client.Network == Network.Main ? 0 : 1)}'/0'/0/{channelId}")).PrivateKey;
+		=> _extendedPrivateKey.Derive(new KeyPath($"m/44'/{(_client.Network == Network.Main ? 0 : 1)}'/0'/{channelId}/{_currentUserService.Id ?? 0}")).PrivateKey;
 
 	private BitcoinAddress GetAddress(int channelId)
 		=> GetKey(channelId).PubKey.GetAddress(ScriptPubKeyType.Legacy, _client.Network);

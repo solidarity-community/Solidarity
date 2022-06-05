@@ -6,7 +6,12 @@ public abstract class PaymentMethod
 	public abstract PaymentChannel GetChannel(int channelId);
 
 	protected readonly IDatabase _database;
-	public PaymentMethod(IDatabase database) => _database = database;
+	protected readonly ICurrentUserService _currentUserService;
+	public PaymentMethod(IDatabase database, ICurrentUserService currentUserService)
+	{
+		_database = database;
+		_currentUserService = currentUserService;
+	}
 
 	public string Identifier =>
 		(GetType().GetCustomAttributes(typeof(PaymentMethodAttribute), true).First() as PaymentMethodAttribute)?.Identifier!;
