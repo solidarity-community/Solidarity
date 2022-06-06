@@ -2,9 +2,11 @@
 
 public class AccountTest
 {
-	[Fact]
-	public void App_Is_Sane()
+	[Theory(DisplayName = "Should lowercase the username in setter")]
+	[InlineData("Username", "username")]
+	public void TestUsername(string username, string expected)
 	{
-		Assert.True(true);
+		Account account = new() { Username = username };
+		Assert.Equal(expected, account.Username);
 	}
 }
