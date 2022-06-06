@@ -6,12 +6,11 @@ public class PaymentMethodProvider : IPaymentMethodProvider
 
 	public PaymentMethodProvider(IServiceProvider serviceProvider)
 	{
-		var enabledPaymentMethods = Environment.GetEnvironmentVariable("PAYMENT_METHODS")?.Split(',');
+		var enabledPaymentMethods = Environment.GetEnvironmentVariable("PAYMENT_METHODS")?.Split(',').Select(x => x.Trim());
 		_paymentMethods = typeof(PaymentMethod).Assembly
 			.GetTypes()
-			.Where(t => t.IsSubclassOf(typeof(PaymentMethod)) && t.GetCustomAttribute<PaymentMethodAttribute>() != null)
-			.Select(t => (PaymentMethod)ActivatorUtilities.CreateInstance(serviceProvider, t))
-			.Where(p => enabledPaymentMethods?.Contains(p.Identifier) ?? false);
+			.Where(t => t.IsSubclassOf(typeof(PaymentMethod)) && t.GetCustomAttribute<PaymentMethodAttribute>() is PaymentMethodAttribute paymentAttribute && enabledPaymentMethods?.Contains(paymentAttribute.Identifier) == true)
+			.Select(t => (PaymentMethod)ActivatorUtilities.CreateInstance(serviceProvider, t));
 	}
 
 	public IEnumerable<PaymentMethod> GetAll() => _paymentMethods;

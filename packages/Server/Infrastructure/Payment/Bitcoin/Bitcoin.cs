@@ -9,20 +9,15 @@ public abstract class Bitcoin : PaymentMethod
 	{
 		if (network != Network.Main && network != Network.TestNet)
 		{
-			throw new NotImplementedException();
+			throw new NotImplementedException("Only Bitcoin Mainnet and Testnet networks are supported");
 		}
 
 		var server = Environment.GetEnvironmentVariable($"PAYMENT_METHOD_{Identifier}_SERVER");
 		var username = Environment.GetEnvironmentVariable($"PAYMENT_METHOD_{Identifier}_USERNAME");
 		var password = Environment.GetEnvironmentVariable($"PAYMENT_METHOD_{Identifier}_PASSWORD");
-
 		_client = new(
-			new RPCCredentialString
-			{
-				Server = server,
-				UserPassword = new NetworkCredential(username, password),
-			},
-			network
+			network: network,
+			credentials: new() { Server = server, UserPassword = new(username, password) }
 		);
 
 		if (Key is null)
@@ -33,16 +28,17 @@ public abstract class Bitcoin : PaymentMethod
 		_extendedPrivateKey = new BitcoinExtKey(Key, _client.Network);
 	}
 
-	public override void EnsureChannelCreated(int channelId)
+	public override async Task EnsureChannelCreated(int channelId)
 	{
 		var address = GetAddress(channelId);
-		_client.ImportAddress(address);
+		await _client.ImportAddressAsync(address);
 	}
 
-	public override PaymentChannel GetChannel(int channelId)
+	public override Task<PaymentChannel> GetChannel(int channelId)
 	{
 		var key = GetKey(channelId);
-		return new BitcoinChannel(key, _client);
+		var channel = new BitcoinChannel(key, _client);
+		return Task.FromResult(channel as PaymentChannel);
 	}
 
 	private Key GetKey(int channelId)

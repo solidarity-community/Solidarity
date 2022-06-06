@@ -3,5 +3,5 @@
 public class PaymentMethodsInstaller : IInstaller
 {
 	public void Install(IServiceCollection services)
-		=> services.AddScoped<IPaymentMethodProvider, PaymentMethodProvider>();
+		=> services.AddTransient<IPaymentMethodProvider, PaymentMethodProvider>();
 }

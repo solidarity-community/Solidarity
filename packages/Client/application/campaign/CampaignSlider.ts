@@ -53,7 +53,7 @@ export class CampaignSlider extends Component {
 		return html`
 			${!this.campaign.media?.length ? html`
 				<mo-error icon='collections' height='100%'>
-					No media found
+					No media
 				</mo-error>
 			` : html`
 				<lit-slider hasPagination hasNavigation>
