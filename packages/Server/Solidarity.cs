@@ -40,6 +40,7 @@ global using System.Text;
 global using System.Reflection;
 global using Xunit;
 global using System.Text.RegularExpressions;
+global using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using NetTopologySuite.IO;
 

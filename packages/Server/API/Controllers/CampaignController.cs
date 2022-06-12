@@ -16,6 +16,10 @@ public class CampaignController : ControllerBase
 	[HttpGet("{id}/balance"), AllowAnonymous]
 	public async Task<ActionResult<decimal>> GetBalance([FromRoute] int id) => Ok(await _campaignService.GetBalance(id));
 
+	[HttpGet("{id}/donation-data"), AllowAnonymous]
+	public async Task<ActionResult<decimal>> GetDonationData([FromRoute] int id)
+		=> Ok(await _campaignService.GetDonationData(id));
+
 	[HttpPost]
 	public async Task<ActionResult<Campaign>> Create([FromBody] Campaign campaign)
 		=> Ok(await _campaignService.Create(campaign));

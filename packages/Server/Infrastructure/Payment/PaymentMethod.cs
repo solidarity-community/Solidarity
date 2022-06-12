@@ -2,16 +2,8 @@ namespace Solidarity.Infrastructure.Payment;
 
 public abstract class PaymentMethod
 {
-	public abstract Task EnsureChannelCreated(int channelId);
-	public abstract Task<PaymentChannel> GetChannel(int channelId);
-
 	protected readonly IDatabase _database;
-	protected readonly ICurrentUserService _currentUserService;
-	public PaymentMethod(IDatabase database, ICurrentUserService currentUserService)
-	{
-		_database = database;
-		_currentUserService = currentUserService;
-	}
+	public PaymentMethod(IDatabase database) => _database = database;
 
 	public string Identifier =>
 		(GetType().GetCustomAttributes(typeof(PaymentMethodAttribute), true).First() as PaymentMethodAttribute)?.Identifier!;
@@ -39,4 +31,8 @@ public abstract class PaymentMethod
 			_database.CommitChanges();
 		}
 	}
+
+	public abstract Task<decimal> GetBalance(Campaign campaign, Account? account);
+	public abstract Task<string> GetDonationData(Campaign campaign, Account? account);
+	public abstract Task Withdraw(Campaign campaign, string destination, decimal amount);
 }

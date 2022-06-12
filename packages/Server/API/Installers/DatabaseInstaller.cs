@@ -11,8 +11,8 @@ public class DatabaseInstaller : IInstaller
 			var password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD");
 
 			var connectionString = server is null || user is null || password is null
-				? "Data Source=localhost\\SQLEXPRESS;Initial Catalog=Solidarity;Integrated Security=True;"
-				: $"Server={server};Initial Catalog=Solidarity;User ID={user};Password={password};";
+				? "Data Source=localhost\\SQLEXPRESS;Database=Solidarity;Integrated Security=True;"
+				: $"Server={server};User ID={user};Database=Solidarity;Password={password};";
 
 			options.UseSqlServer(connectionString, options => options
 				.EnableRetryOnFailure(10)

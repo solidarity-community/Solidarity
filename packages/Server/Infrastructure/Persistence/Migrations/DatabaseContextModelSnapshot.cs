@@ -11,559 +11,558 @@ using Solidarity.Infrastructure.Persistence;
 
 namespace Solidarity.Migrations
 {
-	[DbContext(typeof(DatabaseContext))]
-	partial class DatabaseContextModelSnapshot : ModelSnapshot
-	{
-		protected override void BuildModel(ModelBuilder modelBuilder)
-		{
+    [DbContext(typeof(DatabaseContext))]
+    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    {
+        protected override void BuildModel(ModelBuilder modelBuilder)
+        {
 #pragma warning disable 612, 618
-			modelBuilder
-				.HasAnnotation("ProductVersion", "6.0.3")
-				.HasAnnotation("Relational:MaxIdentifierLength", 128);
+            modelBuilder
+                .HasAnnotation("ProductVersion", "6.0.3")
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-			SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Account", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int");
+            modelBuilder.Entity("Solidarity.Domain.Models.Account", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-					SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.Property<string>("PublicKey")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("PublicKey")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<string>("Username")
-						.IsRequired()
-						.HasColumnType("nvarchar(450)");
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-					b.HasKey("Id");
+                    b.HasKey("Id");
 
-					b.HasIndex("Username")
-						.IsUnique();
+                    b.HasIndex("Username")
+                        .IsUnique();
 
-					b.ToTable("Accounts");
-				});
+                    b.ToTable("Accounts");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.AuthenticationMethod", b =>
-				{
-					b.Property<int>("AccountId")
-						.HasColumnType("int");
+            modelBuilder.Entity("Solidarity.Domain.Models.AuthenticationMethod", b =>
+                {
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
-					b.Property<int>("Type")
-						.HasColumnType("int");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
-					b.Property<int>("Salt")
-						.HasColumnType("int");
+                    b.Property<int>("Salt")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<string>("Data")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("Data")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<int>("Id")
-						.HasColumnType("int");
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.HasKey("AccountId", "Type", "Salt");
+                    b.HasKey("AccountId", "Type", "Salt");
 
-					b.ToTable("AuthenticationMethods");
+                    b.ToTable("AuthenticationMethods");
 
-					b.HasDiscriminator<int>("Type");
-				});
+                    b.HasDiscriminator<int>("Type");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int");
+            modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-					SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-					b.Property<DateTime?>("Completion")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime?>("Completion")
+                        .HasColumnType("datetime2");
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<string>("Description")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.Property<Geometry>("Location")
-						.IsRequired()
-						.HasColumnType("geography");
+                    b.Property<Geometry>("Location")
+                        .IsRequired()
+                        .HasColumnType("geography");
 
-					b.Property<DateTime>("TargetDate")
-						.IsRequired()
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("TargetDate")
+                        .HasColumnType("datetime2");
 
-					b.Property<string>("Title")
-						.IsRequired()
-						.HasMaxLength(50)
-						.HasColumnType("nvarchar(50)");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-					b.Property<int?>("ValidationId")
-						.HasColumnType("int");
+                    b.Property<int?>("ValidationId")
+                        .HasColumnType("int");
 
-					b.HasKey("Id");
+                    b.HasKey("Id");
 
-					b.HasIndex("CreatorId");
+                    b.HasIndex("CreatorId");
 
-					b.HasIndex("ValidationId")
-						.IsUnique()
-						.HasFilter("[ValidationId] IS NOT NULL");
+                    b.HasIndex("ValidationId")
+                        .IsUnique()
+                        .HasFilter("[ValidationId] IS NOT NULL");
 
-					b.ToTable("Campaigns");
-				});
+                    b.ToTable("Campaigns");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.CampaignDonationChannel", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int");
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignExpenditure", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-					SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-					b.Property<int>("CampaignId")
-						.HasColumnType("int");
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.Property<string>("PaymentMethodIdentifier")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-					b.HasKey("Id");
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
-					b.HasIndex("CampaignId");
+                    b.Property<long>("UnitPrice")
+                        .HasColumnType("bigint");
 
-					b.ToTable("CampaignDonationChannels");
-				});
+                    b.HasKey("Id");
 
-			modelBuilder.Entity("Solidarity.Domain.Models.CampaignExpenditure", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int");
+                    b.HasIndex("CampaignId");
 
-					SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    b.ToTable("CampaignExpenditures");
+                });
 
-					b.Property<int>("CampaignId")
-						.HasColumnType("int");
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignMedia", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<string>("Name")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<int>("Quantity")
-						.HasColumnType("int");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.Property<long>("UnitPrice")
-						.HasColumnType("bigint");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
-					b.HasKey("Id");
+                    b.Property<string>("Uri")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-					b.HasIndex("CampaignId");
+                    b.HasKey("Id");
 
-					b.ToTable("CampaignExpenditures");
-				});
+                    b.HasIndex("CampaignId");
 
-			modelBuilder.Entity("Solidarity.Domain.Models.CampaignMedia", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int");
+                    b.ToTable("CampaignMedia");
+                });
 
-					SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignPaymentMethod", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-					b.Property<int>("CampaignId")
-						.HasColumnType("int");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    b.Property<int>("CampaignId")
+                        .HasColumnType("int");
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<string>("Identifier")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<int>("Type")
-						.HasColumnType("int");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<string>("Uri")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.HasKey("Id");
+                    b.HasKey("Id");
 
-					b.HasIndex("CampaignId");
+                    b.HasIndex("CampaignId");
 
-					b.ToTable("CampaignMedia");
-				});
+                    b.ToTable("CampaignPaymentMethods");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Handshake", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int");
+            modelBuilder.Entity("Solidarity.Domain.Models.Handshake", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-					SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-					b.Property<int>("AccountId")
-						.HasColumnType("int");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("Expiration")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Expiration")
+                        .HasColumnType("datetime2");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.Property<string>("Phrase")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("Phrase")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-					b.HasKey("Id");
+                    b.HasKey("Id");
 
-					b.HasIndex("AccountId");
+                    b.HasIndex("AccountId");
 
-					b.ToTable("Handshakes");
-				});
+                    b.ToTable("Handshakes");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Identity", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int");
+            modelBuilder.Entity("Solidarity.Domain.Models.Identity", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-					SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-					b.Property<int>("AccountId")
-						.HasColumnType("int");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
-					b.Property<DateTime?>("BirthDate")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime?>("BirthDate")
+                        .HasColumnType("datetime2");
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<string>("FirstName")
-						.IsRequired()
-						.HasMaxLength(50)
-						.HasColumnType("nvarchar(50)");
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.Property<string>("LastName")
-						.IsRequired()
-						.HasMaxLength(50)
-						.HasColumnType("nvarchar(50)");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-					b.HasKey("Id");
+                    b.HasKey("Id");
 
-					b.HasIndex("AccountId")
-						.IsUnique();
+                    b.HasIndex("AccountId")
+                        .IsUnique();
 
-					b.ToTable("Identities");
-				});
+                    b.ToTable("Identities");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.PaymentMethodKey", b =>
-				{
-					b.Property<string>("PaymentMethodIdentifier")
-						.HasColumnType("nvarchar(450)");
+            modelBuilder.Entity("Solidarity.Domain.Models.PaymentMethodKey", b =>
+                {
+                    b.Property<string>("PaymentMethodIdentifier")
+                        .HasColumnType("nvarchar(450)");
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<int>("Id")
-						.HasColumnType("int");
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
-					b.Property<string>("Key")
-						.IsRequired()
-						.HasColumnType("nvarchar(max)");
+                    b.Property<string>("Key")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.HasKey("PaymentMethodIdentifier");
+                    b.HasKey("PaymentMethodIdentifier");
 
-					b.ToTable("PaymentMethodKeys");
-				});
+                    b.ToTable("PaymentMethodKeys");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Validation", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int");
+            modelBuilder.Entity("Solidarity.Domain.Models.Validation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-					SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("Expiration")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Expiration")
+                        .HasColumnType("datetime2");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.HasKey("Id");
+                    b.HasKey("Id");
 
-					b.ToTable("Validations");
-				});
+                    b.ToTable("Validations");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Vote", b =>
-				{
-					b.Property<int>("Id")
-						.ValueGeneratedOnAdd()
-						.HasColumnType("int");
+            modelBuilder.Entity("Solidarity.Domain.Models.Vote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-					SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
-					b.Property<int>("AccountId")
-						.HasColumnType("int");
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("Creation")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("CreatorId")
-						.HasColumnType("int");
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
 
-					b.Property<DateTime>("LastModification")
-						.HasColumnType("datetime2");
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
 
-					b.Property<int?>("LastModifierId")
-						.HasColumnType("int");
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
 
-					b.Property<int>("ValidationId")
-						.HasColumnType("int");
+                    b.Property<int>("ValidationId")
+                        .HasColumnType("int");
 
-					b.Property<bool>("Value")
-						.HasColumnType("bit");
+                    b.Property<bool>("Value")
+                        .HasColumnType("bit");
 
-					b.HasKey("Id");
+                    b.HasKey("Id");
 
-					b.HasIndex("AccountId");
+                    b.HasIndex("AccountId");
 
-					b.HasIndex("ValidationId");
+                    b.HasIndex("ValidationId");
 
-					b.ToTable("Votes");
-				});
+                    b.ToTable("Votes");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.PasswordAuthentication", b =>
-				{
-					b.HasBaseType("Solidarity.Domain.Models.AuthenticationMethod");
+            modelBuilder.Entity("Solidarity.Domain.Models.PasswordAuthentication", b =>
+                {
+                    b.HasBaseType("Solidarity.Domain.Models.AuthenticationMethod");
 
-					b.HasDiscriminator().HasValue(0);
-				});
+                    b.HasDiscriminator().HasValue(0);
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.AuthenticationMethod", b =>
-				{
-					b.HasOne("Solidarity.Domain.Models.Account", "Account")
-						.WithMany("AuthenticationMethods")
-						.HasForeignKey("AccountId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
+            modelBuilder.Entity("Solidarity.Domain.Models.AuthenticationMethod", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Account", "Account")
+                        .WithMany("AuthenticationMethods")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-					b.Navigation("Account");
-				});
+                    b.Navigation("Account");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
-				{
-					b.HasOne("Solidarity.Domain.Models.Account", null)
-						.WithMany("Campaigns")
-						.HasForeignKey("CreatorId");
+            modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Account", null)
+                        .WithMany("Campaigns")
+                        .HasForeignKey("CreatorId");
 
-					b.HasOne("Solidarity.Domain.Models.Validation", "Validation")
-						.WithOne("Campaign")
-						.HasForeignKey("Solidarity.Domain.Models.Campaign", "ValidationId");
+                    b.HasOne("Solidarity.Domain.Models.Validation", "Validation")
+                        .WithOne("Campaign")
+                        .HasForeignKey("Solidarity.Domain.Models.Campaign", "ValidationId");
 
-					b.Navigation("Validation");
-				});
+                    b.Navigation("Validation");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.CampaignDonationChannel", b =>
-				{
-					b.HasOne("Solidarity.Domain.Models.Campaign", "Campaign")
-						.WithMany("DonationChannels")
-						.HasForeignKey("CampaignId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignExpenditure", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Campaign", null)
+                        .WithMany("Expenditures")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
-					b.Navigation("Campaign");
-				});
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignMedia", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Campaign", null)
+                        .WithMany("Media")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.CampaignExpenditure", b =>
-				{
-					b.HasOne("Solidarity.Domain.Models.Campaign", null)
-						.WithMany("Expenditures")
-						.HasForeignKey("CampaignId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
-				});
+            modelBuilder.Entity("Solidarity.Domain.Models.CampaignPaymentMethod", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Campaign", "Campaign")
+                        .WithMany("ActivatedPaymentMethods")
+                        .HasForeignKey("CampaignId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-			modelBuilder.Entity("Solidarity.Domain.Models.CampaignMedia", b =>
-				{
-					b.HasOne("Solidarity.Domain.Models.Campaign", null)
-						.WithMany("Media")
-						.HasForeignKey("CampaignId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
-				});
+                    b.Navigation("Campaign");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Handshake", b =>
-				{
-					b.HasOne("Solidarity.Domain.Models.Account", "Account")
-						.WithMany()
-						.HasForeignKey("AccountId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
+            modelBuilder.Entity("Solidarity.Domain.Models.Handshake", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-					b.Navigation("Account");
-				});
+                    b.Navigation("Account");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Identity", b =>
-				{
-					b.HasOne("Solidarity.Domain.Models.Account", "Account")
-						.WithOne()
-						.HasForeignKey("Solidarity.Domain.Models.Identity", "AccountId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
+            modelBuilder.Entity("Solidarity.Domain.Models.Identity", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Account", "Account")
+                        .WithOne()
+                        .HasForeignKey("Solidarity.Domain.Models.Identity", "AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-					b.Navigation("Account");
-				});
+                    b.Navigation("Account");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Vote", b =>
-				{
-					b.HasOne("Solidarity.Domain.Models.Account", "Account")
-						.WithMany("Votes")
-						.HasForeignKey("AccountId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
+            modelBuilder.Entity("Solidarity.Domain.Models.Vote", b =>
+                {
+                    b.HasOne("Solidarity.Domain.Models.Account", "Account")
+                        .WithMany("Votes")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-					b.HasOne("Solidarity.Domain.Models.Validation", "Validation")
-						.WithMany("Votes")
-						.HasForeignKey("ValidationId")
-						.OnDelete(DeleteBehavior.Cascade)
-						.IsRequired();
+                    b.HasOne("Solidarity.Domain.Models.Validation", "Validation")
+                        .WithMany("Votes")
+                        .HasForeignKey("ValidationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-					b.Navigation("Account");
+                    b.Navigation("Account");
 
-					b.Navigation("Validation");
-				});
+                    b.Navigation("Validation");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Account", b =>
-				{
-					b.Navigation("AuthenticationMethods");
+            modelBuilder.Entity("Solidarity.Domain.Models.Account", b =>
+                {
+                    b.Navigation("AuthenticationMethods");
 
-					b.Navigation("Campaigns");
+                    b.Navigation("Campaigns");
 
-					b.Navigation("Votes");
-				});
+                    b.Navigation("Votes");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
-				{
-					b.Navigation("DonationChannels");
+            modelBuilder.Entity("Solidarity.Domain.Models.Campaign", b =>
+                {
+                    b.Navigation("ActivatedPaymentMethods");
 
-					b.Navigation("Expenditures");
+                    b.Navigation("Expenditures");
 
-					b.Navigation("Media");
-				});
+                    b.Navigation("Media");
+                });
 
-			modelBuilder.Entity("Solidarity.Domain.Models.Validation", b =>
-				{
-					b.Navigation("Campaign")
-						.IsRequired();
+            modelBuilder.Entity("Solidarity.Domain.Models.Validation", b =>
+                {
+                    b.Navigation("Campaign")
+                        .IsRequired();
 
-					b.Navigation("Votes");
-				});
+                    b.Navigation("Votes");
+                });
 #pragma warning restore 612, 618
-		}
-	}
+        }
+    }
 }

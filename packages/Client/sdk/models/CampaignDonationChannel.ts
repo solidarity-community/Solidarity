@@ -1,7 +1,8 @@
 import { Campaign, model } from 'sdk'
-import { DonationChannel } from './DonationChannel'
+import { PaymentMethod, PaymentMethodIdentifier } from './PaymentMethod'
 
-@model('CampaignDonationChannel')
-export class CampaignDonationChannel extends DonationChannel {
+@model('CampaignPaymentMethod')
+export class CampaignPaymentMethod extends PaymentMethod {
+	override readonly identifier!: PaymentMethodIdentifier
 	readonly campaign!: Campaign
 }

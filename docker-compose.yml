@@ -9,7 +9,6 @@ services:
       -server
       -printtoconsole=1
       -maxuploadtarget=5000
-      -disablewallet=0
       -txindex=0
       -prune=10000
       -dbcache=1024
@@ -21,7 +20,7 @@ services:
     ports:
       - "8333:8333"
     volumes:
-      - ~/bitcoin-mainnet:/home/bitcoin/.bitcoin
+      - ~/solidarity/bitcoin-mainnet:/home/bitcoin/.bitcoin
 
   crypto_bitcoin_testnet:
     container_name: solidarity_crypto_bitcoin_testnet
@@ -32,7 +31,6 @@ services:
       -server
       -printtoconsole=1
       -maxuploadtarget=5000
-      -disablewallet=0
       -txindex=0
       -prune=10000
       -dbcache=1024
@@ -44,7 +42,7 @@ services:
     ports:
       - "18333:18333"
     volumes:
-      - ~/bitcoin-testnet:/home/bitcoin/.bitcoin
+      - ~/solidarity/bitcoin-testnet:/home/bitcoin/.bitcoin
 
   database:
     container_name: solidarity_database
@@ -53,13 +51,18 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Dev_Passw0rd
+      - MSSQL_SA_PASSWORD=Dev_Passw0rd
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
+    # volumes:
+      # - "~/solidarity/database:/var/opt/mssql"
 
   server:
     container_name: solidarity_server
     restart: always
+    depends_on:
+      - solidarity_database
     build:
       context: ./packages/Server
     ports: 
@@ -84,6 +87,8 @@ services:
   client:
     container_name: solidarity_client
     restart: always
+    depends_on:
+      - solidarity_server
     build:
       context: ./packages/Client
     ports:

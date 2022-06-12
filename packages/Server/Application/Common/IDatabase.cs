@@ -15,7 +15,7 @@ public interface IDatabase
 	DbSet<Campaign> Campaigns { get; set; }
 	DbSet<Validation> Validations { get; set; }
 	DbSet<Vote> Votes { get; set; }
-	DbSet<CampaignDonationChannel> CampaignDonationChannels { get; set; }
+	DbSet<CampaignPaymentMethod> CampaignPaymentMethods { get; set; }
 	DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; }
 	DbSet<CampaignMedia> CampaignMedia { get; set; }
 	DbSet<CampaignExpenditure> CampaignExpenditures { get; set; }

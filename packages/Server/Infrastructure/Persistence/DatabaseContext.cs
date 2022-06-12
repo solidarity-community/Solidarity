@@ -15,25 +15,17 @@ public class DatabaseContext : DbContext, IDatabase
 	{
 		_logger.LogInformation(@"Initializing database with the provider name ""{providerName}""", Database.ProviderName);
 
-		var migrations = Database.GetAppliedMigrations();
-
-		if (migrations.Any() == false)
+		var reset = false;
+		if (reset)
 		{
-			_logger.LogInformation("No applied database migrations found. Recreating database");
 			Database.EnsureDeleted();
-			Database.EnsureCreated();
 		}
 
-		try
+		Database.EnsureCreated();
+
+		if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
 		{
-			if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
-			{
-				Database.Migrate();
-			}
-		}
-		finally
-		{
-			Database.EnsureCreated();
+			Database.Migrate();
 		}
 	}
 
@@ -43,10 +35,10 @@ public class DatabaseContext : DbContext, IDatabase
 	public DbSet<Handshake> Handshakes { get; set; } = null!;
 	public DbSet<Campaign> Campaigns { get; set; } = null!;
 	public DbSet<CampaignMedia> CampaignMedia { get; set; } = null!;
-	public DbSet<CampaignDonationChannel> CampaignDonationChannels { get; set; } = null!;
 	public DbSet<CampaignExpenditure> CampaignExpenditures { get; set; } = null!;
 	public DbSet<Validation> Validations { get; set; } = null!;
 	public DbSet<Vote> Votes { get; set; } = null!;
+	public DbSet<CampaignPaymentMethod> CampaignPaymentMethods { get; set; } = null!;
 	public DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; } = null!;
 
 	public DbSet<TEntity> GetSet<TEntity>() where TEntity : class => Set<TEntity>();
@@ -73,7 +65,7 @@ public class DatabaseContext : DbContext, IDatabase
 		modelBuilder.Entity<Campaign>().HasOne(c => c.Validation).WithOne(v => v.Campaign);
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Media).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Expenditures).WithOne();
-		modelBuilder.Entity<Campaign>().HasMany(c => c.DonationChannels).WithOne(dc => dc.Campaign);
+		modelBuilder.Entity<Campaign>().HasMany(c => c.ActivatedPaymentMethods).WithOne(pm => pm.Campaign);
 
 		modelBuilder.Entity<PaymentMethodKey>().HasKey(pmk => pmk.PaymentMethodIdentifier);
 

@@ -18,7 +18,7 @@ public class Campaign : Model
 
 	public long TotalExpenditure => Expenditures.Sum(e => e.TotalPrice);
 
-	public List<CampaignDonationChannel> DonationChannels { get; set; } = new();
+	public List<CampaignPaymentMethod> ActivatedPaymentMethods { get; set; } = new();
 
 	public int? ValidationId { get; set; }
 

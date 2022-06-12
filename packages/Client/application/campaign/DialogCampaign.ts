@@ -1,13 +1,13 @@
 import { component, DialogComponent, html, state, Task } from '@3mo/model'
-import { Campaign, CampaignDonationChannel, CampaignService, DonationChannelService } from 'sdk'
+import { Campaign, CampaignPaymentMethod, CampaignService, PaymentMethodService } from 'sdk'
 import { GeometryCollection } from 'geojson'
 
 @component('solid-dialog-campaign')
 export class DialogCampaign extends DialogComponent<undefined | { readonly id: number }, Campaign> {
 	private campaignTask = new Task(this, async () => !this.parameters?.id ? new Campaign : await CampaignService.get(this.parameters.id), () => [])
 
-	private donationChannelsTask = new Task(this, DonationChannelService.getAll, () => [])
-	private get donationChannels() { return this.donationChannelsTask.value }
+	private paymentMethodsTask = new Task(this, PaymentMethodService.getAll, () => [])
+	private get paymentMethods() { return this.paymentMethodsTask.value }
 
 	@state() private includeAllDonationChannels = !this.parameters?.id
 
@@ -50,12 +50,12 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 									@change=${(e: CustomEvent<CheckboxValue>) => this.includeAllDonationChannels = e.detail === 'checked'}
 								></mo-checkbox>
 
-								${this.donationChannels?.map(donationChannel => html`
+								${this.paymentMethods?.map(pm => html`
 									<mo-checkbox
 										?disabled=${this.includeAllDonationChannels}
-										label=${donationChannel.name || donationChannel.paymentMethodIdentifier}
-										?checked=${campaign.donationChannels.some(dc => dc.paymentMethodIdentifier === donationChannel.paymentMethodIdentifier) || this.includeAllDonationChannels}
-										@change=${(e: CustomEvent<CheckboxValue>) => campaign.donationChannels = e.detail === 'checked' ? [...campaign.donationChannels, new CampaignDonationChannel(donationChannel.paymentMethodIdentifier)] : campaign.donationChannels.filter(dc => dc.paymentMethodIdentifier !== donationChannel.paymentMethodIdentifier)}
+										label=${pm.name || pm.identifier}
+										?checked=${campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier) || this.includeAllDonationChannels}
+										@change=${(e: CustomEvent<CheckboxValue>) => campaign.activatedPaymentMethods = e.detail === 'checked' ? [...campaign.activatedPaymentMethods, new CampaignPaymentMethod(pm.identifier)] : campaign.activatedPaymentMethods.filter(dc => dc.identifier !== pm.identifier)}
 									></mo-checkbox>
 								`)}
 							</mo-section>
