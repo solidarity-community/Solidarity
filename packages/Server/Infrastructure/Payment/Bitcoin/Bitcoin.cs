@@ -39,13 +39,61 @@ public abstract class Bitcoin : PaymentMethod
 		_client.EnsureWalletCreated().GetAwaiter().GetResult();
 	}
 
-	public Key DeriveKey(Campaign campaign, Account? account)
+	public override async Task<string> GetDonationData(Campaign campaign, Account? account)
 	{
-		var keyPath = GetKeyPathFor(campaign, account);
+		var address = await DeriveAddress(campaign, account);
+		return address.ToString();
+	}
+
+	public override async Task<decimal> GetBalance(Campaign campaign, Account? account)
+	{
+		var utxos = await GetUTxOs(campaign, account);
+		return utxos?.Select(utxo => utxo.Amount)
+			.Aggregate(Money.Zero, (a, b) => a + b)
+			.ToDecimal(MoneyUnit.Satoshi) ?? 0m;
+	}
+
+	public override async Task Refund(Campaign campaign, Account? account)
+	{
+		var utxos = await GetUTxOs(campaign, account);
+
+		if (utxos.Any() == false)
+		{
+			return;
+		}
+
+		var feeRate = await GetFeeRate();
+		await _client.Network.CreateTransactionBuilder()
+			.AddKeys(_extendedPrivateKey)
+			.RefundUTxOs(utxos)
+			.SendEstimatedFeesSplit(feeRate)
+			.BuildTransaction(sign: true)
+			.SendAsync(_client);
+	}
+
+	public override async Task Allocate(Campaign campaign, string destination)
+	{
+		var destinationAddress = BitcoinAddress.Create(destination, _client.Network);
+		var utxos = await GetUTxOs(campaign, null);
+		var feeRate = await GetFeeRate();
+		await _client.Network.CreateTransactionBuilder()
+			.AddKeys(_extendedPrivateKey)
+			.AddUTxOs(utxos)
+			.SendEstimatedFeesSplit(feeRate)
+			.SendAll(destinationAddress)
+			.BuildTransaction(sign: true)
+			.SendAsync(_client);
+	}
+
+	private async Task<FeeRate> GetFeeRate() => (await _client.TryEstimateSmartFeeAsync((int)Speed)).FeeRate;
+
+	private Key DeriveKey(Campaign campaign, Account? account)
+	{
+		var keyPath = new KeyPath($"m/44'/{CoinTypeByNetwork.TryGet(_client.Network)}'/0'/{campaign.Id}/{account?.Id ?? 0}");
 		return _extendedPrivateKey.Derive(keyPath).PrivateKey;
 	}
 
-	public async Task<BitcoinAddress> DeriveAddress(Campaign campaign, Account? account)
+	private async Task<BitcoinAddress> DeriveAddress(Campaign campaign, Account? account)
 	{
 		var key = DeriveKey(campaign, account);
 		var address = key.PubKey.GetAddress(ScriptPubKeyType.Legacy, _client.Network);
@@ -53,56 +101,31 @@ public abstract class Bitcoin : PaymentMethod
 		return address;
 	}
 
-	public override async Task<decimal> GetBalance(Campaign campaign, Account? account)
-	{
-		if (account is not null)
-		{
-			var address = await DeriveAddress(campaign, account);
-			var utxos = await GetUTxOs(address);
-			return AggregateUTxOs(utxos);
-		}
-		else
-		{
-			var publicBalanceTask = GetUTxOs(await DeriveAddress(campaign, null));
-			var accountsBalanceTask = Task.WhenAll(_database.Accounts.ToList().Select(a => GetBalance(campaign, a)));
-			await Task.WhenAll(publicBalanceTask, accountsBalanceTask);
-
-			var publicBalance = AggregateUTxOs(publicBalanceTask.Result);
-			var accountsBalance = accountsBalanceTask.Result.Sum();
-
-			return publicBalance + accountsBalance;
-		}
-	}
-
-	public async Task<UnspentCoin[]> GetUTxOs(BitcoinAddress address)
+	private async Task<UnspentCoin[]> GetUTxOs(BitcoinAddress address)
 	{
 		return await _client.ListUnspentAsync(0, int.MaxValue, address);
 	}
 
-	public override async Task Withdraw(Campaign campaign, string destination, decimal amount)
+	private async Task<UnspentCoin[]> GetUTxOs(Campaign campaign, Account? account)
 	{
-		var sourceAddress = await DeriveAddress(campaign, null); // false address
-		var destinationAddress = _extendedPrivateKey.GetPublicKey().GetAddress(ScriptPubKeyType.Legacy, _client.Network);
-		var builder = _client.Network.CreateTransactionBuilder();
-		var utxos = await GetUTxOs(sourceAddress);
-		utxos.ToList().ForEach(utxo => builder.AddCoins(utxo.AsCoin()));
-		var feeRate = _client.TryEstimateSmartFee((int)Speed).FeeRate;
-		builder.AddKeys(_extendedPrivateKey).SendEstimatedFeesSplit(feeRate).SendAll(destinationAddress);
-		var transaction = builder.BuildTransaction(true);
-		_client.SendRawTransaction(transaction);
+		if (account is not null)
+		{
+			var address = await DeriveAddress(campaign, account);
+			return await GetUTxOs(address);
+		}
+		else
+		{
+			var accounts = await _database.Accounts.ToListAsync();
+
+			var publicUTxOsTask = GetUTxOs(await DeriveAddress(campaign, null));
+			var accountsUTxOsTask = Task.WhenAll(accounts.Select(a => GetUTxOs(campaign, a)));
+
+			await Task.WhenAll(publicUTxOsTask, accountsUTxOsTask);
+
+			var publicUTxOs = publicUTxOsTask.Result;
+			var accountsUTxOs = accountsUTxOsTask.Result.SelectMany(a => a).ToArray();
+
+			return publicUTxOs.Concat(accountsUTxOs).ToArray();
+		}
 	}
-
-	public override async Task<string> GetDonationData(Campaign campaign, Account? account)
-	{
-		var address = await DeriveAddress(campaign, account);
-		return address.ToString();
-	}
-
-	public KeyPath GetKeyPathFor(Campaign campaign, Account? account)
-		=> new($"m/44'/{CoinTypeByNetwork.TryGet(_client.Network)}'/0'/{campaign.Id}/{account?.Id ?? 0}");
-
-	private decimal AggregateUTxOs(IEnumerable<UnspentCoin> utxos)
-		=> utxos?.Select(utxo => utxo.Amount)
-			.Aggregate(Money.Zero, (a, b) => a + b)
-			.ToDecimal(MoneyUnit.Satoshi) ?? 0;
 }

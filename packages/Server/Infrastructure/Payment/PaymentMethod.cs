@@ -32,7 +32,8 @@ public abstract class PaymentMethod
 		}
 	}
 
-	public abstract Task<decimal> GetBalance(Campaign campaign, Account? account);
 	public abstract Task<string> GetDonationData(Campaign campaign, Account? account);
-	public abstract Task Withdraw(Campaign campaign, string destination, decimal amount);
+	public abstract Task<decimal> GetBalance(Campaign campaign, Account? account);
+	public abstract Task Refund(Campaign campaign, Account? account);
+	public abstract Task Allocate(Campaign campaign, string destination);
 }

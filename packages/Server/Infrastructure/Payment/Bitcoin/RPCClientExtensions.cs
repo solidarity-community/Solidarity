@@ -20,4 +20,27 @@ public static class RPCClientExtensions
 		}
 		finally { IsWalletLoaded = true; }
 	}
+
+	public static TransactionBuilder AddUTxOs(this TransactionBuilder txBuilder, UnspentCoin[] utxos)
+	{
+		foreach (var utxo in utxos)
+		{
+			txBuilder.AddCoin(utxo.AsCoin());
+		}
+		return txBuilder;
+	}
+
+	public static TransactionBuilder RefundUTxOs(this TransactionBuilder txBuilder, UnspentCoin[] utxos)
+	{
+		foreach (var utxo in utxos)
+		{
+			txBuilder.AddCoin(utxo.AsCoin()).Send(utxo.Address, utxo.Amount);
+		}
+		return txBuilder;
+	}
+
+	public static Task<uint256> SendAsync(this Transaction transaction, RPCClient client)
+	{
+		return client.SendRawTransactionAsync(transaction);
+	}
 }

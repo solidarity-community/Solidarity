@@ -7,7 +7,7 @@ export class CampaignTimeProgress extends Progress {
 	@property({ type: Object }) campaign!: Campaign
 
 	protected get progress() { return this.campaign.remainingTimePercentage }
-	protected get progressTemplate() { return html`<solid-timer .end=${this.campaign.targetDate}></solid-timer>` }
+	protected get progressTemplate() { return html`<solid-timer .end=${this.campaign.targetAllocationDate}></solid-timer>` }
 
 	protected override get template() {
 		return !this.campaign ? nothing : super.template

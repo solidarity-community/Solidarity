@@ -108,10 +108,10 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 			</li>
 			${this.isPublicDonation ? nothing : html`
 				<li>
-					<span>Verify</span> this campaign's activities until the target date <b>${FormatHelper.date(this.parameters.campaign.targetDate)}</b>.
+					<span>Verify</span> this campaign's activities until the target allocation date <b>${FormatHelper.date(this.parameters.campaign.targetAllocationDate)}</b>.
 				</li>
 				<li>
-					<span>Vote</span> in favor or against the integrity of this campaign to help allocating or refunding donations on <b>${FormatHelper.date(this.parameters.campaign.targetDate)}</b>.
+					<span>Vote</span> in favor or against the integrity of this campaign to help allocating or refunding donations on <b>${FormatHelper.date(this.parameters.campaign.targetAllocationDate)}</b>.
 				</li>
 			`}
 		`

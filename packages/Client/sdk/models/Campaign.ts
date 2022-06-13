@@ -1,14 +1,18 @@
 import { Model, Account, Validation, CampaignPaymentMethod, CampaignMedia, CampaignExpenditure, model, CampaignMediaType } from 'sdk'
 import { GeometryCollection } from 'geojson'
 
+export enum CampaignStatus { Funding, Allocation, Complete }
+
 @model('Campaign')
 export class Campaign extends Model {
 	title?: string
 	description?: string
+	readonly status!: CampaignStatus
 	location?: GeometryCollection
 	creator?: Account
-	targetDate!: MoDate
-	completion?: MoDate
+	targetAllocationDate!: MoDate
+	completionDate?: MoDate
+	allocationDate?: MoDate
 	activatedPaymentMethods = new Array<CampaignPaymentMethod>()
 	media = new Array<CampaignMedia>()
 	validationId?: number
@@ -25,7 +29,7 @@ export class Campaign extends Model {
 
 	get remainingTimePercentage() {
 		const now = new MoDate
-		const untilTargetDate = now.until(this.targetDate)
+		const untilTargetDate = now.until(this.targetAllocationDate)
 		const sinceCreation = now.since(this.creation)
 		return untilTargetDate.milliseconds /
 			(sinceCreation.milliseconds + untilTargetDate.milliseconds)

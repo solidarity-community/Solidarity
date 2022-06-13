@@ -9,7 +9,7 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 	private paymentMethodsTask = new Task(this, PaymentMethodService.getAll, () => [])
 	private get paymentMethods() { return this.paymentMethodsTask.value }
 
-	@state() private includeAllDonationChannels = !this.parameters?.id
+	@state() private includeAllPaymentMethods = !this.parameters?.id
 
 	protected override get template() {
 		return html`
@@ -27,9 +27,9 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 								@change=${(e: CustomEvent<string>) => campaign.title = e.detail}
 							></mo-field-text>
 
-							<mo-field-date label='Target Date'
-								.value=${campaign.targetDate}
-								@change=${(e: CustomEvent<MoDate>) => campaign.targetDate = e.detail}
+							<mo-field-date label='Target Allocation Date'
+								.value=${campaign.targetAllocationDate}
+								@change=${(e: CustomEvent<MoDate>) => campaign.targetAllocationDate = e.detail}
 							></mo-field-date>
 
 							<mo-field-text-area label='Description'
@@ -44,17 +44,17 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 								@selectedAreaChange=${(e: CustomEvent<GeometryCollection>) => campaign.location = e.detail}
 							></solid-map>
 
-							<mo-section heading='Donation channels'>
-								<mo-checkbox slot='action' label='Include all'
-									?checked=${this.includeAllDonationChannels}
-									@change=${(e: CustomEvent<CheckboxValue>) => this.includeAllDonationChannels = e.detail === 'checked'}
+							<mo-section heading='Donation methods'>
+								<mo-checkbox slot='action' label='Activate all'
+									?checked=${this.includeAllPaymentMethods}
+									@change=${(e: CustomEvent<CheckboxValue>) => this.includeAllPaymentMethods = e.detail === 'checked'}
 								></mo-checkbox>
 
 								${this.paymentMethods?.map(pm => html`
 									<mo-checkbox
-										?disabled=${this.includeAllDonationChannels}
+										?disabled=${this.includeAllPaymentMethods}
 										label=${pm.name || pm.identifier}
-										?checked=${campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier) || this.includeAllDonationChannels}
+										?checked=${campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier) || this.includeAllPaymentMethods}
 										@change=${(e: CustomEvent<CheckboxValue>) => campaign.activatedPaymentMethods = e.detail === 'checked' ? [...campaign.activatedPaymentMethods, new CampaignPaymentMethod(pm.identifier)] : campaign.activatedPaymentMethods.filter(dc => dc.identifier !== pm.identifier)}
 									></mo-checkbox>
 								`)}
@@ -68,5 +68,5 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 		`
 	}
 
-	protected override primaryButtonAction = () => CampaignService.save(this.campaignTask.value!, this.includeAllDonationChannels)
+	protected override primaryButtonAction = () => CampaignService.save(this.campaignTask.value!, this.includeAllPaymentMethods)
 }

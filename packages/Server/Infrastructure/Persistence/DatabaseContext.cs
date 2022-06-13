@@ -25,6 +25,7 @@ public class DatabaseContext : DbContext, IDatabase
 
 		if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
 		{
+			_logger.LogInformation("Migrating database");
 			Database.Migrate();
 		}
 	}

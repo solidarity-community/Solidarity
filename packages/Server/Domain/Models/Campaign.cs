@@ -1,16 +1,27 @@
 ﻿namespace Solidarity.Domain.Models;
 
+public enum CampaignStatus { Funding, Allocation, Complete }
+
 public class Campaign : Model
 {
 	[MaxLength(50)] public string Title { get; set; } = string.Empty;
 
 	public string Description { get; set; } = null!;
 
+	public CampaignStatus Status => (AllocationDate, CompletionDate) switch
+	{
+		(not null, null) => CampaignStatus.Allocation,
+		(not null, not null) => CampaignStatus.Complete,
+		_ => CampaignStatus.Funding
+	};
+
 	public Geometry Location { get; set; } = null!;
 
-	public DateTime TargetDate { get; set; }
+	public DateTime TargetAllocationDate { get; set; }
 
-	public DateTime? Completion { get; set; }
+	public DateTime? AllocationDate { get; set; }
+
+	public DateTime? CompletionDate { get; set; }
 
 	public List<CampaignMedia> Media { get; set; } = new();
 

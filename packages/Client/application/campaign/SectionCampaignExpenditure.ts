@@ -47,10 +47,8 @@ export class SectionCampaignExpenditure extends Component {
 							value=${expenditure.unitPrice * expenditure.quantity}
 						></solid-amount>
 					`)}
-					<mo-div class='total' gridColumn='1 / -2'>Sum</mo-div>
-					<solid-amount class='total sum price'
-						value=${this.campaign.totalExpenditure}
-					></solid-amount>
+					<mo-div class='total' gridColumn='1 / -2'>Total</mo-div>
+					<solid-amount class='total sum price' value=${this.campaign.totalExpenditure}></solid-amount>
 				</mo-grid>
 			</mo-section>
 		`

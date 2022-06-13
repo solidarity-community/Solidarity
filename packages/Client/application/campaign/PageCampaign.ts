@@ -1,7 +1,7 @@
-import { component, PageComponent, html, route, PageError, HttpErrorCode, DialogAuthenticator, nothing, DialogAlert, state } from '@3mo/model'
+import { component, PageComponent, html, route, PageError, HttpErrorCode, DialogAuthenticator, nothing, DialogAlert, state, DialogDefault, DialogAcknowledge } from '@3mo/model'
 import { Task, TaskStatus } from '@lit-labs/task'
 import { DialogDonate } from 'application'
-import { CampaignService } from 'sdk'
+import { CampaignService, CampaignStatus } from 'sdk'
 import { DialogCampaign, PageCampaigns } from '.'
 
 @route('/campaign/:id')
@@ -38,23 +38,29 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 									.campaign=${campaign}
 									@balanceChange=${(e: CustomEvent<number>) => this.balance = e.detail}
 								></solid-donation-progress>
-								<mo-div>Fund Raised</mo-div>
+								<mo-div foreground='var(--mo-color-gray)'>Fund Raised</mo-div>
 								<mo-div>${this.balance} / ${campaign.totalExpenditure}</mo-div>
 							</mo-flex>
 
 							<mo-flex width='*' alignItems='center'>
 								<solid-campaign-time-progress width='*' .campaign=${campaign}></solid-campaign-time-progress>
-								<mo-div>Time Remaining</mo-div>
-								<mo-div><solid-timer .end=${campaign.targetDate}></solid-timer></mo-div>
+								<mo-div foreground='var(--mo-color-gray)'>Target Allocation Date</mo-div>
+								<mo-div><solid-timer .end=${campaign.targetAllocationDate}></solid-timer></mo-div>
 							</mo-flex>
 
 							<mo-flex width='*' direction='horizontal' gap='10px' justifyContent='flex-end'>
 								<mo-button icon='share' @click=${() => this.share()}>Share</mo-button>
 
 								<mo-button icon='volunteer_activism'
+									?hidden=${this.campaign?.status !== CampaignStatus.Funding}
 									type=${DialogAuthenticator.authenticatedUser.value ? 'normal' : 'raised'}
 									@click=${() => !this.fetchCampaignTask.value ? void 0 : new DialogDonate({ campaign: this.fetchCampaignTask.value }).confirm()}
 								>Donate</mo-button>
+
+								<mo-button icon='how_to_vote'
+									?hidden=${this.campaign?.status !== CampaignStatus.Allocation}
+									type=${DialogAuthenticator.authenticatedUser.value ? 'normal' : 'raised'}
+								>Vote</mo-button>
 
 								${this.manageButtonTemplate}
 							</mo-flex>
@@ -85,6 +91,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 		return !DialogAuthenticator.authenticatedUser.value ? nothing : html`
 			<mo-split-button>
 				<mo-button icon='manage_accounts' @click=${this.edit}>Manage</mo-button>
+				<mo-list-item slot='more' ?disabled=${this.campaign?.status !== CampaignStatus.Funding} icon='how_to_vote' @click=${this.declareAllocationPhase}>Declare Allocation Phase</mo-list-item>
 				<mo-list-item slot='more' icon='edit' @click=${this.edit}>Edit</mo-list-item>
 				<mo-list-item slot='more' icon='delete' @click=${this.delete}>Delete</mo-list-item>
 			</mo-split-button>
@@ -98,6 +105,21 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 				text: this.campaign.description,
 				url: window.location.href
 			})
+		}
+	}
+
+	private async declareAllocationPhase() {
+		if (this.campaign?.id) {
+			const acknowledged = await new DialogAcknowledge({
+				heading: 'Declare Allocation Phase',
+				content: 'Are you sure you want to declare the allocation phase? This action cannot be undone. All donors will be notified of the change to initiate the voting.',
+				primaryButtonText: 'Proceed',
+				secondaryButtonText: 'Cancel',
+			}).confirm()
+			if (acknowledged) {
+				await CampaignService.declareAllocationPhase(this.campaign.id)
+				await this.fetchCampaignTask.run()
+			}
 		}
 	}
 

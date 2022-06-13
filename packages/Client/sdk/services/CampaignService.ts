@@ -10,8 +10,6 @@ export class CampaignService {
 	}
 
 	static getBalance(campaignId: number) {
-		CampaignService.getShare(campaignId).then(console.log)
-
 		return API.get<number>(`/campaign/${campaignId}/balance`)
 	}
 
@@ -22,6 +20,14 @@ export class CampaignService {
 	static async getDonationData(campaignId: number) {
 		const response = await API.get<Record<PaymentMethodIdentifier, string>>(`/campaign/${campaignId}/donation-data`)
 		return new Map(Object.entries(response)) as Map<PaymentMethodIdentifier, string>
+	}
+
+	static async declareAllocationPhase(campaignId: number) {
+		await API.post(`/campaign/${campaignId}/declare-allocation-phase`)
+	}
+
+	static async allocate(campaignId: number, destinationByPaymentMethodIdentifier: Map<string, string>) {
+		await API.post(`/campaign/${campaignId}/allocate`, destinationByPaymentMethodIdentifier)
 	}
 
 	static async save(campaign: Campaign, includeAllDonationChannels = false) {
