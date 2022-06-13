@@ -121,7 +121,7 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 				${this.isPublicDonation ? html`
 					<mo-div><span>Public</span> donation</mo-div>
 				` : html`
-					<mo-div>Donation for <span>${this.fetchCurrentAccountTask.value!.username}</span></mo-div>
+					<mo-div>Donate as <span>${this.fetchCurrentAccountTask.value!.username}</span></mo-div>
 				`}
 			</mo-flex>
 

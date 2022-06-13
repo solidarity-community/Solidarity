@@ -1,6 +1,6 @@
 namespace Solidarity.Infrastructure.Payment;
 
-public abstract class PaymentMethod
+public abstract class PaymentMethod : IHealthCheck
 {
 	protected readonly IDatabase _database;
 	public PaymentMethod(IDatabase database) => _database = database;
@@ -32,6 +32,7 @@ public abstract class PaymentMethod
 		}
 	}
 
+	public abstract Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default);
 	public abstract Task<string> GetDonationData(Campaign campaign, Account? account);
 	public abstract Task<decimal> GetBalance(Campaign campaign, Account? account);
 	public abstract Task Refund(Campaign campaign, Account? account);

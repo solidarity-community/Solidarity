@@ -1,6 +1,6 @@
-import { API, Campaign, PaymentMethodService, CampaignPaymentMethod, PaymentMethodIdentifier } from 'sdk'
+import { API, Service, Campaign, PaymentMethodService, CampaignPaymentMethod, PaymentMethodIdentifier } from 'sdk'
 
-export class CampaignService {
+export class CampaignService extends Service {
 	static get(id: number) {
 		return API.get<Campaign>(`/campaign/${id}`)
 	}
@@ -41,6 +41,9 @@ export class CampaignService {
 	}
 
 	static delete(id: number) {
-		return API.delete(`/campaign/${id}`)
+		return this.confirmDeletion(() => API.delete(`/campaign/${id}`), {
+			heading: 'Delete Campaign',
+			content: 'Are you sure you want to delete this campaign irreversibly? All donations will be refunded.',
+		})
 	}
 }

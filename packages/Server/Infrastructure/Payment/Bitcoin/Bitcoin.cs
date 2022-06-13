@@ -39,6 +39,27 @@ public abstract class Bitcoin : PaymentMethod
 		_client.EnsureWalletCreated().GetAwaiter().GetResult();
 	}
 
+	public override Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+	{
+		return CheckHealthAsync(cancellationToken);
+	}
+
+	public async Task<HealthCheckResult> CheckHealthAsync(CancellationToken cancellationToken = default)
+	{
+		var chainName = $"Bitcoin {(_client.Network == Network.Main ? "" : "Testnet")}";
+		try
+		{
+			var blockchainInfo = await _client.GetBlockchainInfoAsync(cancellationToken);
+			return blockchainInfo.InitialBlockDownload
+				? HealthCheckResult.Degraded($"{chainName} is currently downloading the blockchain at {blockchainInfo.VerificationProgress * 100}%")
+				: HealthCheckResult.Healthy();
+		}
+		catch (RPCException)
+		{
+			return HealthCheckResult.Unhealthy($"No connection to the {chainName} RPC");
+		}
+	}
+
 	public override async Task<string> GetDonationData(Campaign campaign, Account? account)
 	{
 		var address = await DeriveAddress(campaign, account);
@@ -55,6 +76,7 @@ public abstract class Bitcoin : PaymentMethod
 
 	public override async Task Refund(Campaign campaign, Account? account)
 	{
+		await EnsureHealthForNonReadOnlyOperation();
 		var utxos = await GetUTxOs(campaign, account);
 
 		if (utxos.Any() == false)
@@ -73,6 +95,7 @@ public abstract class Bitcoin : PaymentMethod
 
 	public override async Task Allocate(Campaign campaign, string destination)
 	{
+		await EnsureHealthForNonReadOnlyOperation();
 		var destinationAddress = BitcoinAddress.Create(destination, _client.Network);
 		var utxos = await GetUTxOs(campaign, null);
 		var feeRate = await GetFeeRate();
@@ -83,6 +106,15 @@ public abstract class Bitcoin : PaymentMethod
 			.SendAll(destinationAddress)
 			.BuildTransaction(sign: true)
 			.SendAsync(_client);
+	}
+
+	private async Task EnsureHealthForNonReadOnlyOperation()
+	{
+		var healthCheckResult = await CheckHealthAsync();
+		if (healthCheckResult.Status == HealthStatus.Degraded)
+		{
+			throw new Exception($"{Name} is degraded and cannot perform any non-read-only operations as this would cause a fund loss. {healthCheckResult.Description}");
+		}
 	}
 
 	private async Task<FeeRate> GetFeeRate() => (await _client.TryEstimateSmartFeeAsync((int)Speed)).FeeRate;
@@ -128,4 +160,6 @@ public abstract class Bitcoin : PaymentMethod
 			return publicUTxOs.Concat(accountsUTxOs).ToArray();
 		}
 	}
+
+	private string Name => $"Bitcoin {(_client.Network == Network.Main ? "" : "Testnet")}";
 }

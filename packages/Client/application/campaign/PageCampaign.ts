@@ -132,11 +132,6 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 	}
 
 	private delete = async () => {
-		await new DialogAlert({
-			heading: 'Delete Campaign',
-			content: 'Are you sure you want to delete this campaign irreversibly? All donations will be refunded.',
-			primaryButtonText: 'Delete'
-		}).confirm()
 		await CampaignService.delete(this.parameters.id)
 		new PageCampaigns().navigate()
 	}

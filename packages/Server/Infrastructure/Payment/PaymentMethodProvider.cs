@@ -1,6 +1,6 @@
 namespace Solidarity.Infrastructure.Payment;
 
-public class PaymentMethodProvider : IPaymentMethodProvider
+public class PaymentMethodProvider : IPaymentMethodProvider, IHealthCheck
 {
 	private readonly IEnumerable<PaymentMethod> _enabledPaymentMethods;
 
@@ -20,4 +20,18 @@ public class PaymentMethodProvider : IPaymentMethodProvider
 
 	public PaymentMethod Get(string Identifier)
 		=> _enabledPaymentMethods.First(pm => pm.Identifier == Identifier) ?? throw new InvalidOperationException();
+
+	public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+	{
+		var healthChecks = await Task.WhenAll(_enabledPaymentMethods.Select(pm => pm.CheckHealthAsync(context, cancellationToken))) ?? Array.Empty<HealthCheckResult>();
+
+		var unhealthy = healthChecks.Where(hc => hc.Status == HealthStatus.Unhealthy);
+		var degraded = healthChecks.Where(hc => hc.Status == HealthStatus.Degraded);
+
+		return unhealthy.Any()
+			? HealthCheckResult.Unhealthy($"{unhealthy.Count()} unhealthy payment method(s): {string.Join(", ", unhealthy.Select(hc => hc.Description))}")
+			: degraded.Any()
+				? HealthCheckResult.Degraded($"{degraded.Count()} degraded payment method(s): {string.Join(", ", degraded.Select(hc => hc.Description))}")
+				: HealthCheckResult.Healthy();
+	}
 }
