@@ -3,7 +3,7 @@ import { DialogAuthenticator, PageAccount } from 'application'
 import * as Solid from '.'
 import './Logo.svg'
 
-ThemeHelper.accent.value = new Color([105, 69, 130], [92, 119, 185])
+ThemeHelper.accent.value = new Color('rgb(104, 159, 56)', 'rgb(124, 179, 76)', 'rgb(144, 199, 96)')
 
 @application()
 @component('solid-application')

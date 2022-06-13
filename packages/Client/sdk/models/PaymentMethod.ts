@@ -7,7 +7,7 @@ export const enum PaymentMethodIdentifier {
 
 export class PaymentMethod extends Model {
 	private static readonly nameByIdentifier = new Map<string, string>([
-		['BTC_MAINNET', 'Bitcoin Mainnet'],
+		['BTC_MAINNET', 'Bitcoin'],
 		['BTC_TESTNET', 'Bitcoin Testnet'],
 	])
 

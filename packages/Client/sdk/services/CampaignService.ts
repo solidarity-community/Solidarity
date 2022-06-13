@@ -1,4 +1,4 @@
-import { API, Campaign, PaymentMethodService, CampaignPaymentMethod } from 'sdk'
+import { API, Campaign, PaymentMethodService, CampaignPaymentMethod, PaymentMethodIdentifier } from 'sdk'
 
 export class CampaignService {
 	static get(id: number) {
@@ -10,12 +10,18 @@ export class CampaignService {
 	}
 
 	static getBalance(campaignId: number) {
+		CampaignService.getShare(campaignId).then(console.log)
+
 		return API.get<number>(`/campaign/${campaignId}/balance`)
 	}
 
+	static getShare(campaignId: number) {
+		return API.get<number>(`/campaign/${campaignId}/share`)
+	}
+
 	static async getDonationData(campaignId: number) {
-		const response = await API.get<Record<string, string>>(`/campaign/${campaignId}/donation-data`)
-		return new Map(Object.entries(response))
+		const response = await API.get<Record<PaymentMethodIdentifier, string>>(`/campaign/${campaignId}/donation-data`)
+		return new Map(Object.entries(response)) as Map<PaymentMethodIdentifier, string>
 	}
 
 	static async save(campaign: Campaign, includeAllDonationChannels = false) {

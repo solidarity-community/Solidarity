@@ -1,9 +1,15 @@
-import { Component, component, css, html, Snackbar } from '@3mo/model'
+import { Component, component, css, eventListener, html, Snackbar } from '@3mo/model'
 
 @component('solid-clipboard-text-block')
 export class ClipboardTextBlock extends Component {
+	protected get value() { return this.textContent }
+
 	static override get styles() {
 		return css`
+			:host {
+				position: relative;
+			}
+
 			code {
 				background: var(--mo-color-transparent-gray);
 				font-size: 12px;
@@ -14,26 +20,46 @@ export class ClipboardTextBlock extends Component {
 				display: block;
 			}
 
-			code:hover {
-				background: var(--mo-accent-transparent);
-				color: var(--mo-accent);
+			mo-flex {
+				visibility: hidden;
+				position: absolute;
+				top: 0px;
+				right: 0px;
 				cursor: pointer;
+			}
+
+			mo-flex mo-icon-button {
+				border-radius: 50%;
+				background: rgba(var(--mo-color-accessible-base), 0.75);
+				color: var(--mo-accent);
+			}
+
+			:host(:hover) mo-flex {
+				visibility: visible;
 			}
 		`
 	}
 
 	protected override get template() {
 		return html`
-			<code @click=${this.copyPrivateKeyToClipboard}>
+			<code>
 				<slot></slot>
 			</code>
+			<mo-flex direction='horizontal-reversed' gap='2px'>
+				${this.actionsTemplate}
+			</mo-flex>
 		`
 	}
 
-	private copyPrivateKeyToClipboard = async () => {
-		const value = this.textContent
-		if (value) {
-			await navigator.clipboard.writeText(value)
+	protected get actionsTemplate() {
+		return html`
+			<mo-icon-button small icon='copy' title='Copy to clipboard' @click=${this.copyContentToClipboard}></mo-icon-button>
+		`
+	}
+
+	protected copyContentToClipboard = async () => {
+		if (this.value) {
+			await navigator.clipboard.writeText(this.value)
 			Snackbar.show('Value copied to clipboard')
 		}
 	}
