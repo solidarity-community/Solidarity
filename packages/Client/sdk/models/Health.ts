@@ -1,8 +1,4 @@
-export const enum HealthCheckStatus {
-	Healthy = 'Healthy',
-	Degraded = 'Degraded',
-	Unhealthy = 'Unhealthy',
-}
+export const enum HealthCheckStatus { Unhealthy, Degraded, Healthy }
 
 export type Health = {
 	readonly status: HealthCheckStatus,
@@ -12,6 +8,5 @@ export type Health = {
 export type HealthCheck = {
 	readonly key: string,
 	readonly status: HealthCheckStatus,
-	readonly description: string,
-	readonly duration: string,
+	readonly checks?: Array<HealthCheck>
 }

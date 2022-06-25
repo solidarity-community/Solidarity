@@ -16,6 +16,10 @@ export const apiValueConstructor = () => {
 	}
 }
 
+type FetchOptions = {
+	readonly noHttpErrorOnErrorStatusCode?: boolean
+}
+
 export class API {
 	static readonly valueConstructors = new Set<ApiValueConstructor<unknown, unknown>>()
 	static readonly url = '/api'
@@ -30,29 +34,29 @@ export class API {
 		}
 	}
 
-	static get<T = void>(route: string) {
-		return this.fetch<T>('GET', route)
+	static get<T = void>(route: string, options?: FetchOptions) {
+		return this.fetch<T>('GET', route, null, options)
 	}
 
-	static post<T = void, TData = unknown>(route: string, data?: TData) {
-		return this.fetch<T>('POST', route, JSON.stringify(API.deconstruct(data)))
+	static post<T = void, TData = unknown>(route: string, data?: TData, options?: FetchOptions) {
+		return this.fetch<T>('POST', route, JSON.stringify(API.deconstruct(data)), options)
 	}
 
-	static postFile<T = void>(route: string, file: File) {
+	static postFile<T = void>(route: string, file: File, options?: FetchOptions) {
 		const form = new FormData
 		form.set('file', file, file.name)
-		return this.fetch<T>('POST', route, form)
+		return this.fetch<T>('POST', route, form, options)
 	}
 
-	static put<T = void, TData = unknown>(route: string, data?: TData) {
-		return this.fetch<T>('PUT', route, JSON.stringify(API.deconstruct(data)))
+	static put<T = void, TData = unknown>(route: string, data?: TData, options?: FetchOptions) {
+		return this.fetch<T>('PUT', route, JSON.stringify(API.deconstruct(data)), options)
 	}
 
-	static delete<T = void>(route: string) {
-		return this.fetch<T>('DELETE', route)
+	static delete<T = void>(route: string, options?: FetchOptions) {
+		return this.fetch<T>('DELETE', route, null, options)
 	}
 
-	private static async fetch<T = void>(method: HTTPMethod, route: string, body: BodyInit | null = null) {
+	private static async fetch<T = void>(method: HTTPMethod, route: string, body: BodyInit | null = null, options?: FetchOptions) {
 		const headers: HeadersInit = {
 			Accept: 'application/json',
 			Authorization: `Bearer ${this.token}`
@@ -71,7 +75,7 @@ export class API {
 			body: body
 		})
 
-		if (response.status >= 400) {
+		if (response.status >= 400 && !options?.noHttpErrorOnErrorStatusCode) {
 			throw new HttpError(await response.json())
 		}
 

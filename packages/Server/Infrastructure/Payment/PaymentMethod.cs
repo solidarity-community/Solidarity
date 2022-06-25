@@ -8,6 +8,8 @@ public abstract class PaymentMethod : IHealthCheck
 	public string Identifier =>
 		(GetType().GetCustomAttributes(typeof(PaymentMethodAttribute), true).First() as PaymentMethodAttribute)?.Identifier!;
 
+	public virtual string Name => Identifier;
+
 	protected string? Key
 	{
 		get => _database.PaymentMethodKeys.FirstOrDefault(key => key.PaymentMethodIdentifier == Identifier)?.Key;
