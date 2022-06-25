@@ -1,11 +1,7 @@
 namespace Solidarity.Infrastructure.Payment.Bitcoin;
 
-public enum BitcoinTransactionSpeed { Fast = 1, Normal = 3, Economy = 6 }
-
 public abstract class Bitcoin : PaymentMethod
 {
-	private const BitcoinTransactionSpeed Speed = BitcoinTransactionSpeed.Economy;
-
 	private static readonly Dictionary<Network, int> CoinTypeByNetwork = new() {
 		{ Network.Main, 0 },
 		{ Network.TestNet, 1 },
@@ -39,24 +35,20 @@ public abstract class Bitcoin : PaymentMethod
 		_client.EnsureWalletCreated().GetAwaiter().GetResult();
 	}
 
-	public override Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
-	{
-		return CheckHealthAsync(cancellationToken);
-	}
+	public override Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default) => CheckHealthAsync(cancellationToken);
 
 	public async Task<HealthCheckResult> CheckHealthAsync(CancellationToken cancellationToken = default)
 	{
-		var chainName = $"Bitcoin {(_client.Network == Network.Main ? "" : "Testnet")}";
 		try
 		{
 			var blockchainInfo = await _client.GetBlockchainInfoAsync(cancellationToken);
 			return blockchainInfo.InitialBlockDownload
-				? HealthCheckResult.Degraded($"{chainName} is currently downloading the blockchain at {blockchainInfo.VerificationProgress * 100}%")
+				? HealthCheckResult.Degraded($"{Name} is currently downloading the blockchain at {blockchainInfo.VerificationProgress * 100}%")
 				: HealthCheckResult.Healthy();
 		}
 		catch (RPCException)
 		{
-			return HealthCheckResult.Unhealthy($"No connection to the {chainName} RPC");
+			return HealthCheckResult.Unhealthy($"No connection to the {Name} RPC");
 		}
 	}
 
@@ -69,7 +61,7 @@ public abstract class Bitcoin : PaymentMethod
 	public override async Task<decimal> GetBalance(Campaign campaign, Account? account)
 	{
 		var utxos = await GetUTxOs(campaign, account);
-		return utxos?.Select(utxo => utxo.Amount)
+		return utxos?.Select(utxo => utxo.Coin.Amount)
 			.Aggregate(Money.Zero, (a, b) => a + b)
 			.ToDecimal(MoneyUnit.Satoshi) ?? 0m;
 	}
@@ -84,13 +76,9 @@ public abstract class Bitcoin : PaymentMethod
 			return;
 		}
 
-		var feeRate = await GetFeeRate();
 		await _client.Network.CreateTransactionBuilder()
-			.AddKeys(_extendedPrivateKey)
-			.RefundUTxOs(utxos)
-			.SendEstimatedFeesSplit(feeRate)
-			.BuildTransaction(sign: true)
-			.SendAsync(_client);
+			.RefundUTxOs(_client, utxos)
+			.SignAndSendAsync(_client);
 	}
 
 	public override async Task Allocate(Campaign campaign, string destination)
@@ -98,14 +86,10 @@ public abstract class Bitcoin : PaymentMethod
 		await EnsureHealthForNonReadOnlyOperation();
 		var destinationAddress = BitcoinAddress.Create(destination, _client.Network);
 		var utxos = await GetUTxOs(campaign, null);
-		var feeRate = await GetFeeRate();
 		await _client.Network.CreateTransactionBuilder()
-			.AddKeys(_extendedPrivateKey)
 			.AddUTxOs(utxos)
-			.SendEstimatedFeesSplit(feeRate)
 			.SendAll(destinationAddress)
-			.BuildTransaction(sign: true)
-			.SendAsync(_client);
+			.SignAndSendAsync(_client);
 	}
 
 	private async Task EnsureHealthForNonReadOnlyOperation()
@@ -117,8 +101,6 @@ public abstract class Bitcoin : PaymentMethod
 		}
 	}
 
-	private async Task<FeeRate> GetFeeRate() => (await _client.TryEstimateSmartFeeAsync((int)Speed)).FeeRate;
-
 	private Key DeriveKey(Campaign campaign, Account? account)
 	{
 		var keyPath = new KeyPath($"m/44'/{CoinTypeByNetwork.TryGet(_client.Network)}'/0'/{campaign.Id}/{account?.Id ?? 0}");
@@ -128,28 +110,22 @@ public abstract class Bitcoin : PaymentMethod
 	private async Task<BitcoinAddress> DeriveAddress(Campaign campaign, Account? account)
 	{
 		var key = DeriveKey(campaign, account);
-		var address = key.PubKey.GetAddress(ScriptPubKeyType.Legacy, _client.Network);
-		await _client.ImportAddressAsync(address, address.ToString(), false);
-		return address;
+		return await _client.GetAndImportAddress(key);
 	}
 
-	private async Task<UnspentCoin[]> GetUTxOs(BitcoinAddress address)
-	{
-		return await _client.ListUnspentAsync(0, int.MaxValue, address);
-	}
-
-	private async Task<UnspentCoin[]> GetUTxOs(Campaign campaign, Account? account)
+	private async Task<UTxO[]> GetUTxOs(Campaign campaign, Account? account)
 	{
 		if (account is not null)
 		{
-			var address = await DeriveAddress(campaign, account);
-			return await GetUTxOs(address);
+			var key = DeriveKey(campaign, account);
+			return await _client.GetUTxOs(key);
 		}
 		else
 		{
 			var accounts = await _database.Accounts.ToListAsync();
 
-			var publicUTxOsTask = GetUTxOs(await DeriveAddress(campaign, null));
+			var key = DeriveKey(campaign, null);
+			var publicUTxOsTask = _client.GetUTxOs(key);
 			var accountsUTxOsTask = Task.WhenAll(accounts.Select(a => GetUTxOs(campaign, a)));
 
 			await Task.WhenAll(publicUTxOsTask, accountsUTxOsTask);

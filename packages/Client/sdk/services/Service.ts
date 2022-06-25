@@ -1,12 +1,25 @@
-import { DialogDefault, Snackbar } from '@3mo/model'
+import { DialogDefault, NotificationHost } from '@3mo/model'
 
 export class Service {
-	static notify(...parameters: Parameters<typeof Snackbar.show>) {
-		return Snackbar.show(...parameters)
+	static notifyInfo(...parameters: Parameters<typeof NotificationHost.instance.notifyInfo>) {
+		return NotificationHost.instance.notifyInfo(...parameters)
 	}
 
+	static notifySuccess(...parameters: Parameters<typeof NotificationHost.instance.notifySuccess>) {
+		return NotificationHost.instance.notifySuccess(...parameters)
+	}
+
+	static notifyWarning(...parameters: Parameters<typeof NotificationHost.instance.notifyWarning>) {
+		return NotificationHost.instance.notifyWarning(...parameters)
+	}
+
+	static notifyError(...parameters: Parameters<typeof NotificationHost.instance.notifyError>) {
+		return NotificationHost.instance.notifyError(...parameters)
+	}
+
+
 	static throwAndNotify(errorOrErrorMessage: Error | string) {
-		this.notify(typeof errorOrErrorMessage === 'string' ? errorOrErrorMessage : errorOrErrorMessage.message)
+		this.notifyError(typeof errorOrErrorMessage === 'string' ? errorOrErrorMessage : errorOrErrorMessage.message)
 		throw typeof errorOrErrorMessage === 'string' ? new Error(errorOrErrorMessage) : errorOrErrorMessage
 	}
 

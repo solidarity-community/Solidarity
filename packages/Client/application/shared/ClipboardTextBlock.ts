@@ -1,4 +1,4 @@
-import { Component, component, css, eventListener, html, Snackbar } from '@3mo/model'
+import { Component, component, css, eventListener, html, NotificationHost } from '@3mo/model'
 
 @component('solid-clipboard-text-block')
 export class ClipboardTextBlock extends Component {
@@ -60,7 +60,7 @@ export class ClipboardTextBlock extends Component {
 	protected copyContentToClipboard = async () => {
 		if (this.value) {
 			await navigator.clipboard.writeText(this.value)
-			Snackbar.show('Value copied to clipboard')
+			NotificationHost.instance.notifySuccess('Value copied to clipboard')
 		}
 	}
 }
