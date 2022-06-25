@@ -8,7 +8,7 @@ public abstract class CrudService<TModel> : Service where TModel : Model
 		=> await _database.GetSet<TModel>().FindAsync(id) != null;
 
 	public virtual async Task<TModel> Get(int id)
-		=> await _database.GetSet<TModel>().IncludeAll().FirstAsync(x => x.Id == id) ?? throw new EntityNotFoundException<TModel>();
+		=> await _database.GetSet<TModel>().IncludeAll().FirstOrDefaultAsync(x => x.Id == id) ?? throw new EntityNotFoundException<TModel>();
 
 	public virtual async Task<IEnumerable<TModel>> GetAll()
 		=> await _database.GetSet<TModel>().IncludeAll().AsNoTracking().ToArrayAsync();

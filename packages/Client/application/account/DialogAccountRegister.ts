@@ -1,4 +1,4 @@
-import { component, DialogComponent, html, Snackbar, state } from '@3mo/model'
+import { component, DialogComponent, html, state } from '@3mo/model'
 import { AccountService } from 'sdk'
 import JSEncrypt from 'jsencrypt'
 
@@ -23,38 +23,13 @@ export class DialogAccountRegister extends DialogComponent {
 			<mo-dialog heading='Register Account'>
 				<mo-button slot='primaryAction' type='raised' ?disabled=${this.securityConfirmation === false}>Register & Continue</mo-button>
 
-				<style>
-					code {
-						background: var(--mo-color-transparent-gray);
-						font-size: 12px;
-						line-height: 12px;
-						line-break: anywhere;
-						padding: 10px;
-						border-radius: 4px;
-					}
-
-					code:hover {
-						background: var(--mo-accent-transparent);
-						color: var(--mo-accent);
-						cursor: pointer;
-					}
-				</style>
-
 				<mo-flex gap='var(--mo-thickness-m)'>
 					<mo-div>Safeguard your private-key as it is the only way you can recover your account. Copy it to clipboard by clicking the block.</mo-div>
-					<code @click=${this.copyPrivateKeyToClipboard}>${this.idAndPrivateKey}</code>
+					<solid-clipboard-text-block>${this.idAndPrivateKey}</solid-clipboard-text-block>
 					<mo-checkbox @change=${(e: CustomEvent<CheckboxValue>) => this.securityConfirmation = e.detail === 'checked'}>I have secured my private-key</mo-checkbox>
 				</mo-flex>
 			</mo-dialog>
 		`
-	}
-
-	private copyPrivateKeyToClipboard = async () => {
-		if (!this.idAndPrivateKey) {
-			return
-		}
-		await navigator.clipboard.writeText(this.idAndPrivateKey)
-		Snackbar.show('Private-key copied to clipboard')
 	}
 
 	protected override primaryButtonAction() {

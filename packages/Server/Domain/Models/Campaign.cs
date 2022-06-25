@@ -1,18 +1,27 @@
 ﻿namespace Solidarity.Domain.Models;
 
+public enum CampaignStatus { Funding, Allocation, Complete }
+
 public class Campaign : Model
 {
-	public Account? Creator { get; set; }
+	[MaxLength(50)] public string Title { get; set; } = string.Empty;
 
-	[MaxLength(50), Required(ErrorMessage = "Title cannot be empty")]
-	public string Title { get; set; } = string.Empty;
-
-	[Required(ErrorMessage = "Description cannot be empty")]
 	public string Description { get; set; } = null!;
+
+	public CampaignStatus Status => (AllocationDate, CompletionDate) switch
+	{
+		(not null, null) => CampaignStatus.Allocation,
+		(not null, not null) => CampaignStatus.Complete,
+		_ => CampaignStatus.Funding
+	};
 
 	public Geometry Location { get; set; } = null!;
 
-	public DateTime? Completion { get; set; }
+	public DateTime TargetAllocationDate { get; set; }
+
+	public DateTime? AllocationDate { get; set; }
+
+	public DateTime? CompletionDate { get; set; }
 
 	public List<CampaignMedia> Media { get; set; } = new();
 
@@ -20,7 +29,7 @@ public class Campaign : Model
 
 	public long TotalExpenditure => Expenditures.Sum(e => e.TotalPrice);
 
-	public List<DonationChannel> DonationChannels { get; set; } = new();
+	public List<CampaignPaymentMethod> ActivatedPaymentMethods { get; set; } = new();
 
 	public int? ValidationId { get; set; }
 

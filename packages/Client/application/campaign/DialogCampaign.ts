@@ -1,46 +1,72 @@
-import { component, DialogComponent, html, state } from '@3mo/model'
-import { Campaign, CampaignService } from 'sdk'
+import { component, DialogComponent, html, state, Task } from '@3mo/model'
+import { Campaign, CampaignPaymentMethod, CampaignService, PaymentMethodService } from 'sdk'
 import { GeometryCollection } from 'geojson'
 
 @component('solid-dialog-campaign')
 export class DialogCampaign extends DialogComponent<undefined | { readonly id: number }, Campaign> {
-	@state() private campaign: Campaign = {
-		media: [],
-		expenditures: []
-	}
+	private campaignTask = new Task(this, async () => !this.parameters?.id ? new Campaign : await CampaignService.get(this.parameters.id), () => [])
 
-	protected override async initialized() {
-		if (this.parameters?.id) {
-			this.campaign = await CampaignService.get(this.parameters.id)
-		}
-	}
+	private paymentMethodsTask = new Task(this, PaymentMethodService.getAll, () => [])
+	private get paymentMethods() { return this.paymentMethodsTask.value }
+
+	@state() private includeAllPaymentMethods = !this.parameters?.id
 
 	protected override get template() {
 		return html`
 			<mo-dialog size='medium' heading='Campaign' primaryButtonText=${this.parameters?.id ? 'Edit' : 'Create'}>
-				<mo-flex gap='var(--mo-thickness-m)'>
-					<mo-field-text label='Title'
-						value=${this.campaign.title ?? ''}
-						@change=${(e: CustomEvent<string>) => this.campaign.title = e.detail}
-					></mo-field-text>
+				${this.campaignTask.render({
+					pending: () => html`
+						<mo-flex alignItems='center' justifyContent='center' height='100%'>
+							<mo-circular-progress indeterminate></mo-circular-progress>
+						</mo-flex>
+					`,
+					complete: campaign => html`
+						<mo-flex gap='var(--mo-thickness-xl)'>
+							<mo-field-text label='Title'
+								value=${campaign.title ?? ''}
+								@change=${(e: CustomEvent<string>) => campaign.title = e.detail}
+							></mo-field-text>
 
-					<mo-field-text-area label='Description'
-						value=${this.campaign.description ?? ''}
-						@change=${(e: CustomEvent<string>) => this.campaign.description = e.detail}
-					></mo-field-text-area>
+							<mo-field-date label='Target Allocation Date'
+								.value=${campaign.targetAllocationDate}
+								@change=${(e: CustomEvent<MoDate>) => campaign.targetAllocationDate = e.detail}
+							></mo-field-date>
 
-					<solid-campaign-slider .campaign=${this.campaign}></solid-campaign-slider>
+							<mo-field-text-area label='Description'
+								value=${campaign.description ?? ''}
+								@change=${(e: CustomEvent<string>) => campaign.description = e.detail}
+							></mo-field-text-area>
 
-					<solid-map height='400px'
-						.selectedArea=${this.campaign.location}
-						@selectedAreaChange=${(e: CustomEvent<GeometryCollection>) => this.campaign.location = e.detail}
-					></solid-map>
+							<solid-campaign-slider .campaign=${campaign}></solid-campaign-slider>
 
-					<solid-section-campaign-expenditure editable .expenditures=${this.campaign.expenditures}></solid-section-campaign-expenditure>
-				</mo-flex>
+							<solid-map height='400px'
+								.selectedArea=${campaign.location}
+								@selectedAreaChange=${(e: CustomEvent<GeometryCollection>) => campaign.location = e.detail}
+							></solid-map>
+
+							<mo-section heading='Donation methods'>
+								<mo-checkbox slot='action' label='Activate all'
+									?checked=${this.includeAllPaymentMethods}
+									@change=${(e: CustomEvent<CheckboxValue>) => this.includeAllPaymentMethods = e.detail === 'checked'}
+								></mo-checkbox>
+
+								${this.paymentMethods?.map(pm => html`
+									<mo-checkbox
+										?disabled=${this.includeAllPaymentMethods}
+										label=${pm.name || pm.identifier}
+										?checked=${campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier) || this.includeAllPaymentMethods}
+										@change=${(e: CustomEvent<CheckboxValue>) => campaign.activatedPaymentMethods = e.detail === 'checked' ? [...campaign.activatedPaymentMethods, new CampaignPaymentMethod(pm.identifier)] : campaign.activatedPaymentMethods.filter(dc => dc.identifier !== pm.identifier)}
+									></mo-checkbox>
+								`)}
+							</mo-section>
+
+							<solid-section-campaign-expenditure editable .campaign=${campaign}></solid-section-campaign-expenditure>
+						</mo-flex>
+					`
+				})}
 			</mo-dialog>
 		`
 	}
 
-	protected override primaryButtonAction = () => CampaignService.save(this.campaign)
+	protected override primaryButtonAction = () => CampaignService.save(this.campaignTask.value!, this.includeAllPaymentMethods)
 }

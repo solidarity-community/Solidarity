@@ -1,4 +1,4 @@
-import { component, ContextMenuHost, DialogAuthenticator, homePage, html, PageComponent, route, Task } from '@3mo/model'
+import { component, ContextMenuHost, css, DialogAuthenticator, homePage, html, PageComponent, route, Task } from '@3mo/model'
 import { DialogCampaign, PageCampaign } from 'application'
 import { CampaignService } from 'sdk'
 
@@ -7,6 +7,15 @@ import { CampaignService } from 'sdk'
 @component('solid-page-campaigns')
 export class PageCampaigns extends PageComponent {
 	private readonly fetchCampaignsTask = new Task(this, CampaignService.getAll, () => [])
+
+	static override get styles() {
+		return css`
+			solid-campaign-card:hover {
+				transition: var(--mo-duration-quick);
+				transform: scale(1.05);
+			}
+		`
+	}
 
 	protected override get template() {
 		const fabTemplate = html`
@@ -37,7 +46,7 @@ export class PageCampaigns extends PageComponent {
 										tabIndex='0'
 										.campaign=${campaign}
 										@click=${() => new PageCampaign({ id: campaign.id! }).navigate()}
-										@contextmenu=${(event: MouseEvent) => ContextMenuHost.openMenu(event, html`
+										@contextmenu=${(event: MouseEvent) => campaign.creatorId !== DialogAuthenticator.authenticatedUser.value?.id ? void 0 : ContextMenuHost.openMenu(event, html`
 											<mo-context-menu-item icon='edit' @click=${() => this.open(campaign.id)}>Edit</mo-context-menu-item>
 											<mo-context-menu-item icon='delete' @click=${() => this.delete(campaign.id!)}>Delete</mo-context-menu-item>
 										`)}

@@ -53,7 +53,7 @@ export class CampaignSlider extends Component {
 		return html`
 			${!this.campaign.media?.length ? html`
 				<mo-error icon='collections' height='100%'>
-					No media found
+					No media
 				</mo-error>
 			` : html`
 				<lit-slider hasPagination hasNavigation>
@@ -62,7 +62,9 @@ export class CampaignSlider extends Component {
 			`}
 			${when(!this.readOnly, () => html`
 				<mo-fab icon='add' right='8px' @click=${() => this.create()}>Add</mo-fab>
-				<mo-fab icon='delete' left='8px' @click=${() => this.deleteSelectedMedia()}>Delete</mo-fab>
+				${when(!!this.campaign.media.length, () => html`
+					<mo-fab icon='delete' left='8px' @click=${() => this.deleteSelectedMedia()}>Delete</mo-fab>
+				`)}
 			`)}
 		`
 	}

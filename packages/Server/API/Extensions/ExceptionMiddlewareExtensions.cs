@@ -11,7 +11,7 @@ public static class ExceptionMiddlewareExtensions
 			{
 				EntityNotFoundException<object> => (int)HttpStatusCode.NotFound,
 				AccountTakenException => (int)HttpStatusCode.Conflict,
-				IncorrectCredentialsException or NotAuthenticatedException or AuthenticationFailedException => (int)HttpStatusCode.Unauthorized,
+				IncorrectCredentialsException or NotAuthenticatedException => (int)HttpStatusCode.Unauthorized,
 				_ => (int)HttpStatusCode.InternalServerError
 			};
 			await context.Response.WriteAsJsonAsync(new

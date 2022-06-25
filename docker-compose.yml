@@ -1,5 +1,26 @@
 version: "3"
 services:
+  crypto_bitcoin_testnet:
+    container_name: solidarity_crypto_bitcoin_testnet
+    image: ruimarinho/bitcoin-core
+    restart: always
+    command:
+      -chain=test
+      -server
+      -printtoconsole=1
+      -maxuploadtarget=5000
+      -txindex=1
+      -dbcache=1024
+      -rpcallowip=172.0.0.0/8
+      -rpcbind=0.0.0.0
+      -rpcport=18333
+      -rpcuser=solidarity
+      -rpcpassword=Dev_Passw0rd
+    ports:
+      - "18333:18333"
+    volumes:
+      - ~/solidarity/bitcoin-testnet:/home/bitcoin/.bitcoin
+
   database:
     container_name: solidarity_database
     image: mcr.microsoft.com/mssql/server
@@ -7,13 +28,18 @@ services:
     environment:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=Dev_Passw0rd
+      - MSSQL_SA_PASSWORD=Dev_Passw0rd
       - MSSQL_PID=Express
     ports:
       - "1433:1433"
+    # volumes:
+      # - "~/solidarity/database:/var/opt/mssql"
 
   server:
     container_name: solidarity_server
     restart: always
+    depends_on:
+      - database
     build:
       context: ./packages/Server
     ports: 
@@ -27,19 +53,19 @@ services:
       - DATABASE_USER=SA
       - DATABASE_PASSWORD=Dev_Passw0rd
       - JWT_KEY=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
-      # TODO: activated payment methods
-      - PAYMENT_METHODS=BTC_MAINNET,BTC_TESTNET
-      # TODO: Crypto Node conainers
-      - PAYMENT_METHOD_BTC_MAINNET_SERVER=http://0.0.0.0:8000/
+      - PAYMENT_METHODS=BTC_TESTNET
+      - PAYMENT_METHOD_BTC_MAINNET_SERVER=http://solidarity_crypto_bitcoin_mainnet:8333/
       - PAYMENT_METHOD_BTC_MAINNET_USERNAME=solidarity
-      - PAYMENT_METHOD_BTC_MAINNET_PASSWORD=xxxxxxxxxxxxxx
-      - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://0.0.0.0:8001/
+      - PAYMENT_METHOD_BTC_MAINNET_PASSWORD=Dev_Passw0rd
+      - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://solidarity_crypto_bitcoin_testnet:18333/
       - PAYMENT_METHOD_BTC_TESTNET_USERNAME=solidarity
-      - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=xxxxxxxxxxxxxx
+      - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=Dev_Passw0rd
 
   client:
     container_name: solidarity_client
     restart: always
+    depends_on:
+      - server
     build:
       context: ./packages/Client
     ports:

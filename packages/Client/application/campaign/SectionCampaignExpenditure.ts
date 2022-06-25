@@ -1,9 +1,9 @@
 import { Component, component, css, html, nothing, property } from '@3mo/model'
-import { CampaignExpenditure } from 'sdk'
+import { Campaign, CampaignExpenditure } from 'sdk'
 
 @component('solid-section-campaign-expenditure')
 export class SectionCampaignExpenditure extends Component {
-	@property({ type: Array }) expenditures = new Array<CampaignExpenditure>()
+	@property({ type: Object }) campaign!: Campaign
 	@property({ type: Boolean }) editable = false
 
 	static override get styles() {
@@ -32,12 +32,12 @@ export class SectionCampaignExpenditure extends Component {
 			<mo-section heading='Expenditure'>
 				${!this.editable ? nothing : html`
 					<mo-icon-button slot='action' icon='add'
-						@click=${() => { this.expenditures.push(new CampaignExpenditure); this.requestUpdate() }}
+						@click=${() => { this.campaign.expenditures.push(new CampaignExpenditure); this.requestUpdate() }}
 					></mo-icon-button>
 				`}
 
 				<mo-grid alignItems='end' columns='3* * auto 2* auto 2*' gap='10px'>
-					${this.expenditures.map(expenditure => html`
+					${this.campaign.expenditures.map(expenditure => html`
 						${this.getNameTemplate(expenditure)}
 						${this.getQuantityTemplate(expenditure)}
 						<mo-div class='symbol'> × </mo-div>
@@ -47,10 +47,8 @@ export class SectionCampaignExpenditure extends Component {
 							value=${expenditure.unitPrice * expenditure.quantity}
 						></solid-amount>
 					`)}
-					<mo-div class='total' gridColumn='1 / -2'>Sum</mo-div>
-					<solid-amount class='total sum price'
-						value=${this.expenditures.map(e => e.quantity * e.unitPrice).reduce((a, acc) => a + acc, 0)}
-					></solid-amount>
+					<mo-div class='total' gridColumn='1 / -2'>Total</mo-div>
+					<solid-amount class='total sum price' value=${this.campaign.totalExpenditure}></solid-amount>
 				</mo-grid>
 			</mo-section>
 		`

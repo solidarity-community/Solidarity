@@ -5,12 +5,13 @@ services:
     image: ruimarinho/bitcoin-core
     restart: always
     command:
-      -testnet=0
-      -server=1
+      -chain=main
+      -server
       -rpcuser=solidarity
       -rpcpassword=\${CRYPTO_PASSWORD}
-      -rpcallowip=::/0
-      -rpcport=8332
+      -rpcallowip=172.0.0.0/8
+      -rpcport=8333
+      -rpcbind=0.0.0.0
       -printtoconsole=1
       -maxconnections=8
       -maxuploadtarget=144
@@ -18,12 +19,8 @@ services:
       -txindex=0
       -prune=10000
       -dbcache=1024
-      -zmqpubrawblock=tcp://0.0.0.0:28333
-      -zmqpubrawtx=tcp://0.0.0.0:28333
-      -zmqpubhashtx=tcp://0.0.0.0:28333
-      -zmqpubhashblock=tcp://0.0.0.0:28333
     ports:
-      - "8332:8332"
+      - "8333:8333"
     volumes:
       - ~/bitcoin-mainnet:/home/bitcoin/.bitcoin
 
@@ -32,12 +29,13 @@ services:
     image: ruimarinho/bitcoin-core
     restart: always
     command:
-      -testnet=1
-      -server=1
+      -chain=test
+      -server
       -rpcuser=solidarity
       -rpcpassword=\${CRYPTO_PASSWORD}
-      -rpcallowip=::/0
-      -rpcport=18332
+      -rpcallowip=172.0.0.0/8
+      -rpcport=18333
+      -rpcbind=0.0.0.0
       -printtoconsole=1
       -maxconnections=8
       -maxuploadtarget=144
@@ -45,12 +43,8 @@ services:
       -txindex=0
       -prune=10000
       -dbcache=1024
-      -zmqpubrawblock=tcp://0.0.0.0:28333
-      -zmqpubrawtx=tcp://0.0.0.0:28333
-      -zmqpubhashtx=tcp://0.0.0.0:28333
-      -zmqpubhashblock=tcp://0.0.0.0:28333
     ports:
-      - "18332:18332"
+      - "18333:18333"
     volumes:
       - ~/bitcoin-testnet:/home/bitcoin/.bitcoin
 
@@ -80,12 +74,13 @@ services:
       - DATABASE_USER=SA
       - DATABASE_PASSWORD=\${DATABASE_PASSWORD}
       - JWT_KEY=\${JWT_KEY}
-      - CRYPTO_BITCOIN_MAINNET_SERVER=solidarity_crypto_bitcoin_mainnet
-      - CRYPTO_BITCOIN_MAINNET_USERNAME=solidarity
-      - CRYPTO_BITCOIN_MAINNET_PASSWORD=\${CRYPTO_PASSWORD}
-      - CRYPTO_BITCOIN_TESTNET_SERVER=solidarity_crypto_bitcoin_testnet
-      - CRYPTO_BITCOIN_TESTNET_USERNAME=solidarity
-      - CRYPTO_BITCOIN_TESTNET_PASSWORD=\${CRYPTO_PASSWORD}
+      - PAYMENT_METHODS=BTC_MAINNET
+      - PAYMENT_METHOD_BTC_MAINNET_SERVER=http://solidarity_crypto_bitcoin_mainnet:8333/
+      - PAYMENT_METHOD_BTC_MAINNET_USERNAME=solidarity
+      - PAYMENT_METHOD_BTC_MAINNET_PASSWORD=\${CRYPTO_PASSWORD}
+      - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://solidarity_crypto_bitcoin_testnet:18333/
+      - PAYMENT_METHOD_BTC_TESTNET_USERNAME=solidarity
+      - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=\${CRYPTO_PASSWORD}
 
   client:
     container_name: solidarity_client

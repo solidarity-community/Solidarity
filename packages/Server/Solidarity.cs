@@ -40,6 +40,7 @@ global using System.Text;
 global using System.Reflection;
 global using Xunit;
 global using System.Text.RegularExpressions;
+global using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using NetTopologySuite.IO;
 
@@ -95,6 +96,26 @@ public static class ConfigurationExtensions
 		application.ConfigureExceptionHandler();
 		application.UseEndpoints(endpoints => endpoints.MapControllers());
 		application.UseSwagger();
+		application.MapHealthChecks("/health", new()
+		{
+			ResponseWriter = async (c, r) =>
+			{
+				c.Response.ContentType = "application/json";
+				var result = Newtonsoft.Json.JsonConvert.SerializeObject(new
+				{
+					status = r.Status.ToString(),
+					checks = r.Entries.Select(e => new
+					{
+						key = e.Key,
+						status = e.Value.Status.ToString(),
+						description = e.Value.Description,
+						duration = e.Value.Duration.ToString(),
+					})
+				});
+				await c.Response.WriteAsync(result);
+			}
+		});
+		application.Services.GetRequiredService<IDatabase>().Initialize();
 		return application;
 	}
 }

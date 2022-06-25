@@ -82,7 +82,7 @@ jobs:
             export DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
             export JWT_KEY=${{ secrets.JWT_KEY }}
             export CRYPTO_PASSWORD=${{ secrets.CRYPTO_PASSWORD }}
-            docker-compose -f ./docker-compose.prod.yml down
+            docker-compose -f ./docker-compose.prod.yml down solidarity_client solidarity_server
             docker load -i ./solidarity_server_image
             docker load -i ./solidarity_client_image
             docker-compose -f ./docker-compose.prod.yml up -d

@@ -3,14 +3,30 @@
 public class DatabaseContext : DbContext, IDatabase
 {
 	private readonly ICurrentUserService _currentUserService;
+	private readonly ILogger _logger;
 
-	public DatabaseContext(DbContextOptions<DatabaseContext> options, ICurrentUserService currentUserService) : base(options)
+	public DatabaseContext(DbContextOptions<DatabaseContext> options, ICurrentUserService currentUserService, ILogger<DatabaseContext> logger) : base(options)
 	{
 		_currentUserService = currentUserService;
+		_logger = logger;
+	}
+
+	public void Initialize()
+	{
+		_logger.LogInformation(@"Initializing database with the provider name ""{providerName}""", Database.ProviderName);
+
+		var reset = false;
+		if (reset)
+		{
+			Database.EnsureDeleted();
+		}
+
+		Database.EnsureCreated();
+
 		if (Database.ProviderName != "Microsoft.EntityFrameworkCore.InMemory")
 		{
+			_logger.LogInformation("Migrating database");
 			Database.Migrate();
-			// DatabaseSeeder.Seed(this);
 		}
 	}
 
@@ -20,11 +36,11 @@ public class DatabaseContext : DbContext, IDatabase
 	public DbSet<Handshake> Handshakes { get; set; } = null!;
 	public DbSet<Campaign> Campaigns { get; set; } = null!;
 	public DbSet<CampaignMedia> CampaignMedia { get; set; } = null!;
+	public DbSet<CampaignExpenditure> CampaignExpenditures { get; set; } = null!;
 	public DbSet<Validation> Validations { get; set; } = null!;
 	public DbSet<Vote> Votes { get; set; } = null!;
-	public DbSet<DonationChannel> DonationChannels { get; set; } = null!;
+	public DbSet<CampaignPaymentMethod> CampaignPaymentMethods { get; set; } = null!;
 	public DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; } = null!;
-	public DbSet<CampaignExpenditure> CampaignExpenditures { get; set; } = null!;
 
 	public DbSet<TEntity> GetSet<TEntity>() where TEntity : class => Set<TEntity>();
 	public EntityEntry GetEntry(object entity) => Entry(entity);
@@ -35,7 +51,7 @@ public class DatabaseContext : DbContext, IDatabase
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
 		modelBuilder.Entity<Account>(a => a.HasIndex(e => e.Username).IsUnique());
-		modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne(c => c.Creator);
+		modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne().HasForeignKey(c => c.CreatorId);
 		modelBuilder.Entity<Account>().HasMany(a => a.Votes).WithOne(v => v.Account);
 
 		modelBuilder.Entity<Domain.Models.Identity>().HasOne(i => i.Account).WithOne();
@@ -50,7 +66,7 @@ public class DatabaseContext : DbContext, IDatabase
 		modelBuilder.Entity<Campaign>().HasOne(c => c.Validation).WithOne(v => v.Campaign);
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Media).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Expenditures).WithOne();
-		modelBuilder.Entity<Campaign>().HasMany(c => c.DonationChannels).WithOne(dc => dc.Campaign);
+		modelBuilder.Entity<Campaign>().HasMany(c => c.ActivatedPaymentMethods).WithOne(pm => pm.Campaign);
 
 		modelBuilder.Entity<PaymentMethodKey>().HasKey(pmk => pmk.PaymentMethodIdentifier);
 

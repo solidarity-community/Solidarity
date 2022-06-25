@@ -1,4 +1,4 @@
-import { Component, component, event, html, query, Snackbar, property } from '@3mo/model'
+import { Component, component, event, html, query, property, NotificationHost } from '@3mo/model'
 import { FileService } from 'sdk'
 
 /** 
@@ -34,7 +34,7 @@ export class FileUpload extends Component {
 			this.inputElement.value = ''
 			this.change.dispatch(undefined)
 		} catch (error) {
-			Snackbar.show('Upload has failed. Try again.')
+			NotificationHost.instance.notifyError('Upload has failed. Try again.')
 		}
 	}
 
