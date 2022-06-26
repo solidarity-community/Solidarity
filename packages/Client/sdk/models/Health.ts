@@ -8,5 +8,5 @@ export type Health = {
 export type HealthCheck = {
 	readonly key: string,
 	readonly status: HealthCheckStatus,
-	readonly checks?: Array<HealthCheck>
+	readonly checks: Array<HealthCheck>
 }

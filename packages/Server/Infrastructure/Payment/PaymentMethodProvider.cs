@@ -25,10 +25,10 @@ public class PaymentMethodProvider : IPaymentMethodProvider, IHealthCheck
 	{
 		var healthCheckTasksByKey = _enabledPaymentMethods.ToDictionary(pm => pm.Name, pm => pm.CheckHealthAsync(context, cancellationToken));
 		await Task.WhenAll(healthCheckTasksByKey.Values);
-		var healthChecksByKey = healthCheckTasksByKey.ToDictionary(kvp => kvp.Key, kvp => (dynamic)kvp.Value.Result);
+		var healthChecksByKey = healthCheckTasksByKey.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Result);
 
 		return new HealthCheckResult(
-			data: healthChecksByKey,
+			data: healthChecksByKey.ToDictionary(kvp => kvp.Key, kvp => (object)kvp.Value),
 			status: healthChecksByKey.Any(hc => hc.Value.Status == HealthStatus.Unhealthy)
 				? HealthStatus.Unhealthy
 				: healthChecksByKey.Any(hc => hc.Value.Status == HealthStatus.Degraded)

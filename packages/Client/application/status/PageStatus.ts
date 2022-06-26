@@ -86,7 +86,7 @@ export class PageStatus extends PageComponent {
 					<mo-div width='*' fontSize='large'>${check.key}</mo-div>
 					<solid-status status=${check.status}></solid-status>
 				</mo-flex>
-				${!check.checks?.length ? nothing : this.getHealthChecksTemplate(check.checks, index)}
+				${!check.checks.length ? nothing : this.getHealthChecksTemplate(check.checks, index)}
 			</mo-flex>
 		`
 	}
