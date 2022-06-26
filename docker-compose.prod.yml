@@ -7,17 +7,14 @@ services:
     command:
       -chain=main
       -server
+      -printtoconsole=1
+      -maxuploadtarget=5000
+      -txindex=1
+      -rpcallowip=172.0.0.0/8
+      -rpcbind=0.0.0.0
+      -rpcport=8333
       -rpcuser=solidarity
       -rpcpassword=\${CRYPTO_PASSWORD}
-      -rpcallowip=172.0.0.0/8
-      -rpcport=8333
-      -rpcbind=0.0.0.0
-      -printtoconsole=1
-      -maxconnections=8
-      -maxuploadtarget=144
-      -disablewallet=0
-      -txindex=0
-      -prune=10000
       -dbcache=1024
     ports:
       - "8333:8333"
@@ -31,17 +28,14 @@ services:
     command:
       -chain=test
       -server
+      -printtoconsole=1
+      -maxuploadtarget=5000
+      -txindex=1
+      -rpcallowip=172.0.0.0/8
+      -rpcbind=0.0.0.0
+      -rpcport=18333
       -rpcuser=solidarity
       -rpcpassword=\${CRYPTO_PASSWORD}
-      -rpcallowip=172.0.0.0/8
-      -rpcport=18333
-      -rpcbind=0.0.0.0
-      -printtoconsole=1
-      -maxconnections=8
-      -maxuploadtarget=144
-      -disablewallet=0
-      -txindex=0
-      -prune=10000
       -dbcache=1024
     ports:
       - "18333:18333"
