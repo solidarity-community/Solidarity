@@ -7,6 +7,8 @@ public abstract class Bitcoin : PaymentMethod
 		{ Network.TestNet, 1 },
 	};
 
+	public override string Name => $"Bitcoin {(_client.Network == Network.Main ? "" : "Testnet")}";
+
 	public readonly RPCClient _client;
 	public readonly BitcoinExtKey _extendedPrivateKey;
 
@@ -32,12 +34,13 @@ public abstract class Bitcoin : PaymentMethod
 
 		_extendedPrivateKey = new BitcoinExtKey(Key, _client.Network);
 
-		_client.EnsureWalletCreated().GetAwaiter().GetResult();
+		try { _client.EnsureWalletCreated().GetAwaiter().GetResult(); }
+		catch { }
 	}
 
 	public override Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default) => CheckHealthAsync(cancellationToken);
 
-	public async Task<HealthCheckResult> CheckHealthAsync(CancellationToken cancellationToken = default)
+	private async Task<HealthCheckResult> CheckHealthAsync(CancellationToken cancellationToken = default)
 	{
 		try
 		{
@@ -46,7 +49,7 @@ public abstract class Bitcoin : PaymentMethod
 				? HealthCheckResult.Degraded($"{Name} is currently downloading the blockchain at {blockchainInfo.VerificationProgress * 100}%")
 				: HealthCheckResult.Healthy();
 		}
-		catch (RPCException)
+		catch
 		{
 			return HealthCheckResult.Unhealthy($"No connection to the {Name} RPC");
 		}
@@ -136,6 +139,4 @@ public abstract class Bitcoin : PaymentMethod
 			return publicUTxOs.Concat(accountsUTxOs).ToArray();
 		}
 	}
-
-	private string Name => $"Bitcoin {(_client.Network == Network.Main ? "" : "Testnet")}";
 }

@@ -23,15 +23,17 @@ public class PaymentMethodProvider : IPaymentMethodProvider, IHealthCheck
 
 	public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
 	{
-		var healthChecks = await Task.WhenAll(_enabledPaymentMethods.Select(pm => pm.CheckHealthAsync(context, cancellationToken))) ?? Array.Empty<HealthCheckResult>();
+		var healthCheckTasksByKey = _enabledPaymentMethods.ToDictionary(pm => pm.Name, pm => pm.CheckHealthAsync(context, cancellationToken));
+		await Task.WhenAll(healthCheckTasksByKey.Values);
+		var healthChecksByKey = healthCheckTasksByKey.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Result);
 
-		var unhealthy = healthChecks.Where(hc => hc.Status == HealthStatus.Unhealthy);
-		var degraded = healthChecks.Where(hc => hc.Status == HealthStatus.Degraded);
-
-		return unhealthy.Any()
-			? HealthCheckResult.Unhealthy($"{unhealthy.Count()} unhealthy payment method(s): {string.Join(", ", unhealthy.Select(hc => hc.Description))}")
-			: degraded.Any()
-				? HealthCheckResult.Degraded($"{degraded.Count()} degraded payment method(s): {string.Join(", ", degraded.Select(hc => hc.Description))}")
-				: HealthCheckResult.Healthy();
+		return new HealthCheckResult(
+			data: healthChecksByKey.ToDictionary(kvp => kvp.Key, kvp => (object)kvp.Value),
+			status: healthChecksByKey.Any(hc => hc.Value.Status == HealthStatus.Unhealthy)
+				? HealthStatus.Unhealthy
+				: healthChecksByKey.Any(hc => hc.Value.Status == HealthStatus.Degraded)
+					? HealthStatus.Degraded
+					: HealthStatus.Healthy
+		);
 	}
 }

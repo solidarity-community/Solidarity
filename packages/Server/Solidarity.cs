@@ -43,6 +43,7 @@ global using System.Text.RegularExpressions;
 global using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using NetTopologySuite.IO;
+using Newtonsoft.Json.Serialization;
 
 WebApplication.CreateBuilder(args)
 	.ConfigureServices().Build()
@@ -96,26 +97,26 @@ public static class ConfigurationExtensions
 		application.ConfigureExceptionHandler();
 		application.UseEndpoints(endpoints => endpoints.MapControllers());
 		application.UseSwagger();
+		application.ConfigureHealthChecks();
+		application.Services.GetRequiredService<IDatabase>().Initialize();
+		return application;
+	}
+
+	private static WebApplication ConfigureHealthChecks(this WebApplication application)
+	{
 		application.MapHealthChecks("/health", new()
 		{
-			ResponseWriter = async (c, r) =>
+			AllowCachingResponses = true,
+			ResponseWriter = async (context, report) =>
 			{
-				c.Response.ContentType = "application/json";
-				var result = Newtonsoft.Json.JsonConvert.SerializeObject(new
+				context.Response.ContentType = "application/json";
+				var result = Newtonsoft.Json.JsonConvert.SerializeObject(report.ToHealth(), new Newtonsoft.Json.JsonSerializerSettings
 				{
-					status = r.Status.ToString(),
-					checks = r.Entries.Select(e => new
-					{
-						key = e.Key,
-						status = e.Value.Status.ToString(),
-						description = e.Value.Description,
-						duration = e.Value.Duration.ToString(),
-					})
+					ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() }
 				});
-				await c.Response.WriteAsync(result);
+				await context.Response.WriteAsync(result);
 			}
 		});
-		application.Services.GetRequiredService<IDatabase>().Initialize();
 		return application;
 	}
 }
