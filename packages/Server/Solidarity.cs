@@ -97,8 +97,16 @@ public static class ConfigurationExtensions
 		application.ConfigureExceptionHandler();
 		application.UseEndpoints(endpoints => endpoints.MapControllers());
 		application.UseSwagger();
+		application.ConfigureHealthChecks();
+		application.Services.GetRequiredService<IDatabase>().Initialize();
+		return application;
+	}
+
+	private static WebApplication ConfigureHealthChecks(this WebApplication application)
+	{
 		application.MapHealthChecks("/health", new()
 		{
+			AllowCachingResponses = true,
 			ResponseWriter = async (context, report) =>
 			{
 				context.Response.ContentType = "application/json";
@@ -109,7 +117,6 @@ public static class ConfigurationExtensions
 				await context.Response.WriteAsync(result);
 			}
 		});
-		application.Services.GetRequiredService<IDatabase>().Initialize();
 		return application;
 	}
 }

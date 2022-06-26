@@ -9,6 +9,7 @@ export class IntervalController extends Controller {
 
 	override hostConnected() {
 		super.hostConnected?.()
+		this.handleTick()
 		this.timerId = window.setInterval(this.handleTick, this.period.milliseconds)
 	}
 
