@@ -7,27 +7,25 @@ global using Microsoft.AspNetCore.Http;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.ChangeTracking;
-global using Microsoft.EntityFrameworkCore.Metadata;
 global using Microsoft.Extensions.DependencyInjection;
 global using Microsoft.Extensions.Hosting;
 global using Microsoft.IdentityModel.Tokens;
-global using Microsoft.OpenApi.Models;
 global using NBitcoin;
 global using NBitcoin.RPC;
 global using NetTopologySuite.Geometries;
-global using Solidarity.API.Extensions;
-global using Solidarity.Application.Common;
-global using Solidarity.Application.Extensions;
-global using Solidarity.Application.Helpers;
-global using Solidarity.Application.Services;
-global using Solidarity.Core.Application;
-global using Solidarity.Domain.Exceptions;
-global using Solidarity.Domain.Extensions;
+global using Microsoft.EntityFrameworkCore.Metadata;
+global using Solidarity;
+global using Solidarity.Application.Abstractions;
+global using Solidarity.Application.Accounts;
+global using Solidarity.Application.Authentication;
+global using Solidarity.Application.Campaigns;
+global using Solidarity.Application.Files;
+global using Solidarity.Application.PaymentMethods;
 global using Solidarity.Domain.Models;
+global using Solidarity.Infrastructure;
 global using Solidarity.Infrastructure.Identity;
 global using Solidarity.Infrastructure.Persistence;
 global using Solidarity.Infrastructure.Payment;
-global using Solidarity.Installers;
 global using System;
 global using System.Collections.Generic;
 global using System.ComponentModel.DataAnnotations;
@@ -41,82 +39,10 @@ global using System.Reflection;
 global using Xunit;
 global using System.Text.RegularExpressions;
 global using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using NetTopologySuite.IO;
-using Newtonsoft.Json.Serialization;
+global using System.Text.Json;
+global using System.Text.Json.Serialization;
+global using TanvirArjel.Extensions.Microsoft.DependencyInjection;
 
 WebApplication.CreateBuilder(args)
-	.ConfigureServices().Build()
-	.ConfigureApplication().Run();
-
-[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1050", Justification = "This is a one-time extension method to use within top-level statements")]
-public static class ConfigurationExtensions
-{
-	public static WebApplicationBuilder ConfigureServices(this WebApplicationBuilder builder)
-	{
-		builder.Services.AddHttpContextAccessor();
-		builder.Services.AddCors();
-		builder.Services.AddControllers().AddNewtonsoftJson(options =>
-		{
-			options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
-			options.SerializerSettings.DateTimeZoneHandling = Newtonsoft.Json.DateTimeZoneHandling.Utc;
-			var geometryFactory = new GeometryFactoryEx(precisionModel: new PrecisionModel(), srid: 4326) { OrientationOfExteriorRing = LinearRingOrientation.CCW };
-			var geographyConverters = GeoJsonSerializer.Create(geometryFactory).Converters;
-			foreach (var converter in geographyConverters)
-			{
-				options.SerializerSettings.Converters.Add(converter);
-			}
-		});
-		var validator = new SuppressChildValidationMetadataProvider(typeof(Geometry));
-		builder.Services.AddMvc(options => options.ModelMetadataDetailsProviders.Add(validator));
-		builder.Services.InstallSolidarity();
-		return builder;
-	}
-
-	private static void InstallSolidarity(this IServiceCollection services)
-	{
-		new AuthenticationInstaller().Install(services);
-		new PaymentMethodsInstaller().Install(services);
-		new DatabaseInstaller().Install(services);
-		new OpenApiInstaller().Install(services);
-		new UserServiceInstaller().Install(services);
-		new ServiceInstaller().Install(services);
-	}
-
-	public static WebApplication ConfigureApplication(this WebApplication application)
-	{
-		if (application.Environment.IsDevelopment())
-		{
-			application.UseDeveloperExceptionPage();
-		}
-		application.UseCors(policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
-		application.UseHttpsRedirection();
-		application.UseRouting();
-		application.UseAuthentication();
-		application.UseAuthorization();
-		application.ConfigureExceptionHandler();
-		application.UseEndpoints(endpoints => endpoints.MapControllers());
-		application.UseSwagger();
-		application.ConfigureHealthChecks();
-		application.Services.GetRequiredService<IDatabase>().Initialize();
-		return application;
-	}
-
-	private static WebApplication ConfigureHealthChecks(this WebApplication application)
-	{
-		application.MapHealthChecks("/health", new()
-		{
-			AllowCachingResponses = true,
-			ResponseWriter = async (context, report) =>
-			{
-				context.Response.ContentType = "application/json";
-				var result = Newtonsoft.Json.JsonConvert.SerializeObject(report.ToHealth(), new Newtonsoft.Json.JsonSerializerSettings
-				{
-					ContractResolver = new DefaultContractResolver { NamingStrategy = new CamelCaseNamingStrategy() }
-				});
-				await context.Response.WriteAsync(result);
-			}
-		});
-		return application;
-	}
-}
+	.InstallSolidarity().Build()
+	.ConfigureSolidarity().Run();

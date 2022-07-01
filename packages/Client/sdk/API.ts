@@ -79,11 +79,10 @@ export class API {
 			throw new HttpError(await response.json())
 		}
 
-		try {
-			return API.construct<T>(await response.json())
-		} catch (error) {
-			return undefined!
-		}
+		const responseText = await response.text()
+		return JSON.isJson(responseText) === false
+			? responseText as unknown as T
+			: API.construct<T>(JSON.parse(responseText))
 	}
 
 	private static construct<T>(data: any, isChild = false): T {

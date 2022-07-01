@@ -6,7 +6,8 @@ export class AccountService {
 	}
 
 	static async create(account: Account) {
-		API.token = await API.post<string>(`/account`, account)
+		const token = await API.post<string>(`/account`, account)
+		API.token = token
 	}
 
 	static update(account: Account) {

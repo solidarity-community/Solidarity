@@ -1,5 +1,6 @@
 namespace Solidarity.Infrastructure.Identity;
 
+[TransientService]
 public class CurrentUserService : ICurrentUserService
 {
 	public int? Id { get; }

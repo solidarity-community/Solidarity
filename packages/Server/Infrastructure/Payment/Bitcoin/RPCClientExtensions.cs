@@ -134,7 +134,7 @@ public static class RPCClientExtensions
 	public static RawTransaction FetchRawTransaction(this RPCClient client, string transactionId)
 	{
 		var transaction = client.SendCommand("getrawtransaction", transactionId, true).Result.ToString();
-		return Newtonsoft.Json.JsonConvert.DeserializeObject<RawTransaction>(transaction)!;
+		return JsonSerializer.Deserialize<RawTransaction>(transaction)!;
 	}
 
 	public static Task<uint256> SendAsync(this Transaction transaction, RPCClient client)

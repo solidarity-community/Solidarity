@@ -1,5 +1,7 @@
 namespace Solidarity.Infrastructure.Payment.Bitcoin;
 
+#nullable disable
+
 public class RawTransaction
 {
 	public string txid { get; set; }

@@ -31,7 +31,7 @@ public class DatabaseContext : DbContext, IDatabase
 	}
 
 	public DbSet<Account> Accounts { get; set; } = null!;
-	public DbSet<Domain.Models.Identity> Identities { get; set; } = null!;
+	public DbSet<Application.Accounts.Identity> Identities { get; set; } = null!;
 	public DbSet<AuthenticationMethod> AuthenticationMethods { get; set; } = null!;
 	public DbSet<Handshake> Handshakes { get; set; } = null!;
 	public DbSet<Campaign> Campaigns { get; set; } = null!;
@@ -54,14 +54,14 @@ public class DatabaseContext : DbContext, IDatabase
 		modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne().HasForeignKey(c => c.CreatorId);
 		modelBuilder.Entity<Account>().HasMany(a => a.Votes).WithOne(v => v.Account);
 
-		modelBuilder.Entity<Domain.Models.Identity>().HasOne(i => i.Account).WithOne();
+		modelBuilder.Entity<Application.Accounts.Identity>().HasOne(i => i.Account).WithOne();
 
 		modelBuilder.Entity<Handshake>().HasOne(h => h.Account);
 
 		modelBuilder.Entity<AuthenticationMethod>().Ignore(am => am.SupportsMultiple);
 		modelBuilder.Entity<AuthenticationMethod>().HasKey(am => new { am.AccountId, am.Type, am.Salt });
 		modelBuilder.Entity<AuthenticationMethod>().HasDiscriminator(am => am.Type)
-			.HasValue<PasswordAuthentication>(AuthenticationMethodType.Password);
+			.HasValue<PasswordAuthenticationMethod>(AuthenticationMethodType.Password);
 
 		modelBuilder.Entity<Campaign>().HasOne(c => c.Validation).WithOne(v => v.Campaign);
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Media).WithOne();
