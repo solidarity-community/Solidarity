@@ -4,6 +4,8 @@ public enum CampaignStatus { Funding, Allocation, Complete }
 
 public class Campaign : Model
 {
+	private const int ValidationTimeSpanInDays = 3;
+
 	[MaxLength(50)] public string Title { get; set; } = string.Empty;
 
 	public string Description { get; set; } = null!;
@@ -33,16 +35,18 @@ public class Campaign : Model
 
 	public int? ValidationId { get; set; }
 
-	public Validation? Validation { get; set; } = null!;
+	public CampaignValidation? Validation { get; set; }
 
 	// public List<Milestone> Milestones { get; set; }
-}
 
-public static class CampaignExtensions
-{
-	public static Campaign WithoutAuthenticationData(this Campaign campaign)
+	public void TransitionToAllocationPhase()
 	{
-		campaign.Validation?.WithoutAuthenticationData();
-		return campaign;
+		TargetAllocationDate = DateTime.Now;
+		AllocationDate = DateTime.Now;
+		Validation ??= new CampaignValidation
+		{
+			Campaign = this,
+			Expiration = DateTime.Now.AddDays(ValidationTimeSpanInDays),
+		};
 	}
 }

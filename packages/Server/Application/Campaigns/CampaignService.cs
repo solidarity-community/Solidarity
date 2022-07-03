@@ -12,16 +12,6 @@ public class CampaignService : CrudService<Campaign>
 		_accountService = accountService;
 	}
 
-	public override async Task<Campaign> Get(int id)
-	{
-		return (await base.Get(id)).WithoutAuthenticationData();
-	}
-
-	public override async Task<IEnumerable<Campaign>> GetAll()
-	{
-		return (await base.GetAll()).Select(campaign => campaign.WithoutAuthenticationData());
-	}
-
 	public async Task<decimal> GetBalance(int id, int? accountId = null)
 	{
 		var campaign = await Get(id);
@@ -53,7 +43,7 @@ public class CampaignService : CrudService<Campaign>
 		campaign.AllocationDate = null;
 		campaign.CompletionDate = null;
 		await base.Create(campaign);
-		return campaign.WithoutAuthenticationData();
+		return campaign;
 	}
 
 	public override async Task<Campaign> Update(Campaign campaign)
@@ -82,7 +72,7 @@ public class CampaignService : CrudService<Campaign>
 					CampaignId = entity.Id
 				}).ToList();
 
-		return (await base.Update(campaign)).WithoutAuthenticationData();
+		return await base.Update(campaign);
 	}
 
 	public async Task DeclareAllocationPhase(int campaignId)
@@ -94,13 +84,19 @@ public class CampaignService : CrudService<Campaign>
 			throw new Exception("You are not allowed to declare allocation phase of this campaign.");
 		}
 
-		if (campaign.Status != CampaignStatus.Funding)
+		if (campaign.Status is not CampaignStatus.Funding)
 		{
 			throw new Exception("The campaign is not in the funding phase.");
 		}
 
-		campaign.TargetAllocationDate = DateTime.Now;
-		campaign.AllocationDate = DateTime.Now;
+		var balance = await GetBalance(campaignId);
+
+		if (balance < campaign.TotalExpenditure)
+		{
+			throw new Exception("The campaign does not have enough funds.");
+		}
+
+		campaign.TransitionToAllocationPhase();
 		await _database.CommitChangesAsync();
 	}
 
@@ -119,9 +115,9 @@ public class CampaignService : CrudService<Campaign>
 				nameof(destinationByPaymentMethodIdentifier));
 		}
 
-		if (campaign.Status != CampaignStatus.Allocation)
+		if (campaign.Status is not CampaignStatus.Allocation)
 		{
-			throw new Exception("The campaign is not in the allocation phase.");
+			throw new CampaignStatusException(CampaignStatus.Allocation);
 		}
 
 		Task AllocatePaymentMethod(CampaignPaymentMethod p) =>
@@ -129,6 +125,38 @@ public class CampaignService : CrudService<Campaign>
 
 		await Task.WhenAll(campaign.ActivatedPaymentMethods.Select(p => AllocatePaymentMethod(p)));
 		campaign.CompletionDate = DateTime.Now;
+		await _database.CommitChangesAsync();
+	}
+
+	public async Task<bool?> GetVote(int campaignId)
+	{
+		var campaign = await Get(campaignId);
+		return campaign.Validation?.Votes.Find(v => v.AccountId == _currentUserService.Id)?.Value;
+	}
+
+	// public
+
+	public async Task Vote(int campaignId, bool vote)
+	{
+		var campaign = await Get(campaignId);
+
+		if (_currentUserService.Id is null)
+		{
+			throw new Exception("You are not allowed to vote on this campaign");
+		}
+
+		if (campaign.Status is not CampaignStatus.Allocation)
+		{
+			throw new CampaignStatusException(CampaignStatus.Allocation);
+		}
+
+		var validationVote = campaign.Validation?.Votes.Find(v => v.AccountId == _currentUserService.Id) ?? new CampaignValidationVote
+		{
+			AccountId = (int)_currentUserService.Id
+		};
+
+		validationVote.Value = vote;
+
 		await _database.CommitChangesAsync();
 	}
 

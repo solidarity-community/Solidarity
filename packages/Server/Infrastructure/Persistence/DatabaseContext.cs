@@ -37,8 +37,8 @@ public class DatabaseContext : DbContext, IDatabase
 	public DbSet<Campaign> Campaigns { get; set; } = null!;
 	public DbSet<CampaignMedia> CampaignMedia { get; set; } = null!;
 	public DbSet<CampaignExpenditure> CampaignExpenditures { get; set; } = null!;
-	public DbSet<Validation> Validations { get; set; } = null!;
-	public DbSet<Vote> Votes { get; set; } = null!;
+	public DbSet<CampaignValidation> Validations { get; set; } = null!;
+	public DbSet<CampaignValidationVote> Votes { get; set; } = null!;
 	public DbSet<CampaignPaymentMethod> CampaignPaymentMethods { get; set; } = null!;
 	public DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; } = null!;
 
@@ -70,7 +70,10 @@ public class DatabaseContext : DbContext, IDatabase
 
 		modelBuilder.Entity<PaymentMethodKey>().HasKey(pmk => pmk.PaymentMethodIdentifier);
 
-		modelBuilder.Entity<Validation>().HasMany(v => v.Votes).WithOne(v => v.Validation);
+		modelBuilder.Entity<CampaignValidation>().HasMany(v => v.Votes).WithOne(v => v.Validation);
+
+		modelBuilder.Entity<CampaignValidationVote>().Ignore(v => v.Id);
+		modelBuilder.Entity<CampaignValidationVote>().HasKey(v => new { v.ValidationId, v.AccountId });
 	}
 
 	public override int SaveChanges()

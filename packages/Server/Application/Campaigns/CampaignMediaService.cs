@@ -12,7 +12,7 @@ public class CampaignMediaService : CrudService<CampaignMedia>
 	public async Task<CampaignMedia> CreateOrUpdate(CampaignMedia media)
 	{
 		return media.IsValid() == false
-			? throw new InvalidMediaException()
+			? throw new InvalidCampaignMediaException()
 			: media.Id is not 0 && await Get(media.Id) is not null
 				? await Update(media)
 				: await Create(media);

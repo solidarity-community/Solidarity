@@ -13,7 +13,7 @@ public class Account : Model
 
 	public List<Campaign> Campaigns { get; set; } = new();
 
-	public List<Vote> Votes { get; set; } = new();
+	public List<CampaignValidationVote> Votes { get; set; } = new();
 }
 
 public static class AccountExtensions

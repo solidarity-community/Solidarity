@@ -10,6 +10,7 @@ public class CampaignModule : Module
 			options.SerializerOptions.Converters.Add(new NetTopologySuite.IO.Converters.GeoJsonConverterFactory(geometryFactory));
 		});
 	}
+
 	public override void ConfigureEndpoints(IEndpointRouteBuilder endpoints)
 	{
 		endpoints.MapGet("/campaign",
@@ -52,6 +53,15 @@ public class CampaignModule : Module
 		endpoints.MapDelete("/campaign/{id}",
 			(CampaignService campaignService, int id) => campaignService.Delete(id)
 		);
+
+		endpoints.MapGet("/campaign/{id}/vote",
+			(CampaignService campaignService, int id) => campaignService.GetVote(id)
+		);
+
+		endpoints.MapPost("/campaign/{id}/vote",
+			(CampaignService campaignService, int id, [FromBody] bool vote) => campaignService.Vote(id, vote)
+		);
+
 		endpoints.MapGet("/media/{id}",
 			[AllowAnonymous] (CampaignMediaService campaignMediaService, int id) => campaignMediaService.Get(id)
 		);

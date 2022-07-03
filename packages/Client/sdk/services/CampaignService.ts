@@ -26,6 +26,15 @@ export class CampaignService extends Service {
 		await API.post(`/campaign/${campaignId}/declare-allocation-phase`)
 	}
 
+	static async getVote(campaignId: number) {
+		const vote = await API.get<boolean | null>(`/campaign/${campaignId}/vote`)
+		return vote ?? undefined
+	}
+
+	static async vote(campaignId: number, value: boolean) {
+		await API.post(`/campaign/${campaignId}/vote`, value)
+	}
+
 	static async allocate(campaignId: number, destinationByPaymentMethodIdentifier: Map<string, string>) {
 		await API.post(`/campaign/${campaignId}/allocate`, destinationByPaymentMethodIdentifier)
 	}

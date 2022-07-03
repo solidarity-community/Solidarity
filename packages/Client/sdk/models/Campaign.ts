@@ -7,7 +7,6 @@ export enum CampaignStatus { Funding, Allocation, Complete }
 export class Campaign extends Model {
 	title?: string
 	description?: string
-	readonly status!: CampaignStatus
 	location?: GeometryCollection
 	creator?: Account
 	targetAllocationDate!: MoDate
@@ -18,6 +17,17 @@ export class Campaign extends Model {
 	validationId?: number
 	validation?: Validation
 	expenditures = new Array<CampaignExpenditure>()
+
+	get status() {
+		switch (true) {
+			case !!this.allocationDate && !this.completionDate:
+				return CampaignStatus.Allocation
+			case !!this.allocationDate && !!this.completionDate:
+				return CampaignStatus.Complete
+			default:
+				return CampaignStatus.Funding
+		}
+	}
 
 	get coverImageUri() {
 		return this.media.find(m => m.type === CampaignMediaType.File)?.uri

@@ -13,8 +13,8 @@ public interface IDatabase
 	DbSet<AuthenticationMethod> AuthenticationMethods { get; set; }
 	DbSet<Handshake> Handshakes { get; set; }
 	DbSet<Campaign> Campaigns { get; set; }
-	DbSet<Validation> Validations { get; set; }
-	DbSet<Vote> Votes { get; set; }
+	DbSet<CampaignValidation> Validations { get; set; }
+	DbSet<CampaignValidationVote> Votes { get; set; }
 	DbSet<CampaignPaymentMethod> CampaignPaymentMethods { get; set; }
 	DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; }
 	DbSet<CampaignMedia> CampaignMedia { get; set; }
