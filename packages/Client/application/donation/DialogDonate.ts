@@ -1,5 +1,5 @@
-import { component, css, DialogComponent, html, state, Task, nothing, FormatHelper } from '@3mo/model'
-import { AccountService, Campaign, CampaignPaymentMethod, CampaignService, PaymentMethodIdentifier } from 'sdk'
+import { component, css, DialogComponent, html, state, Task, nothing } from '@3mo/model'
+import { AccountService, Campaign, CampaignService, PaymentMethodIdentifier } from 'sdk'
 
 @component('solid-dialog-donate')
 export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign }> {
@@ -102,16 +102,16 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 		const listItemsTemplate = html`
 			<li>
 				<mo-flex gap='10px'>
-					<mo-div><span>Donate</span> <b>${this.selectedPaymentMethod?.name}</b> funds to this campaign via the following information:</mo-div>
+					<mo-div><span>Donate.</span> Send <b>${this.selectedPaymentMethod?.name}</b> funds to this campaign via the following information:</mo-div>
 					${this.paymentMethodTemplate}
 				</mo-flex>
 			</li>
 			${this.isPublicDonation ? nothing : html`
 				<li>
-					<span>Verify</span> this campaign's activities until the target allocation date <b>${FormatHelper.date(this.parameters.campaign.targetAllocationDate)}</b>.
+					<span>Validate.</span> Use provided media, description, location, etc. to validate this campaign's activities.
 				</li>
 				<li>
-					<span>Vote</span> in favor or against the integrity of this campaign to help allocating or refunding donations on <b>${FormatHelper.date(this.parameters.campaign.targetAllocationDate)}</b>.
+					<span>Vote.</span> Endorse or Oppose the the integrity of this campaign to decide on allocating or refunding donations.
 				</li>
 			`}
 		`

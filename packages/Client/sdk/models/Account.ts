@@ -1,4 +1,4 @@
-import { Model, model, PasswordAuthentication, Campaign, Vote } from 'sdk'
+import { Model, model, PasswordAuthentication, Campaign, CampaignValidationVote } from 'sdk'
 
 @model('Account')
 export class Account extends Model {
@@ -6,5 +6,5 @@ export class Account extends Model {
 	publicKey?: string
 	authenticationMethods?: Array<PasswordAuthentication>
 	campaigns?: Array<Campaign>
-	votes?: Array<Vote>
+	votes?: Array<CampaignValidationVote>
 }

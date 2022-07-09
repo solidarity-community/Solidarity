@@ -7,11 +7,12 @@ export class AuthenticationService {
 	}
 
 	static async isAuthenticated() {
-		return !!API.token && await API.get<boolean>(`/authentication/check`)
+		return !!API.authenticator?.isAuthenticated() && await API.get<boolean>(`/authentication/check`)
 	}
 
 	static async authenticateWithPassword(username: string, password: string) {
-		API.token = await API.get<string>(`/authentication/password?username=${username}&password=${password}`)
+		const token = await API.get<string>(`/authentication/password?username=${username}&password=${password}`)
+		API.authenticator?.authenticate(token)
 	}
 
 	static updatePassword(newPassword: string, oldPassword: string) {
@@ -19,6 +20,6 @@ export class AuthenticationService {
 	}
 
 	static unauthenticate() {
-		API.token = undefined
+		API.authenticator?.unauthenticate()
 	}
 }

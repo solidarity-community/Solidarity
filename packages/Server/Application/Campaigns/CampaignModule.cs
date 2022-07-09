@@ -34,12 +34,11 @@ public class CampaignModule : Module
 		);
 
 		endpoints.MapPost("/campaign/{id}/allocate",
-			(CampaignService campaignService, int id, Dictionary<string, string> destinationByPaymentMethodIdentifier)
-				=> campaignService.Allocate(id, destinationByPaymentMethodIdentifier)
+			(CampaignService campaignService, int id) => campaignService.Allocate(id)
 		);
 
-		endpoints.MapPost("/campaign/{id}/declare-allocation-phase",
-			(CampaignService campaignService, int id) => campaignService.DeclareAllocationPhase(id)
+		endpoints.MapPost("/campaign/{id}/declare-validation-phase",
+			(CampaignService campaignService, int id) => campaignService.DeclareValidationPhase(id)
 		);
 
 		endpoints.MapPost("/campaign",
@@ -56,6 +55,10 @@ public class CampaignModule : Module
 
 		endpoints.MapGet("/campaign/{id}/vote",
 			(CampaignService campaignService, int id) => campaignService.GetVote(id)
+		);
+
+		endpoints.MapGet("/campaign/{id}/votes",
+			(CampaignService campaignService, int id) => campaignService.GetVotes(id)
 		);
 
 		endpoints.MapPost("/campaign/{id}/vote",

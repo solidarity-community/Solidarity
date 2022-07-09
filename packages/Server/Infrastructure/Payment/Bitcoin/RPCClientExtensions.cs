@@ -114,10 +114,11 @@ public static class RPCClientExtensions
 		return txBuilder;
 	}
 
-	public static async Task SignAndSendAsync(this TransactionBuilder txBuilder, RPCClient client)
+	public static async Task<string> SignAndSendAsync(this TransactionBuilder txBuilder, RPCClient client)
 	{
 		var transaction = txBuilder.BuildTransaction(sign: true);
 		await transaction.SendAsync(client);
+		return transaction.GetHash().ToString();
 	}
 
 	public static async Task<FeeRate> GetFeeRateAsync(this RPCClient client)

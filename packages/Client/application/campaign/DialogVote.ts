@@ -1,8 +1,10 @@
-import { component, css, DialogComponent, FormatHelper, html, NotificationHost, state, Task } from '@3mo/model'
+import { component, css, DialogComponent, FormatHelper, html, NotificationHost, event, Task, nothing } from '@3mo/model'
 import { Campaign, CampaignService } from 'sdk'
 
 @component('solid-dialog-vote')
 export class DialogVote extends DialogComponent<{ readonly campaign: Campaign }> {
+	@event() static readonly voteCast: EventDispatcher
+
 	private readonly fetchShareTask = new Task(this, () => CampaignService.getShare(this.parameters.campaign.id!))
 	private get share() { return this.fetchShareTask.value }
 
@@ -30,9 +32,11 @@ export class DialogVote extends DialogComponent<{ readonly campaign: Campaign }>
 			<mo-dialog heading='Vote' primaryButtonText=''>
 				<mo-flex gap='16px'>
 					<mo-flex>
-						<mo-div>Endorse or oppose the integrity of this campaign.</mo-div>
+						<mo-div>Endorse or oppose the integrity of "${this.parameters.campaign.title}".</mo-div>
 						<mo-div>
-							This vote weighs
+							Voting ends
+							<solid-timer foreground='var(--mo-accent)' fontWeight='bold' .end=${this.parameters.campaign.validation?.expiration}></solid-timer>
+							and your vote weighs
 							<mo-div foreground='var(--mo-accent)' fontWeight='bold'>${FormatHelper.percent(this.share! / this.parameters.campaign.totalExpenditure * 100)}%</mo-div>
 							towards the integrity of the campaign.
 						</mo-div>
@@ -53,9 +57,12 @@ export class DialogVote extends DialogComponent<{ readonly campaign: Campaign }>
 				?data-pre-disabled=${this.vote !== undefined && this.vote !== vote}
 				@click=${() => this.handleVoteButtonClick(vote)}
 			>
+				${this.vote !== vote ? nothing : html`
+					<mo-icon-button position='absolute' icon='verified' left='-4px' top='-4px' fontSize='28px'></mo-icon-button>
+				`}
 				<mo-flex>
 					<mo-div fontSize='24px'>${text}</mo-div>
-					<mo-div foreground='var(--mo-color-gray)' style='text-transform: lowercase;'>this campaign's integrity</mo-div>
+					<mo-div foreground='var(--mo-color-gray)' style='text-transform: initial'>the integrity of this campaign</mo-div>
 				</mo-flex>
 			</mo-loading-button>
 		`
@@ -63,6 +70,7 @@ export class DialogVote extends DialogComponent<{ readonly campaign: Campaign }>
 
 	private async handleVoteButtonClick(vote: boolean) {
 		await CampaignService.vote(this.parameters.campaign.id!, vote)
+		DialogVote.voteCast.dispatch()
 		await this.fetchVoteTask.run()
 	}
 }

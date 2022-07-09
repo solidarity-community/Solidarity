@@ -9,4 +9,6 @@ public abstract class Model
 	public DateTime Creation { get; set; }
 	public int? LastModifierId { get; set; }
 	public DateTime LastModification { get; set; }
+
+	public virtual void Validate() => Validator.ValidateObject(this, new ValidationContext(this), true);
 }

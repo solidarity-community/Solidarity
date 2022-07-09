@@ -2,21 +2,21 @@ import { apiValueConstructor, ApiValueConstructor } from '../API'
 
 export const model = (csharpTypeName: string) => {
 	return (Constructor: Constructor<unknown>) => {
-		ModelConstructor.modelConstructorsByCsharpTypeName.set(csharpTypeName, Constructor)
+		ModelValueConstructor.modelConstructorsByCsharpTypeName.set(csharpTypeName, Constructor)
 	}
 }
 
 @apiValueConstructor()
-export class ModelConstructor implements ApiValueConstructor<object, object> {
+export class ModelValueConstructor implements ApiValueConstructor<object, object> {
 	static readonly modelConstructorsByCsharpTypeName = new Map<string, Constructor<unknown>>()
 	private static readonly csharpTypeNameKeyName = '__typeName__'
 
-	shallConstruct = (value: unknown) => !!value && typeof value === 'object' && ModelConstructor.csharpTypeNameKeyName in value
+	shallConstruct = (value: unknown) => !!value && typeof value === 'object' && ModelValueConstructor.csharpTypeNameKeyName in value
 
 	construct(object: object) {
-		const csharpTypeNameKey = ModelConstructor.csharpTypeNameKeyName as keyof typeof object
+		const csharpTypeNameKey = ModelValueConstructor.csharpTypeNameKeyName as keyof typeof object
 		const csharpTypeName = object[csharpTypeNameKey] as string
-		const Constructor = ModelConstructor.modelConstructorsByCsharpTypeName.get(csharpTypeName)
+		const Constructor = ModelValueConstructor.modelConstructorsByCsharpTypeName.get(csharpTypeName)
 		return !Constructor ? object : safeAssign(new Constructor, object)
 	}
 }

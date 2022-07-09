@@ -1,4 +1,4 @@
-import { component, DialogAuthenticator as DialogAuthenticatorBase, User, LocalStorageEntry, authenticator, DialogPrompt, html, state, Snackbar } from '@3mo/model'
+import { component, DialogAuthenticator as DialogAuthenticatorBase, User, authenticator, html } from '@3mo/model'
 import { AccountService, AuthenticationService } from 'sdk'
 import { DialogAccountRegister, DialogAccountReset } from 'application'
 
@@ -8,7 +8,7 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 	protected async authenticateProcess() {
 		await AuthenticationService.authenticateWithPassword(this.username, this.password)
 		const user = await this.fetchUser()
-		MoDeL.application.requestUpdate()
+		this.requestApplicationUpdate()
 		return user
 	}
 
@@ -25,6 +25,7 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 
 	protected async unauthenticateProcess() {
 		AuthenticationService.unauthenticate()
+		this.requestApplicationUpdate()
 	}
 
 	protected checkAuthenticationProcess() {
@@ -34,6 +35,7 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 	protected async resetPasswordProcess() {
 		await new DialogAccountReset().confirm()
 		await this.fetchUser()
+		this.requestApplicationUpdate()
 		this.close()
 	}
 
@@ -47,7 +49,12 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 	private async register() {
 		await new DialogAccountRegister().confirm()
 		await this.fetchUser()
+		this.requestApplicationUpdate()
 		this.close()
+	}
+
+	private requestApplicationUpdate() {
 		MoDeL.application.requestUpdate()
+		MoDeL.application.pageHost.currentPage?.requestUpdate()
 	}
 }

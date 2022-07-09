@@ -26,18 +26,18 @@ public class CampaignTest
 
 	public static List<object[]> StatusData => new() {
 		new object[] { null!, null!, CampaignStatus.Funding },
-		new object[] { DateTime.Now, null!, CampaignStatus.Allocation },
-		new object[] { DateTime.Now.AddDays(-2), DateTime.Now.AddDays(-1), CampaignStatus.Complete },
+		new object[] { new CampaignValidation(), null!, CampaignStatus.Validation },
+		new object[] {new CampaignValidation(), new CampaignAllocation(), CampaignStatus.Allocation },
 	};
 
 	[Theory(DisplayName = "Status getter should return the correct status")]
 	[MemberData(nameof(StatusData))]
-	public void TestStatus(DateTime? voteInitiation, DateTime? completion, CampaignStatus expected)
+	public void TestStatus(CampaignValidation? validation, CampaignAllocation? allocation, CampaignStatus expected)
 	{
 		Campaign campaign = new()
 		{
-			AllocationDate = voteInitiation,
-			CompletionDate = completion,
+			Validation = validation,
+			Allocation = allocation,
 		};
 
 		Assert.Equal(expected, campaign.Status);

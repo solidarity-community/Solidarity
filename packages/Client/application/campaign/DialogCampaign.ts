@@ -1,15 +1,30 @@
-import { component, DialogComponent, html, state, Task } from '@3mo/model'
+import { component, DialogComponent, html, ifDefined, state, Task } from '@3mo/model'
 import { Campaign, CampaignPaymentMethod, CampaignService, PaymentMethodService } from 'sdk'
 import { GeometryCollection } from 'geojson'
 
 @component('solid-dialog-campaign')
 export class DialogCampaign extends DialogComponent<undefined | { readonly id: number }, Campaign> {
 	private campaignTask = new Task(this, async () => !this.parameters?.id ? new Campaign : await CampaignService.get(this.parameters.id), () => [])
+	private get campaign() { return this.campaignTask.value }
 
 	private paymentMethodsTask = new Task(this, PaymentMethodService.getAll, () => [])
 	private get paymentMethods() { return this.paymentMethodsTask.value }
 
-	@state() private includeAllPaymentMethods = !this.parameters?.id
+	private get includeAllPaymentMethods() {
+		const activatedPaymentMethods = this.campaign?.activatedPaymentMethods.map(pm => pm.identifier)
+		return this.paymentMethods
+			?.map(pm => pm.identifier)
+			.every(identifier => activatedPaymentMethods?.includes(identifier) ?? false)
+			?? false
+	}
+
+	private set includeAllPaymentMethods(value) {
+		if (!this.campaign || !value) {
+			return
+		}
+		this.campaign.activatedPaymentMethods = this.paymentMethods?.map(pm => new CampaignPaymentMethod(pm.identifier)) ?? []
+		this.requestUpdate()
+	}
 
 	protected override get template() {
 		return html`
@@ -26,11 +41,6 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 								value=${campaign.title ?? ''}
 								@change=${(e: CustomEvent<string>) => campaign.title = e.detail}
 							></mo-field-text>
-
-							<mo-field-date label='Target Allocation Date'
-								.value=${campaign.targetAllocationDate}
-								@change=${(e: CustomEvent<MoDate>) => campaign.targetAllocationDate = e.detail}
-							></mo-field-date>
 
 							<mo-field-text-area label='Description'
 								value=${campaign.description ?? ''}
@@ -51,12 +61,19 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 								></mo-checkbox>
 
 								${this.paymentMethods?.map(pm => html`
-									<mo-checkbox
-										?disabled=${this.includeAllPaymentMethods}
-										label=${pm.name || pm.identifier}
-										?checked=${campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier) || this.includeAllPaymentMethods}
-										@change=${(e: CustomEvent<CheckboxValue>) => campaign.activatedPaymentMethods = e.detail === 'checked' ? [...campaign.activatedPaymentMethods, new CampaignPaymentMethod(pm.identifier)] : campaign.activatedPaymentMethods.filter(dc => dc.identifier !== pm.identifier)}
-									></mo-checkbox>
+									<mo-flex direction='horizontal' gap='20px'>
+										<mo-checkbox
+											label=${pm.name || pm.identifier}
+											?checked=${campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier)}
+											@change=${(e: CustomEvent<CheckboxValue>) => campaign.activatedPaymentMethods = e.detail === 'checked' ? [...campaign.activatedPaymentMethods, new CampaignPaymentMethod(pm.identifier)] : campaign.activatedPaymentMethods.filter(dc => dc.identifier !== pm.identifier)}
+										></mo-checkbox>
+
+										<mo-field-text width='*' label='Allocation Destination'
+											?disabled=${!campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier)}
+											value=${ifDefined(campaign.activatedPaymentMethods.find(p => p.identifier === pm.identifier)?.allocationDestination)}
+											@change=${(e: CustomEvent<string>) => campaign.activatedPaymentMethods.find(p => p.identifier === pm.identifier)!.allocationDestination = e.detail}
+										></mo-field-text>
+									</mo-flex>
 								`)}
 							</mo-section>
 
@@ -68,5 +85,5 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 		`
 	}
 
-	protected override primaryButtonAction = () => CampaignService.save(this.campaignTask.value!, this.includeAllPaymentMethods)
+	protected override primaryButtonAction = () => CampaignService.save(this.campaignTask.value!)
 }

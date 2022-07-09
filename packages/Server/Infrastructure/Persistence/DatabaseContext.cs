@@ -64,6 +64,7 @@ public class DatabaseContext : DbContext, IDatabase
 			.HasValue<PasswordAuthenticationMethod>(AuthenticationMethodType.Password);
 
 		modelBuilder.Entity<Campaign>().HasOne(c => c.Validation).WithOne(v => v.Campaign);
+		modelBuilder.Entity<Campaign>().HasOne(c => c.Allocation).WithOne(a => a.Campaign);
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Media).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Expenditures).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.ActivatedPaymentMethods).WithOne(pm => pm.Campaign);
@@ -74,6 +75,8 @@ public class DatabaseContext : DbContext, IDatabase
 
 		modelBuilder.Entity<CampaignValidationVote>().Ignore(v => v.Id);
 		modelBuilder.Entity<CampaignValidationVote>().HasKey(v => new { v.ValidationId, v.AccountId });
+
+		modelBuilder.Entity<CampaignAllocation>().HasMany(a => a.Entries).WithOne(e => e.CampaignAllocation);
 	}
 
 	public override int SaveChanges()

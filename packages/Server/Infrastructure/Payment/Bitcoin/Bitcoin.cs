@@ -84,12 +84,12 @@ public abstract class Bitcoin : PaymentMethod
 			.SignAndSendAsync(_client);
 	}
 
-	public override async Task Allocate(Campaign campaign, string destination)
+	public override async Task<string> Fund(Campaign campaign, string destination)
 	{
 		await EnsureHealthForNonReadOnlyOperation();
 		var destinationAddress = BitcoinAddress.Create(destination, _client.Network);
 		var utxos = await GetUTxOs(campaign, null);
-		await _client.Network.CreateTransactionBuilder()
+		return await _client.Network.CreateTransactionBuilder()
 			.AddUTxOs(utxos)
 			.SendAll(destinationAddress)
 			.SignAndSendAsync(_client);

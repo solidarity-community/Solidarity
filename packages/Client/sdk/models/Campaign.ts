@@ -1,7 +1,7 @@
-import { Model, Account, Validation, CampaignPaymentMethod, CampaignMedia, CampaignExpenditure, model, CampaignMediaType } from 'sdk'
+import { Model, Account, CampaignValidation, CampaignPaymentMethod, CampaignMedia, CampaignExpenditure, model, CampaignMediaType, CampaignAllocation } from 'sdk'
 import { GeometryCollection } from 'geojson'
 
-export enum CampaignStatus { Funding, Allocation, Complete }
+export enum CampaignStatus { Funding, Validation, Allocation }
 
 @model('Campaign')
 export class Campaign extends Model {
@@ -9,23 +9,23 @@ export class Campaign extends Model {
 	description?: string
 	location?: GeometryCollection
 	creator?: Account
-	targetAllocationDate!: MoDate
-	completionDate?: MoDate
-	allocationDate?: MoDate
 	activatedPaymentMethods = new Array<CampaignPaymentMethod>()
 	media = new Array<CampaignMedia>()
 	validationId?: number
-	validation?: Validation
+	validation?: CampaignValidation
+	allocation?: CampaignAllocation
 	expenditures = new Array<CampaignExpenditure>()
 
 	get status() {
 		switch (true) {
-			case !!this.allocationDate && !this.completionDate:
-				return CampaignStatus.Allocation
-			case !!this.allocationDate && !!this.completionDate:
-				return CampaignStatus.Complete
-			default:
+			case !this.validation && !this.allocation:
 				return CampaignStatus.Funding
+			case !!this.validation && !this.allocation:
+				return CampaignStatus.Validation
+			case !!this.validation && !!this.allocation:
+				return CampaignStatus.Allocation
+			default:
+				throw new Error('Unknown campaign status')
 		}
 	}
 
@@ -35,13 +35,5 @@ export class Campaign extends Model {
 
 	get totalExpenditure() {
 		return this.expenditures.map(e => e.totalPrice).reduce((a, acc) => a + acc, 0)
-	}
-
-	get remainingTimePercentage() {
-		const now = new MoDate
-		const untilTargetDate = now.until(this.targetAllocationDate)
-		const sinceCreation = now.since(this.creation)
-		return untilTargetDate.milliseconds /
-			(sinceCreation.milliseconds + untilTargetDate.milliseconds)
 	}
 }

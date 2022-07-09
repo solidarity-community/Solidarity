@@ -38,5 +38,5 @@ public abstract class PaymentMethod : IHealthCheck
 	public abstract Task<string> GetDonationData(Campaign campaign, Account? account);
 	public abstract Task<decimal> GetBalance(Campaign campaign, Account? account);
 	public abstract Task Refund(Campaign campaign, Account? account);
-	public abstract Task Allocate(Campaign campaign, string destination);
+	public abstract Task<string> Fund(Campaign campaign, string destination);
 }

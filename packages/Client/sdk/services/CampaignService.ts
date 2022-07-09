@@ -23,12 +23,20 @@ export class CampaignService extends Service {
 	}
 
 	static async declareAllocationPhase(campaignId: number) {
-		await API.post(`/campaign/${campaignId}/declare-allocation-phase`)
+		await API.post(`/campaign/${campaignId}/declare-validation-phase`)
 	}
 
 	static async getVote(campaignId: number) {
 		const vote = await API.get<boolean | null>(`/campaign/${campaignId}/vote`)
 		return vote ?? undefined
+	}
+
+	static getVotes(campaignId: number) {
+		return API.get<{
+			readonly balance: number,
+			readonly endorsedBalance: number,
+			readonly approvalThreshold: number,
+		}>(`/campaign/${campaignId}/votes`)
 	}
 
 	static async vote(campaignId: number, value: boolean) {
@@ -39,11 +47,7 @@ export class CampaignService extends Service {
 		await API.post(`/campaign/${campaignId}/allocate`, destinationByPaymentMethodIdentifier)
 	}
 
-	static async save(campaign: Campaign, includeAllDonationChannels = false) {
-		if (includeAllDonationChannels) {
-			const paymentMethodIdentifiers = await PaymentMethodService.getAllIdentifiers()
-			campaign.activatedPaymentMethods = paymentMethodIdentifiers.map(identifier => new CampaignPaymentMethod(identifier))
-		}
+	static save(campaign: Campaign) {
 		return campaign.id
 			? API.put<Campaign>(`/campaign/${campaign.id}`, campaign)
 			: API.post<Campaign>('/campaign', campaign)

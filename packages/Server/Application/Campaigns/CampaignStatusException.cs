@@ -2,5 +2,6 @@ namespace Solidarity.Application.Campaigns;
 
 public class CampaignStatusException : Exception
 {
-	public CampaignStatusException(CampaignStatus status) : base($"The campaign is not in the {Enum.GetName(status)} phase.") { }
+	public CampaignStatusException(params CampaignStatus[] statuses)
+		: base($"The campaign is not in the {string.Join(" or", statuses.Select(status => Enum.GetName(status)))} phase.") { }
 }

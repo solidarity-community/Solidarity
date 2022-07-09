@@ -40,7 +40,7 @@ export class PageCampaigns extends PageComponent {
 								${fabTemplate}
 							</mo-flex>
 						` : html`
-							<mo-grid columns='repeat(auto-fill, minmax(250px, 1fr))' gap='var(--mo-thickness-xxl)'>
+							<mo-grid columns='repeat(auto-fill, minmax(300px, 1fr))' gap='var(--mo-thickness-xxl)'>
 								${campaigns.map(campaign => html`
 									<solid-campaign-card
 										tabIndex='0'

@@ -211,9 +211,6 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("geography");
 
-                    b.Property<DateTime>("TargetAllocationDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -369,7 +366,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("CampaignValidations");
+                    b.ToTable("Validations");
                 });
 
             modelBuilder.Entity("Solidarity.Application.PaymentMethods.PaymentMethodKey", b =>
@@ -428,7 +425,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("CampaignValidationVotes");
+                    b.ToTable("Votes");
                 });
 
             modelBuilder.Entity("Solidarity.Application.Authentication.PasswordAuthenticationMethod", b =>
