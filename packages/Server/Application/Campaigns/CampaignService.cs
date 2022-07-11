@@ -20,13 +20,12 @@ public class CampaignService : CrudService<Campaign>
 			: campaign;
 	}
 
-
 	public async Task<decimal> GetBalance(int id, int? accountId = null)
 	{
 		var campaign = await Get(id);
 		var account = accountId.HasValue is false ? null : await _accountService.Get(accountId.Value);
 		var balances = await Task.WhenAll(
-			campaign.ActivatedPaymentMethods.Select(pm => _paymentMethodProvider.Get(pm.Identifier).GetBalance(campaign, account))
+			campaign.ActivatedPaymentMethods.Select(pm => _paymentMethodProvider.Get(pm.Identifier).GetChannel(campaign).GetBalance(account))
 		);
 		return balances?.Sum() ?? 0;
 	}
@@ -39,7 +38,7 @@ public class CampaignService : CrudService<Campaign>
 		var campaign = await Get(campaignId);
 		var account = await _accountService.Get();
 		var activatedPaymentMethods = _paymentMethodService.GetAll().Where(pm => campaign.ActivatedPaymentMethods.Any(apm => apm.Identifier == pm.Identifier)).ToList();
-		var data = await Task.WhenAll(activatedPaymentMethods.Select(pm => pm.GetDonationData(campaign, account)));
+		var data = await Task.WhenAll(activatedPaymentMethods.Select(pm => pm.GetChannel(campaign).GetDonationData(account)));
 		return data.Select((d, i) => new { d, i = activatedPaymentMethods[i].Identifier }).ToDictionary(d => d.i, d => d.d);
 	}
 
@@ -71,7 +70,7 @@ public class CampaignService : CrudService<Campaign>
 		return await base.Update(campaign);
 	}
 
-	public async Task DeclareValidationPhase(int campaignId)
+	public async Task InitiateValidation(int campaignId)
 	{
 		var campaign = await GetAndEnsureCreatedByCurrentUser(campaignId);
 
@@ -84,8 +83,25 @@ public class CampaignService : CrudService<Campaign>
 	public async Task Allocate(int campaignId)
 	{
 		var campaign = await GetAndEnsureCreatedByCurrentUser(campaignId);
-		await campaign.Allocate(p => _paymentMethodService.Get(p.Identifier).Fund(campaign, p.AllocationDestination));
-		await _database.CommitChangesAsync();
+		campaign.EnsureNotInStatus(CampaignStatus.Funding, CampaignStatus.Allocation);
+
+		var votesStatus = await GetVotes(campaignId);
+
+		if (votesStatus.EndorsedBalance / votesStatus.Balance < (decimal)votesStatus.ApprovalThreshold)
+		{
+			await campaign.Refund(p => _paymentMethodService.Get(p.Identifier).GetChannel(campaign).RefundRemaining().Allocate());
+		}
+		else
+		{
+			var accountsToRefund = campaign.Validation!.Votes
+				.Where(vote => vote.Value is false)
+				.Select(vote => vote.Account)
+				.ToList();
+
+			await campaign.Allocate(p => _paymentMethodService.Get(p.Identifier).GetChannel(campaign).RefundRange(accountsToRefund).FundRemaining().Allocate());
+			await _database.CommitChangesAsync();
+		}
+
 	}
 
 	public async Task<bool?> GetVote(int campaignId)
@@ -97,13 +113,14 @@ public class CampaignService : CrudService<Campaign>
 	public async Task<CampaignVotes> GetVotes(int id)
 	{
 		var campaign = await Get(id);
+		campaign.EnsureNotInStatus(CampaignStatus.Funding, CampaignStatus.Allocation);
 		var balance = await GetBalance(id);
 		var endorsedDonations = 0m;
-		foreach (var vote in campaign.Validation?.Votes.Where(vote => vote.Value == true) ?? Enumerable.Empty<CampaignValidationVote>())
+		foreach (var vote in campaign.Validation!.Votes.Where(vote => vote.Value == true))
 		{
 			endorsedDonations += await GetBalance(id, vote.AccountId);
 		}
-		return new(endorsedDonations, balance);
+		return new(endorsedDonations, balance, campaign.Validation!.ApprovalThreshold);
 	}
 
 	public async Task Vote(int campaignId, bool vote)
@@ -116,7 +133,7 @@ public class CampaignService : CrudService<Campaign>
 	public override async Task<Campaign> Delete(int id)
 	{
 		var campaign = await Get(id);
-		await campaign.Refund(p => _paymentMethodService.Get(p.Identifier).Refund(campaign, null));
+		await campaign.Refund(p => _paymentMethodService.Get(p.Identifier).GetChannel(campaign).RefundRemaining().Allocate());
 		return await base.Delete(id);
 	}
 }

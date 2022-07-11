@@ -15,6 +15,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 		}
 	}, () => [])
 
+	@state() private balance = 0
 	@state() private balanceShare = 0
 	@queryAll('mo-button.action') private actionButtonElements!: Array<Button>
 
@@ -47,7 +48,9 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 					`,
 					complete: campaign => html`
 						<mo-flex direction='horizontal' alignItems='center' padding='20px' background='var(--mo-color-transparent-gray-2)' gap='50px'>
-							<solid-campaign-progress width='*' .campaign=${campaign} alwaysShowValidationApprovalThreshold></solid-campaign-progress>
+							<solid-campaign-progress width='*' .campaign=${campaign} alwaysShowValidationApprovalThreshold
+								@balanceChange=${(e: CustomEvent<number>) => this.balance = e.detail}
+							></solid-campaign-progress>
 
 							<mo-flex direction='horizontal' gap='10px' justifyContent='flex-end'>
 								<mo-button class='action' icon='share' @click=${this.share}>Share</mo-button>
@@ -73,9 +76,12 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 
 								${!this.isAuthenticatedUserTheCreator ? nothing : html`
 									<mo-split-button>
-										<mo-button class='action' icon='manage_accounts' @click=${this.edit}>Manage</mo-button>
-										<mo-list-item slot='more' ?hidden=${this.campaign?.status !== CampaignStatus.Funding} icon='how_to_vote' @click=${this.declareAllocationPhase}>Declare Allocation Phase</mo-list-item>
-										<mo-list-item slot='more' icon='edit' @click=${this.edit}>Edit</mo-list-item>
+										${this.campaign?.status === CampaignStatus.Funding && this.balance >= this.campaign.totalExpenditure ? html`
+											<mo-button class='action' icon='how_to_vote' @click=${this.initiateValidation}>Initiate Validation</mo-button>
+											<mo-list-item slot='more' icon='edit' @click=${this.edit}>Edit</mo-list-item>
+										` : html`
+											<mo-button class='action' icon='edit' @click=${this.edit}>Edit</mo-button>
+										`}
 										<mo-list-item slot='more' icon='delete' @click=${this.delete}>Delete</mo-list-item>
 									</mo-split-button>
 								`}
@@ -106,23 +112,23 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 		if (this.campaign && 'share' in navigator) {
 			await navigator.share({
 				title: this.campaign.title,
-				text: this.campaign.description,
-				url: window.location.href
+				text: `Check out this campaign on Solidarity`,
+				url: window.location.href,
 			})
 		}
 	}
 
-	private declareAllocationPhase = async () => {
+	private initiateValidation = async () => {
 		if (this.campaign?.id) {
 			const acknowledged = await new DialogAcknowledge({
-				heading: 'Declare Allocation Phase',
-				content: 'Are you sure you want to declare the allocation phase? This action cannot be undone. All donors will be notified to initiate voting.',
+				heading: 'Initiate Validation',
+				content: 'Are you sure you want to initiate the validation phase? This action cannot be undone. All donors will be notified to initiate the validation voting procedures.',
 				primaryButtonText: 'Proceed',
 				secondaryButtonText: 'Cancel',
 			}).confirm()
 			if (acknowledged) {
 				try {
-					await CampaignService.declareAllocationPhase(this.campaign.id)
+					await CampaignService.initiateValidation(this.campaign.id)
 					await this.fetchCampaignTask.run()
 				} catch (error: any) {
 					NotificationHost.instance.notifyError(error.message)

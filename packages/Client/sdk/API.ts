@@ -1,7 +1,5 @@
 import { HttpError } from 'sdk'
 
-export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD'
-
 export type ApiValueConstructor<TConstructed, TDeconstructed> = {
 	shallConstruct(text: unknown): boolean
 	construct(text: TDeconstructed): TConstructed
@@ -20,7 +18,7 @@ export type ApiAuthenticator = {
 	authenticate(data: string): void
 	unauthenticate(): void
 	isAuthenticated(): boolean
-	processRequest(request: Request): Request
+	processRequest(request: RequestInit): RequestInit
 }
 
 export const apiAuthenticator = () => {
@@ -29,6 +27,8 @@ export const apiAuthenticator = () => {
 		API.authenticator = new Constructor
 	}
 }
+
+type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD'
 
 type FetchOptions = {
 	readonly noHttpErrorOnErrorStatusCode?: boolean
@@ -62,7 +62,7 @@ export class API {
 	}
 
 	private static async fetch<T = void>(method: HTTPMethod, route: string, body: BodyInit | null = null, options?: FetchOptions) {
-		const request = new Request(API.url + route, {
+		const request: RequestInit = {
 			method: method,
 			credentials: 'omit',
 			headers: new Headers({
@@ -71,7 +71,7 @@ export class API {
 			}),
 			referrer: 'no-referrer',
 			body: body
-		})
+		}
 
 		API.authenticator?.processRequest(request)
 

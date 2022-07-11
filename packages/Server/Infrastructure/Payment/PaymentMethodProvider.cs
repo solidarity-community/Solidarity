@@ -19,8 +19,8 @@ public class PaymentMethodProvider : IPaymentMethodProvider, IHealthCheck
 	public T Get<T>() where T : PaymentMethod
 		=> _enabledPaymentMethods.FirstOrDefault(pm => pm is T) as T ?? throw new InvalidOperationException();
 
-	public PaymentMethod Get(string Identifier)
-		=> _enabledPaymentMethods.First(pm => pm.Identifier == Identifier) ?? throw new InvalidOperationException();
+	public PaymentMethod Get(string identifier)
+		=> _enabledPaymentMethods.First(pm => pm.Identifier == identifier) ?? throw new InvalidOperationException();
 
 	public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
 	{

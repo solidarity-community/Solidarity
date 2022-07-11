@@ -25,7 +25,7 @@ export class JwtApiAuthenticator implements ApiAuthenticator {
 		return !!JwtApiAuthenticator.token
 	}
 
-	processRequest(request: Request): Request {
+	processRequest(request: RequestInit): RequestInit {
 		const token = JwtApiAuthenticator.token
 		if (token) {
 			const headers = request.headers as Headers

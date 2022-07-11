@@ -7,4 +7,6 @@ public class CampaignValidation : Model
 	public List<CampaignValidationVote> Votes { get; set; } = new();
 
 	public DateTime Expiration { get; set; }
+
+	public double ApprovalThreshold => 0.75;
 }

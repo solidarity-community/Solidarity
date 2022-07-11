@@ -22,8 +22,8 @@ export class CampaignService extends Service {
 		return new Map(Object.entries(response)) as Map<PaymentMethodIdentifier, string>
 	}
 
-	static async declareAllocationPhase(campaignId: number) {
-		await API.post(`/campaign/${campaignId}/declare-validation-phase`)
+	static async initiateValidation(campaignId: number) {
+		await API.post(`/campaign/${campaignId}/initiate-validation`)
 	}
 
 	static async getVote(campaignId: number) {
@@ -41,10 +41,6 @@ export class CampaignService extends Service {
 
 	static async vote(campaignId: number, value: boolean) {
 		await API.post(`/campaign/${campaignId}/vote`, value)
-	}
-
-	static async allocate(campaignId: number, destinationByPaymentMethodIdentifier: Map<string, string>) {
-		await API.post(`/campaign/${campaignId}/allocate`, destinationByPaymentMethodIdentifier)
 	}
 
 	static save(campaign: Campaign) {

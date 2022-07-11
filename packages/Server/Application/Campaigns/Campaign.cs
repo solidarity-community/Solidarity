@@ -90,19 +90,16 @@ public class Campaign : Model
 		await Task.WhenAll(ActivatedPaymentMethods.Select(paymentMethod => refundPaymentMethod(paymentMethod)));
 	}
 
-	public async Task Allocate(Func<CampaignPaymentMethod, Task<string>> allocatePaymentMethod)
+	public async Task Allocate(Func<CampaignPaymentMethod, Task<IEnumerable<CampaignAllocationEntry>>> allocatePaymentMethod)
 	{
-		EnsureNotInStatus(CampaignStatus.Funding, CampaignStatus.Validation);
+		EnsureNotInStatus(CampaignStatus.Funding, CampaignStatus.Allocation);
 		Allocation ??= new();
 		foreach (var paymentMethod in ActivatedPaymentMethods)
 		{
-			var data = await allocatePaymentMethod(paymentMethod);
-			Allocation.Entries.Add(new()
+			foreach (var allocationEntry in await allocatePaymentMethod(paymentMethod))
 			{
-				CampaignAllocation = Allocation,
-				PaymentMethodIdentifier = paymentMethod.Identifier,
-				Data = data
-			});
+				Allocation.Entries.Add(allocationEntry);
+			}
 		}
 	}
 

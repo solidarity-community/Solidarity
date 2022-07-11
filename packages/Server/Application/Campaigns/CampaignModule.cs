@@ -33,12 +33,8 @@ public class CampaignModule : Module
 			[AllowAnonymous] (CampaignService campaignService, int id) => campaignService.GetDonationData(id)
 		);
 
-		endpoints.MapPost("/campaign/{id}/allocate",
-			(CampaignService campaignService, int id) => campaignService.Allocate(id)
-		);
-
-		endpoints.MapPost("/campaign/{id}/declare-validation-phase",
-			(CampaignService campaignService, int id) => campaignService.DeclareValidationPhase(id)
+		endpoints.MapPost("/campaign/{id}/initiate-validation",
+			(CampaignService campaignService, int id) => campaignService.InitiateValidation(id)
 		);
 
 		endpoints.MapPost("/campaign",
