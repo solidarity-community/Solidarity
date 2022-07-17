@@ -9,4 +9,5 @@ public class PaymentMethodService : Service
 	public PaymentMethod Get(string Identifier) => _paymentMethodProvider.Get(Identifier);
 	public T Get<T>() where T : PaymentMethod => _paymentMethodProvider.Get<T>();
 	public IEnumerable<string> GetAllIdentifiers() => GetAll().Select(pm => pm.Identifier);
+	public bool IsAllocationDestinationValid(string identifier, string allocationDestination) => Get(identifier).IsAllocationDestinationValid(allocationDestination);
 }

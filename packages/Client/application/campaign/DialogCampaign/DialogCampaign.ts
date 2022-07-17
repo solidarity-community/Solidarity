@@ -68,11 +68,12 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 											@change=${(e: CustomEvent<CheckboxValue>) => campaign.activatedPaymentMethods = e.detail === 'checked' ? [...campaign.activatedPaymentMethods, new CampaignPaymentMethod(pm.identifier)] : campaign.activatedPaymentMethods.filter(dc => dc.identifier !== pm.identifier)}
 										></mo-checkbox>
 
-										<mo-field-text width='*' label='Allocation Destination'
+										<solid-field-allocation-destination width='*'
+											paymentMethodIdentifier=${pm.identifier}
 											?disabled=${!campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier)}
 											value=${ifDefined(campaign.activatedPaymentMethods.find(p => p.identifier === pm.identifier)?.allocationDestination)}
 											@change=${(e: CustomEvent<string>) => campaign.activatedPaymentMethods.find(p => p.identifier === pm.identifier)!.allocationDestination = e.detail}
-										></mo-field-text>
+										></solid-field-allocation-destination>
 									</mo-flex>
 								`)}
 							</mo-section>

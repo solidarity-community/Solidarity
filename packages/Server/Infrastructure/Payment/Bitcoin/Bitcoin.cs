@@ -49,5 +49,18 @@ public abstract class Bitcoin : PaymentMethod
 		}
 	}
 
+	public override bool IsAllocationDestinationValid(string allocationDestination)
+	{
+		try
+		{
+			BitcoinAddress.Create(allocationDestination, Network);
+			return true;
+		}
+		catch
+		{
+			return false;
+		}
+	}
+
 	public override PaymentChannel GetChannel(Campaign campaign) => new BitcoinChannel(this, campaign);
 }

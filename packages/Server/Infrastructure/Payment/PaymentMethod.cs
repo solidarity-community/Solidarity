@@ -36,5 +36,6 @@ public abstract class PaymentMethod : IHealthCheck
 
 	public abstract Task<HealthCheckResult> CheckHealthAsync(CancellationToken cancellationToken = default);
 	public abstract PaymentChannel GetChannel(Campaign campaign);
+	public abstract bool IsAllocationDestinationValid(string allocationDestination);
 	public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default) => CheckHealthAsync(cancellationToken);
 }
