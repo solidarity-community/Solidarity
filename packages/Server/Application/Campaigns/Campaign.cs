@@ -58,9 +58,24 @@ public class Campaign : Model
 	{
 		updated.Validate();
 		updated.EnsureTotalExpenditureNotTooLow();
-		if (Status is not CampaignStatus.Funding && updated.TotalExpenditure != TotalExpenditure)
+
+		if (Status is not CampaignStatus.Funding && Location != updated.Location)
+		{
+			throw new InvalidOperationException("Cannot change location once the campaign is in validation status");
+		}
+
+		if (Status is not CampaignStatus.Funding && Enumerable.SequenceEqual(
+			Expenditures.Select(e => e.TotalPrice),
+			updated.Expenditures.Select(e => e.TotalPrice)) == false)
 		{
 			throw new InvalidOperationException("Cannot change expenditures once the campaign is in validation status");
+		}
+
+		if (Status is CampaignStatus.Allocation && Enumerable.SequenceEqual(
+			ActivatedPaymentMethods.Select(pm => (pm.Identifier, pm.AllocationDestination)),
+			updated.ActivatedPaymentMethods.Select(pm => (pm.Identifier, pm.AllocationDestination))) == false)
+		{
+			throw new InvalidOperationException("Cannot change activated payment methods once the campaign is in allocation status");
 		}
 	}
 

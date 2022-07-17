@@ -61,11 +61,8 @@ public class CampaignService : CrudService<Campaign>
 			? campaign.ActivatedPaymentMethods
 			: _paymentMethodService
 				.GetAll()
-				.Select(pm => new CampaignPaymentMethod
-				{
-					Identifier = pm.Identifier,
-					CampaignId = entity.Id
-				}).ToList();
+				.Select(pm => new CampaignPaymentMethod { Identifier = pm.Identifier, CampaignId = entity.Id })
+				.ToList();
 
 		return await base.Update(campaign);
 	}

@@ -1,5 +1,5 @@
 import { component, DialogComponent, html, ifDefined, state, Task } from '@3mo/modelx'
-import { Campaign, CampaignPaymentMethod, CampaignService, PaymentMethodService } from 'sdk'
+import { Campaign, CampaignPaymentMethod, CampaignService, CampaignStatus, PaymentMethodService } from 'sdk'
 import { GeometryCollection } from 'geojson'
 
 @component('solid-dialog-campaign')
@@ -50,12 +50,14 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 							<solid-campaign-slider .campaign=${campaign}></solid-campaign-slider>
 
 							<solid-map height='400px'
+								?readOnly=${campaign.status !== CampaignStatus.Funding}
 								.selectedArea=${campaign.location}
 								@selectedAreaChange=${(e: CustomEvent<GeometryCollection>) => campaign.location = e.detail}
 							></solid-map>
 
 							<mo-section heading='Donation methods'>
 								<mo-checkbox slot='action' label='Activate all'
+									?disabled=${this.campaign?.status === CampaignStatus.Allocation}
 									?checked=${this.includeAllPaymentMethods}
 									@change=${(e: CustomEvent<CheckboxValue>) => this.includeAllPaymentMethods = e.detail === 'checked'}
 								></mo-checkbox>
@@ -63,6 +65,7 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 								${this.paymentMethods?.map(pm => html`
 									<mo-flex direction='horizontal' gap='20px'>
 										<mo-checkbox
+											?disabled=${this.campaign?.status === CampaignStatus.Allocation}
 											label=${pm.name || pm.identifier}
 											?checked=${campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier)}
 											@change=${(e: CustomEvent<CheckboxValue>) => campaign.activatedPaymentMethods = e.detail === 'checked' ? [...campaign.activatedPaymentMethods, new CampaignPaymentMethod(pm.identifier)] : campaign.activatedPaymentMethods.filter(dc => dc.identifier !== pm.identifier)}
@@ -70,6 +73,7 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 
 										<solid-field-allocation-destination width='*'
 											paymentMethodIdentifier=${pm.identifier}
+											?readonly=${this.campaign?.status === CampaignStatus.Allocation}
 											?disabled=${!campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier)}
 											value=${ifDefined(campaign.activatedPaymentMethods.find(p => p.identifier === pm.identifier)?.allocationDestination)}
 											@change=${(e: CustomEvent<string>) => campaign.activatedPaymentMethods.find(p => p.identifier === pm.identifier)!.allocationDestination = e.detail}

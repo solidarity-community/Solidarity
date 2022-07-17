@@ -138,7 +138,15 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 		if (this.campaign?.id) {
 			const acknowledged = await new DialogAcknowledge({
 				heading: 'Initiate Validation',
-				content: 'Are you sure you want to initiate the validation phase? This action cannot be undone. All donors will be notified to initiate the validation voting procedures.',
+				content: html`
+					Once the campaign is in the validation phase:
+					<ul>
+						<li>You won't be able to edit campaign's location and expenditures.</li>
+						<li>All donors will be notified to initiate the validation voting procedures.</li>
+						<li>The campaign cannot transition back to the funding status.</li>
+					</ul> 
+					Are you sure you want to initiate the validation?
+				`,
 				primaryButtonText: 'Proceed',
 				secondaryButtonText: 'Cancel',
 			}).confirm()
