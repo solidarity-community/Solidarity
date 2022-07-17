@@ -10,22 +10,6 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 	private paymentMethodsTask = new Task(this, PaymentMethodService.getAll, () => [])
 	private get paymentMethods() { return this.paymentMethodsTask.value }
 
-	private get includeAllPaymentMethods() {
-		const activatedPaymentMethods = this.campaign?.activatedPaymentMethods.map(pm => pm.identifier)
-		return this.paymentMethods
-			?.map(pm => pm.identifier)
-			.every(identifier => activatedPaymentMethods?.includes(identifier) ?? false)
-			?? false
-	}
-
-	private set includeAllPaymentMethods(value) {
-		if (!this.campaign || !value) {
-			return
-		}
-		this.campaign.activatedPaymentMethods = this.paymentMethods?.map(pm => new CampaignPaymentMethod(pm.identifier)) ?? []
-		this.requestUpdate()
-	}
-
 	protected override get template() {
 		return html`
 			<mo-dialog size='medium' heading='Campaign' primaryButtonText=${this.parameters?.id ? 'Edit' : 'Create'}>
@@ -56,19 +40,13 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 							></solid-map>
 
 							<mo-section heading='Donation methods'>
-								<mo-checkbox slot='action' label='Activate all'
-									?disabled=${this.campaign?.status === CampaignStatus.Allocation}
-									?checked=${this.includeAllPaymentMethods}
-									@change=${(e: CustomEvent<CheckboxValue>) => this.includeAllPaymentMethods = e.detail === 'checked'}
-								></mo-checkbox>
-
 								${this.paymentMethods?.map(pm => html`
 									<mo-flex direction='horizontal' gap='20px'>
 										<mo-checkbox
 											?disabled=${this.campaign?.status === CampaignStatus.Allocation}
 											label=${pm.name || pm.identifier}
 											?checked=${campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier)}
-											@change=${(e: CustomEvent<CheckboxValue>) => campaign.activatedPaymentMethods = e.detail === 'checked' ? [...campaign.activatedPaymentMethods, new CampaignPaymentMethod(pm.identifier)] : campaign.activatedPaymentMethods.filter(dc => dc.identifier !== pm.identifier)}
+											@change=${(e: CustomEvent<CheckboxValue>) => { campaign.activatedPaymentMethods = e.detail === 'checked' ? [...campaign.activatedPaymentMethods, new CampaignPaymentMethod(pm.identifier)] : campaign.activatedPaymentMethods.filter(dc => dc.identifier !== pm.identifier); this.requestUpdate() }}
 										></mo-checkbox>
 
 										<solid-field-allocation-destination width='*'

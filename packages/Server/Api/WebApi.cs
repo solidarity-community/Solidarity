@@ -26,6 +26,7 @@ public class WebApi : Module
 				.RequireAuthenticatedUser()
 				.Build();
 		});
+		services.Configure<LoggerFilterOptions>(options => options.MinLevel = LogLevel.Warning);
 		services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 		{
 			options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;

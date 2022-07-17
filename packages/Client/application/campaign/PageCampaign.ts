@@ -99,7 +99,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 					>
 						<mo-flex direction='horizontal' gap='5px' alignItems='baseline'>
 							<mo-div>Vote</mo-div>
-							<mo-div fontSize='var(--mo-font-size-s)' foreground='var(--mo-color-gray)' style='letter-spacing: 0px; text-transform: initial;'>
+							<mo-div fontSize='var(--mo-font-size-s)' foreground='var(--mo-color-foreground)' opacity='0.75' style='letter-spacing: 0px; text-transform: initial;'>
 								Ends <solid-timer .end=${this.campaign?.validation?.expiration}></solid-timer>
 							</mo-div>
 						</mo-flex>

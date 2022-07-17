@@ -4,11 +4,8 @@ namespace Solidarity.Application.Campaigns;
 public class CampaignService : CrudService<Campaign>
 {
 	private readonly AccountService _accountService;
-
 	public CampaignService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService, AccountService accountService) : base(database, paymentMethodProvider, currentUserService)
-	{
-		_accountService = accountService;
-	}
+		=> _accountService = accountService;
 
 	private async Task<Campaign> GetAndEnsureCreatedByCurrentUser(int id)
 	{
@@ -26,7 +23,7 @@ public class CampaignService : CrudService<Campaign>
 	}
 
 	public Task<double> GetShare(int id)
-		=> _currentUserService.Id is null ? Task.FromResult(0d) : GetBalance(id, _currentUserService.Id);
+		=> _currentUserService.Id.HasValue is false ? Task.FromResult(0d) : GetBalance(id, _currentUserService.Id.Value);
 
 	public async Task<Dictionary<string, string>> GetDonationData(int campaignId)
 	{
@@ -69,27 +66,31 @@ public class CampaignService : CrudService<Campaign>
 		await _database.CommitChangesAsync();
 	}
 
-	public async Task Allocate(int campaignId)
+	public async Task AllocateAllValidated()
 	{
-		var campaign = await GetAndEnsureCreatedByCurrentUser(campaignId);
-		campaign.EnsureNotInStatus(CampaignStatus.Funding, CampaignStatus.Allocation);
+		var campaigns = await _database.Campaigns
+			.IncludeAll()
+			.Where(campaign => campaign.AllocationId == null && campaign.ValidationId != null && campaign.Validation!.Expiration < DateTime.Now)
+			.ToArrayAsync();
 
-		var votesStatus = await GetVotes(campaignId);
+		foreach (var campaign in campaigns)
+		{
+			var votesStatus = await GetVotes(campaign.Id);
 
-		if (votesStatus.EndorsedBalance / votesStatus.Balance < votesStatus.ApprovalThreshold)
-		{
-			await campaign.Refund(_paymentMethodProvider);
-		}
-		else
-		{
-			var accountsToRefund = campaign.Validation!.Votes
-				.Where(vote => vote.Value is false)
-				.Select(vote => vote.Account)
-				.ToList();
-			await campaign.Allocate(_paymentMethodProvider, accountsToRefund);
+			var endorsedRatio = votesStatus.EndorsedBalance / votesStatus.Balance;
+
+			if (double.IsNaN(endorsedRatio))
+			{
+				await Delete(campaign.Id);
+				return;
+			}
+
+			await (endorsedRatio < votesStatus.ApprovalThreshold
+				? campaign.Refund(_paymentMethodProvider)
+				: campaign.Fund(_paymentMethodProvider));
+
 			await _database.CommitChangesAsync();
 		}
-
 	}
 
 	public async Task<bool?> GetVote(int campaignId)

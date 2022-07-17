@@ -9,6 +9,7 @@ public class CampaignModule : Module
 			var geometryFactory = new GeometryFactoryEx(precisionModel: new PrecisionModel(), srid: 4326) { OrientationOfExteriorRing = LinearRingOrientation.CCW };
 			options.SerializerOptions.Converters.Add(new NetTopologySuite.IO.Converters.GeoJsonConverterFactory(geometryFactory));
 		});
+		services.AddHostedService<CampaignAllocationBackgroundService>();
 	}
 
 	public override void ConfigureEndpoints(IEndpointRouteBuilder endpoints)
@@ -54,7 +55,7 @@ public class CampaignModule : Module
 		);
 
 		endpoints.MapGet("/campaign/{id}/votes",
-			(CampaignService campaignService, int id) => campaignService.GetVotes(id)
+			[AllowAnonymous] (CampaignService campaignService, int id) => campaignService.GetVotes(id)
 		);
 
 		endpoints.MapPost("/campaign/{id}/vote",

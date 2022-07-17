@@ -83,7 +83,7 @@ public class Campaign : Model
 		ActivatedPaymentMethods = updated.ActivatedPaymentMethods;
 	}
 
-	public async Task<double> GetBalance(IPaymentMethodProvider paymentMethodProvider, Account? account)
+	public async Task<double> GetBalance(IPaymentMethodProvider paymentMethodProvider, Account? account = null)
 	{
 		var balances = await Task.WhenAll(
 			ActivatedPaymentMethods.Select(pm => paymentMethodProvider
@@ -112,20 +112,38 @@ public class Campaign : Model
 	public async Task Refund(IPaymentMethodProvider paymentMethodProvider)
 	{
 		EnsureNotInStatus(CampaignStatus.Allocation);
-		await Task.WhenAll(
-			ActivatedPaymentMethods.Select(paymentMethod => paymentMethodProvider
+
+		var balance = await GetBalance(paymentMethodProvider);
+
+		if (balance is 0)
+		{
+			return;
+		}
+
+		if (Status is CampaignStatus.Validation)
+		{
+			Allocation ??= new();
+		}
+
+		foreach (var paymentMethod in ActivatedPaymentMethods)
+		{
+			var allocationEntries = await paymentMethodProvider
 				.Get(paymentMethod.Identifier)
 				.GetChannel(this)
 				.RefundRemaining()
-				.Allocate()
-			)
-		);
+				.Allocate();
+			Allocation?.Entries.AddRange(allocationEntries);
+		}
 	}
 
-	public async Task Allocate(IPaymentMethodProvider paymentMethodProvider, List<Account> accountsToRefund)
+	public async Task Fund(IPaymentMethodProvider paymentMethodProvider)
 	{
 		EnsureNotInStatus(CampaignStatus.Funding, CampaignStatus.Allocation);
 		Allocation ??= new();
+		var accountsToRefund = Validation!.Votes
+			.Where(vote => vote.Value is false)
+			.Select(vote => vote.Account)
+			.ToList();
 		foreach (var paymentMethod in ActivatedPaymentMethods)
 		{
 			var allocationEntries = await paymentMethodProvider

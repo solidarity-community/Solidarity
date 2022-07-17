@@ -105,7 +105,7 @@ public class BitcoinClient
 			.Allocate(allocationsByUTxOs)
 			.BuildTransaction(sign: true)
 			.GetVirtualSize();
-		var feeRate = GetFeeRateAsync().GetAwaiter().GetResult(); ;
+		var feeRate = GetFeeRateAsync().GetAwaiter().GetResult();
 		var estimatedTransactionFee = feeRate.GetFee(estimatedTransactionSize);
 		var totalInputAmount = allocationsByUTxOs.Select(kvp => kvp.Key.Coin.Amount.Satoshi).Sum();
 		var totalAmount = allocationsByUTxOs.SelectMany(kvp => kvp.Value.Select(am => am.amount)).Sum();
