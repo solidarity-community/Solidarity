@@ -1,4 +1,4 @@
-import { Component, component, html, nothing, property, event } from '@3mo/model'
+import { Component, component, html, nothing, property, event } from '@3mo/modelx'
 import { Campaign, CampaignStatus } from 'sdk'
 
 /** @fires balanceChange */

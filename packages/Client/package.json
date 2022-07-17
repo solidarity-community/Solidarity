@@ -8,7 +8,7 @@
 		"build": "webpack --mode=production"
 	},
 	"dependencies": {
-		"@3mo/model": "git+https://github.com/3mo-esolutions/model.git",
+		"@3mo/modelx": "git+https://github.com/3mo-esolutions/modelx.git",
 		"@a11d/lit-slider": "*",
 		"@geoman-io/leaflet-geoman-free": "2.*",
 		"jsencrypt": "3.*",

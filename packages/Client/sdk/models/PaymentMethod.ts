@@ -11,6 +11,10 @@ export class PaymentMethod extends Model {
 		['BTC_TESTNET', 'Bitcoin Testnet'],
 	])
 
+	static getLogoSource(identifier: PaymentMethodIdentifier) {
+		return `/assets/payment-methods/${identifier.toLowerCase()}.svg`
+	}
+
 	constructor(identifier?: PaymentMethodIdentifier) {
 		super()
 		if (identifier) {
@@ -21,6 +25,5 @@ export class PaymentMethod extends Model {
 	readonly identifier!: PaymentMethodIdentifier
 
 	get name() { return PaymentMethod.nameByIdentifier.get(this.identifier) }
-
-	get logoSource() { return `/assets/payment-methods/${this.identifier.toLowerCase()}.svg` }
+	get logoSource() { return PaymentMethod.getLogoSource(this.identifier) }
 }

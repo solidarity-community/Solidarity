@@ -1,4 +1,4 @@
-import { component, css, DialogComponent, html, state, Task, nothing } from '@3mo/model'
+import { component, css, DialogComponent, html, state, Task, nothing } from '@3mo/modelx'
 import { AccountService, Campaign, CampaignService, PaymentMethodIdentifier } from 'sdk'
 
 @component('solid-dialog-donate')

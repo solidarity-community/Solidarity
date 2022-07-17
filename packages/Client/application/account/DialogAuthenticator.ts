@@ -1,4 +1,4 @@
-import { component, DialogAuthenticator as DialogAuthenticatorBase, User, authenticator, html } from '@3mo/model'
+import { component, DialogAuthenticator as DialogAuthenticatorBase, User, authenticator, html } from '@3mo/modelx'
 import { AccountService, AuthenticationService } from 'sdk'
 import { DialogAccountRegister, DialogAccountReset } from 'application'
 

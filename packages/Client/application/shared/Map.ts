@@ -1,4 +1,4 @@
-import { Component, component, css, html, property, query, event, ThemeHelper, Background } from '@3mo/model'
+import { Component, component, css, html, property, query, event, ThemeHelper, Background } from '@3mo/modelx'
 import { Map as LMap, TileLayer, Circle, PM, Layer, geoJSON, FeatureGroup } from 'leaflet'
 import { GeometryCollection, Feature } from 'geojson'
 import { ResizeController } from './utilities'

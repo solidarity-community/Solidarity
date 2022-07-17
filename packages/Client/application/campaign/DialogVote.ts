@@ -1,4 +1,4 @@
-import { component, css, DialogComponent, FormatHelper, html, NotificationHost, event, Task, nothing } from '@3mo/model'
+import { component, css, DialogComponent, FormatHelper, html, NotificationHost, event, Task, nothing } from '@3mo/modelx'
 import { Campaign, CampaignService } from 'sdk'
 
 @component('solid-dialog-vote')

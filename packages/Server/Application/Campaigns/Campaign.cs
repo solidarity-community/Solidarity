@@ -4,18 +4,16 @@ public enum CampaignStatus { Funding, Validation, Allocation }
 
 public class Campaign : Model
 {
-	private const int ValidationTimeSpanInDays = 7;
-
 	[Required, MaxLength(50)] public string Title { get; set; } = null!;
 
 	public string Description { get; set; } = null!;
 
-	public CampaignStatus Status => (Validation, Allocation) switch
+	public CampaignStatus Status => this switch
 	{
-		(null, null) => CampaignStatus.Funding,
-		(not null, null) => CampaignStatus.Validation,
-		(not null, not null) => CampaignStatus.Allocation,
-		_ => throw new Exception("Invalid campaign status")
+		{ Validation: null, Allocation: null } => CampaignStatus.Funding,
+		{ Validation: not null, Allocation: null } => CampaignStatus.Validation,
+		{ Validation: not null, Allocation: not null } => CampaignStatus.Allocation,
+		_ => throw new InvalidOperationException("Invalid campaign status")
 	};
 
 	public Geometry Location { get; set; } = null!;
@@ -43,11 +41,7 @@ public class Campaign : Model
 			throw new InvalidOperationException("The campaign does not have enough funds.");
 		}
 
-		Validation ??= new CampaignValidation
-		{
-			Campaign = this,
-			Expiration = DateTime.Now.AddDays(ValidationTimeSpanInDays),
-		};
+		Validation ??= new CampaignValidation { Campaign = this };
 	}
 
 	public void ValidateForCreation()

@@ -1,4 +1,4 @@
-import { DialogDefault, NotificationHost } from '@3mo/model'
+import { DialogDefault, NotificationHost } from '@3mo/modelx'
 
 export class Service {
 	static notifyInfo(...parameters: Parameters<typeof NotificationHost.instance.notifyInfo>) {

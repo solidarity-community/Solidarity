@@ -1,4 +1,4 @@
-import { component, PageComponent, html, route, state, PageError, HttpErrorCode, nothing, authentication } from '@3mo/model'
+import { component, PageComponent, html, route, state, PageError, HttpErrorCode, nothing, authentication } from '@3mo/modelx'
 import { Account, AccountService, AuthenticationMethodType, AuthenticationService, Identity, IdentityService } from 'sdk'
 import { DialogIdentity, DialogAuthenticationMethods, DialogAuthenticator } from 'application'
 

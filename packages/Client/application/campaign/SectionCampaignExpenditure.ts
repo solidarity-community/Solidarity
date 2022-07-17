@@ -1,4 +1,4 @@
-import { Component, component, css, html, nothing, property } from '@3mo/model'
+import { Component, component, css, html, nothing, property } from '@3mo/modelx'
 import { Campaign, CampaignExpenditure } from 'sdk'
 
 @component('solid-section-campaign-expenditure')

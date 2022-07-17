@@ -1,4 +1,4 @@
-import { component, ContextMenuHost, css, DialogAuthenticator, homePage, html, PageComponent, route, Task } from '@3mo/model'
+import { component, ContextMenuHost, css, DialogAuthenticator, homePage, html, PageComponent, route, Task } from '@3mo/modelx'
 import { DialogCampaign, PageCampaign } from 'application'
 import { CampaignService } from 'sdk'
 

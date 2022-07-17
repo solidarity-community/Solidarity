@@ -1,4 +1,4 @@
-import { component, DialogComponent, html, ifDefined, state, Task } from '@3mo/model'
+import { component, DialogComponent, html, ifDefined, state, Task } from '@3mo/modelx'
 import { Campaign, CampaignPaymentMethod, CampaignService, PaymentMethodService } from 'sdk'
 import { GeometryCollection } from 'geojson'
 

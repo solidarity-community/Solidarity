@@ -1,4 +1,4 @@
-import { Component, component, html, property, nothing } from '@3mo/model'
+import { Component, component, html, property, nothing } from '@3mo/modelx'
 import { Campaign } from 'sdk'
 
 @component('solid-campaign-allocation-progress')

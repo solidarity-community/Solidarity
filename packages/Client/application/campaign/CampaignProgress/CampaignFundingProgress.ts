@@ -1,4 +1,4 @@
-import { component, property, nothing, state, html, event } from '@3mo/model'
+import { component, property, nothing, state, html, event } from '@3mo/modelx'
 import { Campaign, CampaignService } from 'sdk'
 import { Progress, TimerController } from 'application'
 

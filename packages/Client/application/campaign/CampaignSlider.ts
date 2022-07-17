@@ -1,4 +1,4 @@
-import { Component, component, html, css, property, ifDefined, styleMap, when, query, nothing } from '@3mo/model'
+import { Component, component, html, css, property, ifDefined, styleMap, when, query, nothing } from '@3mo/modelx'
 import { Campaign, CampaignMedia, CampaignMediaType, FileService } from 'sdk'
 import { DialogCampaignMedia } from 'application'
 import { Slider } from '@a11d/lit-slider'

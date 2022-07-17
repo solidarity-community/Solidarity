@@ -133,6 +133,7 @@ public class CampaignService : CrudService<Campaign>
 	public override async Task<Campaign> Delete(int id)
 	{
 		var campaign = await Get(id);
+		campaign.EnsureNotInStatus(CampaignStatus.Allocation);
 		await campaign.Refund(p => _paymentMethodService.Get(p.Identifier).GetChannel(campaign).RefundRemaining().Allocate());
 		return await base.Delete(id);
 	}

@@ -1,4 +1,4 @@
-import { Component, component, event, html, query, property, NotificationHost } from '@3mo/model'
+import { Component, component, event, html, query, property, NotificationHost } from '@3mo/modelx'
 import { FileService } from 'sdk'
 
 /** 

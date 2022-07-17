@@ -1,4 +1,4 @@
-import { component, DialogComponent, html, state } from '@3mo/model'
+import { component, DialogComponent, html, state } from '@3mo/modelx'
 import { AccountService } from 'sdk'
 import JSEncrypt from 'jsencrypt'
 

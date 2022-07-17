@@ -1,4 +1,4 @@
-import { Component } from '@3mo/model'
+import { Component } from '@3mo/modelx'
 import { amountModeStorage } from './amountModeStorage'
 
 export interface IAmountComponent extends Component {

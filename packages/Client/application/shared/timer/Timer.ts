@@ -1,4 +1,4 @@
-import { Component, component, css, html, join, nothing, property } from '@3mo/model'
+import { Component, component, css, html, join, nothing, property } from '@3mo/modelx'
 import { TimerController } from '../utilities'
 
 @component('solid-timer')

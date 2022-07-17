@@ -1,4 +1,4 @@
-import { component, html, property } from '@3mo/model'
+import { component, html, property } from '@3mo/modelx'
 import { nothing } from 'lit-html'
 import { ClipboardTextBlock } from './ClipboardTextBlock'
 

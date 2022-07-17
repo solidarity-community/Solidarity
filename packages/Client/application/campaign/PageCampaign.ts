@@ -1,6 +1,6 @@
-import { component, PageComponent, html, route, PageError, HttpErrorCode, nothing, state, DialogAcknowledge, NotificationHost, Task, TaskStatus, queryAll, Button, ButtonType } from '@3mo/model'
+import { component, PageComponent, html, route, PageError, HttpErrorCode, nothing, state, DialogAcknowledge, NotificationHost, Task, TaskStatus, queryAll, Button, ButtonType, choose } from '@3mo/modelx'
 import { CampaignService, CampaignStatus } from 'sdk'
-import { DialogCampaign, DialogVote, PageCampaigns, DialogDonate, DialogAuthenticator } from 'application'
+import { DialogCampaign, DialogVote, PageCampaigns, DialogDonate, DialogAuthenticator, DialogCampaignAllocations } from 'application'
 
 @route('/campaign/:id')
 @component('solid-page-campaign')
@@ -39,7 +39,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 
 	protected override get template() {
 		return html`
-			<mo-page style='--mo-page-margin: 0px' heading=${`Campaign ${!this.fetchCampaignTask.value ? '' : `"${this.fetchCampaignTask.value?.title}"`}`} ?fullHeight=${this.fetchCampaignTask.status !== TaskStatus.COMPLETE}>
+			<mo-page style='--mo-page-margin: 0px' heading=${`Campaign ${!this.campaign ? '' : `"${this.campaign?.title}"`}`} ?fullHeight=${this.fetchCampaignTask.status !== TaskStatus.COMPLETE}>
 				${this.fetchCampaignTask.render({
 					pending: () => html`
 						<mo-flex alignItems='center' justifyContent='center'>
@@ -51,41 +51,8 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 							<solid-campaign-progress width='*' .campaign=${campaign} alwaysShowValidationApprovalThreshold
 								@balanceChange=${(e: CustomEvent<number>) => this.balance = e.detail}
 							></solid-campaign-progress>
-
-							<mo-flex direction='horizontal' gap='10px' justifyContent='flex-end'>
-								<mo-button class='action' icon='share' @click=${this.share}>Share</mo-button>
-
-								${this.campaign?.status !== CampaignStatus.Funding ? nothing : html`
-									<mo-button class='action' icon='volunteer_activism'
-										@click=${() => !this.fetchCampaignTask.value ? void 0 : new DialogDonate({ campaign: this.fetchCampaignTask.value }).confirm()}
-									>Donate</mo-button>
-								`}
-
-								${!this.authenticatedUserId || !this.balanceShare || this.campaign?.status !== CampaignStatus.Validation ? nothing : html`
-									<mo-button class='action' icon='how_to_vote'
-										@click=${() => !this.fetchCampaignTask.value || !this.balanceShare ? void 0 : new DialogVote({ campaign: this.fetchCampaignTask.value }).confirm()}
-									>
-										<mo-flex direction='horizontal' gap='5px' alignItems='baseline'>
-											<mo-div>Vote</mo-div>
-											<mo-div fontSize='var(--mo-font-size-s)' foreground='var(--mo-color-gray)' style='letter-spacing: 0px; text-transform: initial;'>
-												Ends <solid-timer .end=${this.campaign.validation?.expiration}></solid-timer>
-											</mo-div>
-										</mo-flex>
-									</mo-button>
-								`}
-
-								${!this.isAuthenticatedUserTheCreator ? nothing : html`
-									<mo-split-button>
-										${this.campaign?.status === CampaignStatus.Funding && this.balance >= this.campaign.totalExpenditure ? html`
-											<mo-button class='action' icon='how_to_vote' @click=${this.initiateValidation}>Initiate Validation</mo-button>
-											<mo-list-item slot='more' icon='edit' @click=${this.edit}>Edit</mo-list-item>
-										` : html`
-											<mo-button class='action' icon='edit' @click=${this.edit}>Edit</mo-button>
-										`}
-										<mo-list-item slot='more' icon='delete' @click=${this.delete}>Delete</mo-list-item>
-									</mo-split-button>
-								`}
-							</mo-flex>
+						
+							${this.actionButtonsTemplate}
 						</mo-flex>
 
 						<mo-grid columns='2* *' rows='435px *' gap='25px' padding='20px'>
@@ -108,6 +75,55 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 			</mo-page>
 		`
 	}
+
+	private get actionButtonsTemplate() {
+		return html`
+			<mo-flex direction='horizontal' gap='10px' justifyContent='flex-end'>
+				<mo-button class='action' icon='share' @click=${this.share}>Share</mo-button>
+
+				${this.campaign?.status !== CampaignStatus.Funding ? nothing : html`
+					<mo-button class='action' icon='volunteer_activism'
+						@click=${() => !this.campaign ? void 0 : new DialogDonate({ campaign: this.campaign }).confirm()}
+					>Donate</mo-button>
+				`}
+
+				${this.campaign?.status !== CampaignStatus.Allocation ? nothing : html`
+					<mo-button class='action' icon='checklist'
+						@click=${() => !this.campaign ? void 0 : new DialogCampaignAllocations({ campaign: this.campaign }).confirm()}
+					>Allocations</mo-button>
+				`}
+
+				${!this.authenticatedUserId || !this.balanceShare || this.campaign?.status !== CampaignStatus.Validation ? nothing : html`
+					<mo-button class='action' icon='how_to_vote'
+						@click=${() => !this.campaign || !this.balanceShare ? void 0 : new DialogVote({ campaign: this.campaign }).confirm()}
+					>
+						<mo-flex direction='horizontal' gap='5px' alignItems='baseline'>
+							<mo-div>Vote</mo-div>
+							<mo-div fontSize='var(--mo-font-size-s)' foreground='var(--mo-color-gray)' style='letter-spacing: 0px; text-transform: initial;'>
+								Ends <solid-timer .end=${this.campaign?.validation?.expiration}></solid-timer>
+							</mo-div>
+						</mo-flex>
+					</mo-button>
+				`}
+
+				${!this.isAuthenticatedUserTheCreator ? nothing : html`
+					<mo-split-button>
+						${this.campaign?.status === CampaignStatus.Funding && this.balance >= this.campaign?.totalExpenditure ? html`
+							<mo-button class='action' icon='how_to_vote' @click=${this.initiateValidation}>Initiate Validation</mo-button>
+							<mo-list-item slot='more' icon='edit' @click=${this.edit}>Edit</mo-list-item>
+						` : html`
+							<mo-button class='action' icon='edit' @click=${this.edit}>Edit</mo-button>
+						`}
+						<mo-list-item slot='more' icon='delete'
+							?disabled=${this.campaign?.status === CampaignStatus.Allocation}
+							@click=${this.delete}
+						>Delete</mo-list-item>
+					</mo-split-button>
+				`}
+			</mo-flex>
+		`
+	}
+
 	private share = async () => {
 		if (this.campaign && 'share' in navigator) {
 			await navigator.share({
@@ -138,7 +154,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 	}
 
 	private async edit() {
-		const id = this.fetchCampaignTask.value?.id
+		const id = this.campaign?.id
 		if (id) {
 			await new DialogCampaign({ id }).confirm()
 			await this.fetchCampaignTask.run()
