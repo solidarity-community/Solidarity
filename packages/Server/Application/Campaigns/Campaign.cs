@@ -32,7 +32,7 @@ public class Campaign : Model
 	public int? AllocationId { get; set; }
 	public CampaignAllocation? Allocation { get; set; }
 
-	public void TransitionToValidationPhase(decimal totalBalance)
+	public void TransitionToValidationPhase(double totalBalance)
 	{
 		EnsureNotInStatus(CampaignStatus.Allocation, CampaignStatus.Validation);
 
@@ -54,7 +54,7 @@ public class Campaign : Model
 		Allocation = null;
 	}
 
-	public void ValidateForUpdate(Campaign updated)
+	public void Update(Campaign updated)
 	{
 		updated.Validate();
 		updated.EnsureTotalExpenditureNotTooLow();
@@ -77,6 +77,22 @@ public class Campaign : Model
 		{
 			throw new InvalidOperationException("Cannot change activated payment methods once the campaign is in allocation status");
 		}
+
+		Media = updated.Media;
+		Expenditures = updated.Expenditures;
+		ActivatedPaymentMethods = updated.ActivatedPaymentMethods;
+	}
+
+	public async Task<double> GetBalance(IPaymentMethodProvider paymentMethodProvider, Account? account)
+	{
+		var balances = await Task.WhenAll(
+			ActivatedPaymentMethods.Select(pm => paymentMethodProvider
+				.Get(pm.Identifier)
+				.GetChannel(this)
+				.GetBalance(account)
+			)
+		);
+		return balances?.Sum() ?? 0;
 	}
 
 	public void Vote(int accountId, bool value)
@@ -93,22 +109,32 @@ public class Campaign : Model
 		vote.Value = value;
 	}
 
-	public async Task Refund(Func<CampaignPaymentMethod, Task> refundPaymentMethod)
+	public async Task Refund(IPaymentMethodProvider paymentMethodProvider)
 	{
 		EnsureNotInStatus(CampaignStatus.Allocation);
-		await Task.WhenAll(ActivatedPaymentMethods.Select(paymentMethod => refundPaymentMethod(paymentMethod)));
+		await Task.WhenAll(
+			ActivatedPaymentMethods.Select(paymentMethod => paymentMethodProvider
+				.Get(paymentMethod.Identifier)
+				.GetChannel(this)
+				.RefundRemaining()
+				.Allocate()
+			)
+		);
 	}
 
-	public async Task Allocate(Func<CampaignPaymentMethod, Task<IEnumerable<CampaignAllocationEntry>>> allocatePaymentMethod)
+	public async Task Allocate(IPaymentMethodProvider paymentMethodProvider, List<Account> accountsToRefund)
 	{
 		EnsureNotInStatus(CampaignStatus.Funding, CampaignStatus.Allocation);
 		Allocation ??= new();
 		foreach (var paymentMethod in ActivatedPaymentMethods)
 		{
-			foreach (var allocationEntry in await allocatePaymentMethod(paymentMethod))
-			{
-				Allocation.Entries.Add(allocationEntry);
-			}
+			var allocationEntries = await paymentMethodProvider
+				.Get(paymentMethod.Identifier)
+				.GetChannel(this)
+				.RefundRange(accountsToRefund)
+				.FundRemaining()
+				.Allocate();
+			Allocation.Entries.AddRange(allocationEntries);
 		}
 	}
 

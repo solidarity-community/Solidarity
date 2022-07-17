@@ -17,12 +17,13 @@ public class BitcoinChannel : PaymentChannel
 		return address.ToString();
 	}
 
-	public override async Task<decimal> GetBalance(Account? account)
+	public override async Task<double> GetBalance(Account? account)
 	{
 		var utxos = await GetUTxOs(account);
-		return utxos?.Select(utxo => utxo.Coin.Amount)
+		var balanceDecimal = utxos.Select(utxo => utxo.Coin.Amount)
 			.Aggregate(Money.Zero, (a, b) => a + b)
-			.ToDecimal(MoneyUnit.Satoshi) ?? 0m;
+			.ToDecimal(MoneyUnit.Satoshi);
+		return (double)balanceDecimal;
 	}
 
 	public override async Task<IEnumerable<CampaignAllocationEntry>> Allocate()

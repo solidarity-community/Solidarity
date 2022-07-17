@@ -13,7 +13,7 @@ public abstract class PaymentChannel
 	}
 
 	public abstract Task<string> GetDonationData(Account? account);
-	public abstract Task<decimal> GetBalance(Account? account);
+	public abstract Task<double> GetBalance(Account? account);
 
 	protected readonly AllocationList _allocationList = new();
 
