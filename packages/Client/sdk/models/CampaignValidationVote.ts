@@ -1,6 +1,6 @@
 import { Model, Account, CampaignValidation, model } from 'sdk'
 
-@model('Vote')
+@model('CampaignValidationVote')
 export class CampaignValidationVote extends Model {
 	validation!: CampaignValidation
 	account!: Account

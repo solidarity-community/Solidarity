@@ -37,8 +37,8 @@ public class DatabaseContext : DbContext, IDatabase
 	public DbSet<Campaign> Campaigns { get; set; } = null!;
 	public DbSet<CampaignMedia> CampaignMedia { get; set; } = null!;
 	public DbSet<CampaignExpenditure> CampaignExpenditures { get; set; } = null!;
-	public DbSet<CampaignValidation> Validations { get; set; } = null!;
-	public DbSet<CampaignValidationVote> Votes { get; set; } = null!;
+	public DbSet<CampaignValidation> CampaignValidations { get; set; } = null!;
+	public DbSet<CampaignValidationVote> CampaignValidationVotes { get; set; } = null!;
 	public DbSet<CampaignPaymentMethod> CampaignPaymentMethods { get; set; } = null!;
 	public DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; } = null!;
 

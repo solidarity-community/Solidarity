@@ -34,15 +34,7 @@ export class PageAccount extends PageComponent {
 	}
 
 	private async fetchAccount() {
-		const account = await AccountService.get()
-		if (!account) {
-			new PageError({
-				error: HttpErrorCode.Forbidden,
-				message: 'You are not signed in to any account.'
-			}).navigate()
-			return
-		}
-		this.account = account
+		this.account = (await AccountService.get())!
 	}
 
 	private async fetchAuthenticationMethods() {

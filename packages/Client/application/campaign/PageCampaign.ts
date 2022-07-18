@@ -1,6 +1,6 @@
 import { component, PageComponent, html, route, PageError, HttpErrorCode, nothing, state, DialogAcknowledge, NotificationHost, queryAll, Button, ButtonType } from '@3mo/modelx'
 import { Campaign, CampaignService, CampaignStatus } from 'sdk'
-import { DialogCampaign, DialogVote, PageCampaigns, DialogDonate, DialogAuthenticator, DialogCampaignAllocations, TimerController } from 'application'
+import { DialogCampaign, DialogCampaignValidationVote, PageCampaigns, DialogDonate, DialogAuthenticator, DialogCampaignAllocations, TimerController } from 'application'
 
 @route('/campaign/:id')
 @component('solid-page-campaign')
@@ -105,7 +105,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 
 				${!this.authenticatedUserId || !this.balanceShare || this.campaign?.status !== CampaignStatus.Validation ? nothing : html`
 					<mo-button class='action' icon='how_to_vote'
-						@click=${() => !this.campaign || !this.balanceShare ? void 0 : new DialogVote({ campaign: this.campaign }).confirm()}
+						@click=${() => !this.campaign || !this.balanceShare ? void 0 : new DialogCampaignValidationVote({ campaign: this.campaign }).confirm()}
 					>
 						<mo-flex direction='horizontal' gap='5px' alignItems='baseline'>
 							<mo-div>Vote</mo-div>

@@ -1,8 +1,8 @@
 import { component, css, DialogComponent, FormatHelper, html, NotificationHost, event, nothing, state } from '@3mo/modelx'
 import { Campaign, CampaignService } from 'sdk'
 
-@component('solid-dialog-vote')
-export class DialogVote extends DialogComponent<{ readonly campaign: Campaign }> {
+@component('solid-dialog-campaign-validation-vote')
+export class DialogCampaignValidationVote extends DialogComponent<{ readonly campaign: Campaign }> {
 	@event() static readonly voteCast: EventDispatcher
 
 	@state() private share?: number
@@ -75,7 +75,7 @@ export class DialogVote extends DialogComponent<{ readonly campaign: Campaign }>
 
 	private async handleVoteButtonClick(vote: boolean) {
 		await CampaignService.vote(this.parameters.campaign.id!, vote)
-		DialogVote.voteCast.dispatch()
+		DialogCampaignValidationVote.voteCast.dispatch()
 		await this.fetchVote()
 	}
 }

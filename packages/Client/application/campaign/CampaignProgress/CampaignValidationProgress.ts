@@ -1,6 +1,6 @@
 import { component, property, nothing, state, html, FormatHelper } from '@3mo/modelx'
 import { Campaign, CampaignService } from 'sdk'
-import { DialogVote, Progress, TimerController } from 'application'
+import { DialogCampaignValidationVote, Progress, TimerController } from 'application'
 
 @component('solid-campaign-validation-progress')
 export class CampaignValidationProgress extends Progress {
@@ -21,11 +21,11 @@ export class CampaignValidationProgress extends Progress {
 
 
 	protected override connected() {
-		DialogVote.voteCast.subscribe(this.fetchVotes)
+		DialogCampaignValidationVote.voteCast.subscribe(this.fetchVotes)
 	}
 
 	protected override disconnected() {
-		DialogVote.voteCast.unsubscribe(this.fetchVotes)
+		DialogCampaignValidationVote.voteCast.unsubscribe(this.fetchVotes)
 	}
 
 	protected get heading() { return 'Validation' }

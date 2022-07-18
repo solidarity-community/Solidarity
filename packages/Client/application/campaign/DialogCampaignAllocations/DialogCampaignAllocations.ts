@@ -12,7 +12,7 @@ export class DialogCampaignAllocations extends DialogComponent<{ readonly campai
 					}
 				</style>
 				<mo-data-grid .data=${this.parameters.campaign.allocation?.entries ?? []}>
-					<solid-data-grid-column-campaign-allocation-entry-type width='100px' heading='Type' dataSelector=${nameof<CampaignAllocationEntry>('type')}></solid-data-grid-column-campaign-allocation-entry-type>
+					<solid-data-grid-column-campaign-allocation-entry-type heading='Type' dataSelector=${nameof<CampaignAllocationEntry>('type')}></solid-data-grid-column-campaign-allocation-entry-type>
 					<mo-data-grid-column-date width='100px' hidden heading='Date' dataSelector=${nameof<CampaignAllocationEntry>('creation')}></mo-data-grid-column-date>
 					<solid-data-grid-column-payment-method heading='Payment Method' dataSelector=${nameof<CampaignAllocationEntry>('paymentMethodIdentifier')}></solid-data-grid-column-payment-method>
 					<mo-data-grid-column-text width='*' heading='Transaction ID' dataSelector=${nameof<CampaignAllocationEntry>('data')}></mo-data-grid-column-text>
