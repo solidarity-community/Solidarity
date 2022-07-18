@@ -1,13 +1,13 @@
 import { component, PageComponent, html, route, state, PageError, HttpErrorCode, nothing, authentication } from '@3mo/modelx'
-import { Account, AccountService, AuthenticationMethodType, AuthenticationService, Identity, IdentityService } from 'sdk'
-import { DialogIdentity, DialogAuthenticationMethods, DialogAuthenticator } from 'application'
+import { Account, AccountService, AuthenticationMethodType, AuthenticationService, AccountProfile, AccountProfileService } from 'sdk'
+import { DialogAccountProfile, DialogAuthenticationMethods, DialogAuthenticator } from 'application'
 
 @authentication()
 @route('/account')
 @component('solid-page-account')
 export class PageAccount extends PageComponent {
 	@state() private account: Account = {}
-	@state() private identity?: Identity
+	@state() private profile?: AccountProfile
 	@state() private isNewByAuthenticationMethod = new Map<AuthenticationMethodType, boolean>()
 
 	protected override async initialized() {
@@ -19,7 +19,7 @@ export class PageAccount extends PageComponent {
 		await Promise.all([
 			this.fetchAccount(),
 			this.fetchAuthenticationMethods(),
-			this.fetchIdentity()
+			this.fetchProfile()
 		])
 	}
 
@@ -41,8 +41,8 @@ export class PageAccount extends PageComponent {
 		this.isNewByAuthenticationMethod = await AuthenticationService.getAll()
 	}
 
-	private async fetchIdentity() {
-		this.identity = await IdentityService.getByAccountId()
+	private async fetchProfile() {
+		this.profile = await AccountProfileService.getByAccountId()
 	}
 
 	protected override get template() {
@@ -60,13 +60,13 @@ export class PageAccount extends PageComponent {
 	}
 
 	private get topBarTemplate() {
-		const name = `${this.identity?.firstName ?? ''} ${this.identity?.lastName ?? ''}`
+		const name = `${this.profile?.firstName ?? ''} ${this.profile?.lastName ?? ''}`
 		const username = this.account.username
 		const hasName = !!name.trim()
 		return html`
 			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center'>
 				<mo-flex alignItems='center' direction='horizontal' gap='12px'>
-					<mo-avatar width='50px' height='50px' fontSize='var(--mo-font-size-xl)' foreground='var(--mo-color-accessible)'>${(this.identity?.firstName || DialogAuthenticator.authenticatedUser.value?.name || '').charAt(0).toUpperCase()}</mo-avatar>
+					<mo-avatar width='50px' height='50px' fontSize='var(--mo-font-size-xl)' foreground='var(--mo-color-accessible)'>${(this.profile?.firstName || DialogAuthenticator.authenticatedUser.value?.name || '').charAt(0).toUpperCase()}</mo-avatar>
 					<mo-flex>
 						<mo-heading typography='heading3'>${hasName ? name : username}</mo-heading>
 						${!hasName ? nothing : html`<mo-heading typography='heading5' foreground='var(--mo-color-gray)'>${username}</mo-heading>`}
@@ -82,7 +82,7 @@ export class PageAccount extends PageComponent {
 		if (!this.account.id) {
 			return
 		}
-		await new DialogIdentity({ accountId: this.account.id }).confirm()
+		await new DialogAccountProfile({ accountId: this.account.id }).confirm()
 		await this.fetchData()
 	}
 

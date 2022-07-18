@@ -24,12 +24,13 @@ public class AccountModule : Module
 			[AllowAnonymous] (AccountService accountService, string phrase) => accountService.Recover(phrase)
 		);
 
-		endpoints.MapGet("/identity/{id}", (IdentityService identityService, int id) => identityService.Get(id));
+		endpoints.MapGet("/account/profile", (AccountProfileService accountProfileService) => accountProfileService.GetByAccountId(null));
+		endpoints.MapGet("/account/{accountId}/profile", (AccountProfileService accountProfileService, int accountId) => accountProfileService.GetByAccountId(accountId));
 
-		endpoints.MapGet("/identity", (IdentityService identityService, [FromQuery] int? accountId) => identityService.GetByAccountId(accountId));
+		endpoints.MapGet("/account/profile/{id}", (AccountProfileService accountProfileService, int id) => accountProfileService.Get(id));
 
-		var postAndPut = (IdentityService identityService, Identity identity) => identityService.CreateOrUpdate(identity);
-		endpoints.MapPost("/identity", postAndPut);
-		endpoints.MapPut("/identity", postAndPut);
+		var postAndPut = (AccountProfileService accountProfileService, AccountProfile profile) => accountProfileService.CreateOrUpdate(profile);
+		endpoints.MapPost("/account/profile", postAndPut);
+		endpoints.MapPut("/account/profile", postAndPut);
 	}
 }

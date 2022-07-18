@@ -1,6 +1,6 @@
 ﻿namespace Solidarity.Application.Accounts;
 
-public class Identity : Model
+public class AccountProfile : Model
 {
 	public int AccountId { get; set; }
 

@@ -31,7 +31,7 @@ public class DatabaseContext : DbContext, IDatabase
 	}
 
 	public DbSet<Account> Accounts { get; set; } = null!;
-	public DbSet<Application.Accounts.Identity> Identities { get; set; } = null!;
+	public DbSet<AccountProfile> AccountProfiles { get; set; } = null!;
 	public DbSet<AuthenticationMethod> AuthenticationMethods { get; set; } = null!;
 	public DbSet<Handshake> Handshakes { get; set; } = null!;
 	public DbSet<Campaign> Campaigns { get; set; } = null!;
@@ -54,7 +54,7 @@ public class DatabaseContext : DbContext, IDatabase
 		modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne().HasForeignKey(c => c.CreatorId);
 		modelBuilder.Entity<Account>().HasMany(a => a.Votes).WithOne(v => v.Account);
 
-		modelBuilder.Entity<Application.Accounts.Identity>().HasOne(i => i.Account).WithOne();
+		modelBuilder.Entity<AccountProfile>().HasOne(i => i.Account).WithOne();
 
 		modelBuilder.Entity<Handshake>().HasOne(h => h.Account);
 
