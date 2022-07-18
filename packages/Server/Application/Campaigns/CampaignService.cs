@@ -38,6 +38,7 @@ public class CampaignService : CrudService<Campaign>
 
 	public override async Task<Campaign> Create(Campaign campaign)
 	{
+		ValidateAllocationDestinations(campaign);
 		campaign.ValidateForCreation();
 		await base.Create(campaign);
 		return campaign;
@@ -45,16 +46,14 @@ public class CampaignService : CrudService<Campaign>
 
 	public override async Task<Campaign> Update(Campaign campaign)
 	{
+		ValidateAllocationDestinations(campaign);
 		var entity = await GetAndEnsureCreatedByCurrentUser(campaign.Id);
-
-		campaign.ActivatedPaymentMethods = entity.ActivatedPaymentMethods.Any() ? entity.ActivatedPaymentMethods : _paymentMethodProvider
-			.GetAll()
-			.Select(pm => new CampaignPaymentMethod { Identifier = pm.Identifier, CampaignId = entity.Id })
-			.ToList();
-
 		entity.Update(campaign);
 		return await base.Update(campaign);
 	}
+
+	private void ValidateAllocationDestinations(Campaign campaign)
+		=> campaign.ActivatedPaymentMethods.ForEach(pm => _paymentMethodProvider.Get(pm.Identifier).ValidateAllocationDestination(pm.AllocationDestination));
 
 	public async Task InitiateValidation(int campaignId)
 	{

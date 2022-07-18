@@ -35,7 +35,17 @@ public abstract class PaymentMethod : IHealthCheck
 	}
 
 	public abstract Task<HealthCheckResult> CheckHealthAsync(CancellationToken cancellationToken = default);
+	public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+		=> CheckHealthAsync(cancellationToken);
+
 	public abstract PaymentChannel GetChannel(Campaign campaign);
+
 	public abstract bool IsAllocationDestinationValid(string allocationDestination);
-	public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default) => CheckHealthAsync(cancellationToken);
+	public void ValidateAllocationDestination(string allocationDestination)
+	{
+		if (!IsAllocationDestinationValid(allocationDestination))
+		{
+			throw new InvalidAllocationDestinationException(this, allocationDestination);
+		}
+	}
 }
