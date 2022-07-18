@@ -78,7 +78,7 @@
 	"Component": {
 		"prefix": "component",
 		"body": [
-			"import { Component, component, html } from '@3mo/model'",
+			"import { Component, component, html } from '@3mo/modelx'",
 			"",
 			"@component('solid-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}')",
 			"export class ${TM_FILENAME_BASE} extends Component {",
@@ -99,7 +99,7 @@
 	"PageComponent": {
 		"prefix": "pageComponent",
 		"body": [
-			"import { component, PageComponent, html, route } from '@3mo/model'",
+			"import { component, PageComponent, html, route } from '@3mo/modelx'",
 			"",
 			"@route('/${1:route}')",
 			"@component('solid-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}')",
@@ -117,7 +117,7 @@
 	"DialogComponent": {
 		"prefix": "dialogComponent",
 		"body": [
-			"import { component, DialogComponent, html } from '@3mo/model'",
+			"import { component, DialogComponent, html } from '@3mo/modelx'",
 			"",
 			"@component('solid-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}')",
 			"export class ${TM_FILENAME_BASE} extends DialogComponent {",

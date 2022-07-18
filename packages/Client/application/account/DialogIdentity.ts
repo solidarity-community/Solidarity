@@ -1,4 +1,4 @@
-import { component, DialogComponent, html, state } from '@3mo/model'
+import { component, DialogComponent, html, state } from '@3mo/modelx'
 import { Identity, IdentityService } from 'sdk'
 
 @component('solid-dialog-identity')

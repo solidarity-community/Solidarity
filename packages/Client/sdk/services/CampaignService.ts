@@ -1,4 +1,4 @@
-import { API, Service, Campaign, PaymentMethodService, CampaignPaymentMethod, PaymentMethodIdentifier } from 'sdk'
+import { API, Service, Campaign, PaymentMethodIdentifier, HttpError } from 'sdk'
 
 export class CampaignService extends Service {
 	static get(id: number) {
@@ -18,23 +18,37 @@ export class CampaignService extends Service {
 	}
 
 	static async getDonationData(campaignId: number) {
-		const response = await API.get<Record<PaymentMethodIdentifier, string>>(`/campaign/${campaignId}/donation-data`)
-		return new Map(Object.entries(response)) as Map<PaymentMethodIdentifier, string>
-	}
-
-	static async declareAllocationPhase(campaignId: number) {
-		await API.post(`/campaign/${campaignId}/declare-allocation-phase`)
-	}
-
-	static async allocate(campaignId: number, destinationByPaymentMethodIdentifier: Map<string, string>) {
-		await API.post(`/campaign/${campaignId}/allocate`, destinationByPaymentMethodIdentifier)
-	}
-
-	static async save(campaign: Campaign, includeAllDonationChannels = false) {
-		if (includeAllDonationChannels) {
-			const paymentMethodIdentifiers = await PaymentMethodService.getAllIdentifiers()
-			campaign.activatedPaymentMethods = paymentMethodIdentifiers.map(identifier => new CampaignPaymentMethod(identifier))
+		try {
+			const response = await API.get<Record<PaymentMethodIdentifier, string>>(`/campaign/${campaignId}/donation-data`)
+			return new Map(Object.entries(response)) as Map<PaymentMethodIdentifier, string>
+		} catch (error) {
+			Service.notifyError((error as HttpError).message)
+			throw error
 		}
+	}
+
+	static async initiateValidation(campaignId: number) {
+		await API.post(`/campaign/${campaignId}/initiate-validation`)
+	}
+
+	static async getVote(campaignId: number) {
+		const vote = await API.get<boolean | null>(`/campaign/${campaignId}/vote`)
+		return vote ?? undefined
+	}
+
+	static getVotes(campaignId: number) {
+		return API.get<{
+			readonly balance: number,
+			readonly endorsedBalance: number,
+			readonly approvalThreshold: number,
+		}>(`/campaign/${campaignId}/votes`)
+	}
+
+	static async vote(campaignId: number, value: boolean) {
+		await API.post(`/campaign/${campaignId}/vote`, value)
+	}
+
+	static save(campaign: Campaign) {
 		return campaign.id
 			? API.put<Campaign>(`/campaign/${campaign.id}`, campaign)
 			: API.post<Campaign>('/campaign', campaign)

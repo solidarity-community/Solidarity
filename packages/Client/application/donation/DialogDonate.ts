@@ -1,28 +1,37 @@
-import { component, css, DialogComponent, html, state, Task, nothing, FormatHelper } from '@3mo/model'
-import { AccountService, Campaign, CampaignPaymentMethod, CampaignService, PaymentMethodIdentifier } from 'sdk'
+import { component, css, DialogComponent, html, state, nothing } from '@3mo/modelx'
+import { Account, AccountService, Campaign, CampaignService, PaymentMethodIdentifier } from 'sdk'
 
 @component('solid-dialog-donate')
 export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign }> {
-	private readonly fetchDonationDataByPaymentMethodTask = new Task(this, this.fetchDonationDataByPaymentMethod.bind(this), () => [])
-	private readonly fetchCurrentAccountTask = new Task(this, AccountService.get, () => [])
+	override async confirm(...parameters: Parameters<DialogComponent<{ readonly campaign: Campaign }>['confirm']>) {
+		await this.fetchDonationDataByPaymentMethod()
+		await this.fetchAccount()
+		return super.confirm(...parameters)
+	}
 
+	@state() private donationDataByPaymentMethod?: Map<PaymentMethodIdentifier, string>
 	@state() private selectedPaymentMethodIdentifier?: PaymentMethodIdentifier
+	@state() private currentAccount?: Account
 
+	private async fetchDonationDataByPaymentMethod() {
+		this.donationDataByPaymentMethod = await CampaignService.getDonationData(this.parameters.campaign.id!)
+		if (this.donationDataByPaymentMethod.size === 1) {
+			this.selectedPaymentMethodIdentifier = [...this.donationDataByPaymentMethod.keys()][0]
+		}
+		return this.donationDataByPaymentMethod
+	}
+	
+	private async fetchAccount() {
+		this.currentAccount = await AccountService.get()
+	}
+	
 	private get selectedPaymentMethod() {
 		return this.parameters.campaign.activatedPaymentMethods
 			.find(dc => dc.identifier === this.selectedPaymentMethodIdentifier)
 	}
 
 	private get isPublicDonation() {
-		return !this.fetchCurrentAccountTask.value
-	}
-
-	private async fetchDonationDataByPaymentMethod() {
-		const donationData = await CampaignService.getDonationData(this.parameters.campaign.id!)
-		if (donationData.size === 1) {
-			this.selectedPaymentMethodIdentifier = [...donationData.keys()][0]
-		}
-		return donationData
+		return !this.currentAccount
 	}
 
 	static override get styles() {
@@ -102,16 +111,16 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 		const listItemsTemplate = html`
 			<li>
 				<mo-flex gap='10px'>
-					<mo-div><span>Donate</span> <b>${this.selectedPaymentMethod?.name}</b> funds to this campaign via the following information:</mo-div>
+					<mo-div><span>Donate.</span> Send <b>${this.selectedPaymentMethod?.name}</b> funds to this campaign via the following information:</mo-div>
 					${this.paymentMethodTemplate}
 				</mo-flex>
 			</li>
 			${this.isPublicDonation ? nothing : html`
 				<li>
-					<span>Verify</span> this campaign's activities until the target allocation date <b>${FormatHelper.date(this.parameters.campaign.targetAllocationDate)}</b>.
+					<span>Validate.</span> Use provided media, description, location, etc. to validate this campaign's activities.
 				</li>
 				<li>
-					<span>Vote</span> in favor or against the integrity of this campaign to help allocating or refunding donations on <b>${FormatHelper.date(this.parameters.campaign.targetAllocationDate)}</b>.
+					<span>Vote.</span> Endorse or Oppose the the integrity of this campaign to decide on allocating or refunding donations.
 				</li>
 			`}
 		`
@@ -121,7 +130,7 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 				${this.isPublicDonation ? html`
 					<mo-div><span>Public</span> donation</mo-div>
 				` : html`
-					<mo-div>Donate as <span>${this.fetchCurrentAccountTask.value!.username}</span></mo-div>
+					<mo-div>Donate as <span>${this.currentAccount!.username}</span></mo-div>
 				`}
 			</mo-flex>
 
@@ -140,7 +149,7 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 	}
 
 	private get bitcoinTemplate() {
-		const walletAddress = this.fetchDonationDataByPaymentMethodTask.value?.get(this.selectedPaymentMethod!.identifier)
+		const walletAddress = this.donationDataByPaymentMethod?.get(this.selectedPaymentMethod!.identifier)
 		return html`
 			<mo-flex alignItems='center'>
 				<solid-wallet-qr-code protocol='bitcoin'>${walletAddress}</solid-wallet-qr-code>

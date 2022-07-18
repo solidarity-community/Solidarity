@@ -5,7 +5,7 @@ public class AccountModule : Module
 	public override void ConfigureEndpoints(IEndpointRouteBuilder endpoints)
 	{
 		endpoints.MapGet("/account",
-			(AccountService accountService) => accountService.GetWithoutAuthentication(null)
+			(AccountService accountService) => accountService.GetWithoutAuthentication()
 		);
 
 		endpoints.MapPost("/account",

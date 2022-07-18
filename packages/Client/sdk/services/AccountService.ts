@@ -2,12 +2,12 @@ import { API, Account } from 'sdk'
 
 export class AccountService {
 	static get() {
-		return API.get<Account>(`/account`)
+		return !API.authenticator?.isAuthenticated() ? Promise.resolve(undefined) : API.get<Account>(`/account`)
 	}
 
 	static async create(account: Account) {
 		const token = await API.post<string>(`/account`, account)
-		API.token = token
+		API.authenticator?.authenticate(token)
 	}
 
 	static update(account: Account) {
@@ -19,6 +19,7 @@ export class AccountService {
 	}
 
 	static async recover(phrase: string) {
-		API.token = await API.get<string>(`/recover?phrase=${phrase}`)
+		const token = await API.get<string>(`/recover?phrase=${phrase}`)
+		API.authenticator?.authenticate(token)
 	}
 }

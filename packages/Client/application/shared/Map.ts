@@ -1,4 +1,4 @@
-import { Component, component, css, html, property, query, event, ThemeHelper, Background } from '@3mo/model'
+import { Component, component, css, html, property, query, event, ThemeHelper, Background } from '@3mo/modelx'
 import { Map as LMap, TileLayer, Circle, PM, Layer, geoJSON, FeatureGroup } from 'leaflet'
 import { GeometryCollection, Feature } from 'geojson'
 import { ResizeController } from './utilities'
@@ -6,8 +6,8 @@ import { ResizeController } from './utilities'
 /** @fires selectedAreaChange CustomEvent<Geography | undefined> */
 @component('solid-map')
 export class Map extends Component {
-	private static readonly tileLayerUrlDark = 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png'
-	private static readonly tileLayerUrlLight = 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png'
+	private static readonly tileLayerUrlDark = 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+	private static readonly tileLayerUrlLight = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png'
 	private static readonly polygonSidesForCircleConversion = 100
 
 	@event() readonly selectedAreaChange!: EventDispatcher<GeometryCollection | undefined>

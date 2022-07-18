@@ -28,6 +28,7 @@ global using Solidarity.Infrastructure.Persistence;
 global using Solidarity.Infrastructure.Payment;
 global using System;
 global using System.Collections.Generic;
+global using System.Collections.ObjectModel;
 global using System.ComponentModel.DataAnnotations;
 global using System.IdentityModel.Tokens.Jwt;
 global using System.Linq;

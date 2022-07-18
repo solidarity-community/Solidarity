@@ -1,4 +1,4 @@
-import { component, Component, css, html, property } from '@3mo/model'
+import { component, Component, css, html, property } from '@3mo/modelx'
 import { Campaign, FileService } from 'sdk'
 
 @component('solid-campaign-card')
@@ -38,10 +38,7 @@ export class CampaignCard extends Component {
 				`}
 				<mo-div slot='heading' textAlign='center' fontSize='var(--mo-font-size-l)' fontWeight='bold'>${this.campaign.title}</mo-div>
 				<mo-div>${this.campaign.description}</mo-div>
-				<mo-flex slot='footer' direction='horizontal' justifyContent='space-around'>
-					<solid-donation-progress .campaign=${this.campaign}></solid-donation-progress>
-					<solid-campaign-time-progress .campaign=${this.campaign}></solid-campaign-time-progress>
-				</mo-flex>
+				<solid-campaign-progress slot='footer' .campaign=${this.campaign}></solid-campaign-progress>
 			</mo-card>
 		`
 	}

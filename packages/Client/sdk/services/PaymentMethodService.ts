@@ -9,4 +9,8 @@ export class PaymentMethodService {
 	static getAllIdentifiers() {
 		return API.get<Array<PaymentMethodIdentifier>>('/paymentMethod')
 	}
+
+	static isAllocationDestinationValid(identifier: PaymentMethodIdentifier, allocationDestination: string) {
+		return API.get<boolean>(`/paymentMethod/${identifier}/is-allocation-destination-valid/${allocationDestination}`)
+	}
 }

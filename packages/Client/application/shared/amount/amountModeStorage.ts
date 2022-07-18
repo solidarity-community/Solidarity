@@ -1,4 +1,4 @@
-import { LocalStorageEntry } from '@3mo/model'
+import { LocalStorageEntry } from '@3mo/modelx'
 
 export const enum AmountMode {
 	Satoshi = 1,

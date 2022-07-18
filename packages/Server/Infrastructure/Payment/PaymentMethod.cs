@@ -2,7 +2,7 @@ namespace Solidarity.Infrastructure.Payment;
 
 public abstract class PaymentMethod : IHealthCheck
 {
-	protected readonly IDatabase _database;
+	public readonly IDatabase _database;
 	public PaymentMethod(IDatabase database) => _database = database;
 
 	public string Identifier =>
@@ -34,9 +34,18 @@ public abstract class PaymentMethod : IHealthCheck
 		}
 	}
 
-	public abstract Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default);
-	public abstract Task<string> GetDonationData(Campaign campaign, Account? account);
-	public abstract Task<decimal> GetBalance(Campaign campaign, Account? account);
-	public abstract Task Refund(Campaign campaign, Account? account);
-	public abstract Task Allocate(Campaign campaign, string destination);
+	public abstract Task<HealthCheckResult> CheckHealthAsync(CancellationToken cancellationToken = default);
+	public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+		=> CheckHealthAsync(cancellationToken);
+
+	public abstract PaymentChannel GetChannel(Campaign campaign);
+
+	public abstract bool IsAllocationDestinationValid(string allocationDestination);
+	public void ValidateAllocationDestination(string allocationDestination)
+	{
+		if (!IsAllocationDestinationValid(allocationDestination))
+		{
+			throw new InvalidAllocationDestinationException(this, allocationDestination);
+		}
+	}
 }

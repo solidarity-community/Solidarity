@@ -1,7 +1,5 @@
 import { HttpError } from 'sdk'
 
-export type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD'
-
 export type ApiValueConstructor<TConstructed, TDeconstructed> = {
 	shallConstruct(text: unknown): boolean
 	construct(text: TDeconstructed): TConstructed
@@ -16,23 +14,30 @@ export const apiValueConstructor = () => {
 	}
 }
 
+export type ApiAuthenticator = {
+	authenticate(data: string): void
+	unauthenticate(): void
+	isAuthenticated(): boolean
+	processRequest(request: RequestInit): RequestInit
+}
+
+export const apiAuthenticator = () => {
+	return (Constructor: Constructor<ApiAuthenticator>) => {
+		// @ts-expect-error - Writing readonly property
+		API.authenticator = new Constructor
+	}
+}
+
+type HTTPMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'OPTIONS' | 'HEAD'
+
 type FetchOptions = {
 	readonly noHttpErrorOnErrorStatusCode?: boolean
 }
 
 export class API {
 	static readonly valueConstructors = new Set<ApiValueConstructor<unknown, unknown>>()
+	static readonly authenticator?: ApiAuthenticator
 	static readonly url = '/api'
-	private static readonly tokenStorageKey = 'Solidarity.Authentication.Token'
-
-	static get token() { return localStorage.getItem(API.tokenStorageKey) ?? undefined }
-	static set token(value) {
-		if (value) {
-			localStorage.setItem(API.tokenStorageKey, value)
-		} else {
-			localStorage.removeItem(API.tokenStorageKey)
-		}
-	}
 
 	static get<T = void>(route: string, options?: FetchOptions) {
 		return this.fetch<T>('GET', route, null, options)
@@ -57,23 +62,20 @@ export class API {
 	}
 
 	private static async fetch<T = void>(method: HTTPMethod, route: string, body: BodyInit | null = null, options?: FetchOptions) {
-		const headers: HeadersInit = {
-			Accept: 'application/json',
-			Authorization: `Bearer ${this.token}`
-		}
-
-		const isForm = body instanceof FormData
-		if (isForm === false) {
-			headers['Content-Type'] = 'application/json'
-		}
-
-		const response = await fetch(API.url + route, {
+		const request: RequestInit = {
 			method: method,
 			credentials: 'omit',
-			headers: headers,
+			headers: new Headers({
+				Accept: 'application/json',
+				'Content-Type': body instanceof FormData ? 'multipart/form-data' : 'application/json'
+			}),
 			referrer: 'no-referrer',
 			body: body
-		})
+		}
+
+		API.authenticator?.processRequest(request)
+
+		const response = await fetch(API.url + route, request)
 
 		if (response.status >= 400 && !options?.noHttpErrorOnErrorStatusCode) {
 			throw new HttpError(await response.json())

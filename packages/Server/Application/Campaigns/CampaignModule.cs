@@ -9,7 +9,9 @@ public class CampaignModule : Module
 			var geometryFactory = new GeometryFactoryEx(precisionModel: new PrecisionModel(), srid: 4326) { OrientationOfExteriorRing = LinearRingOrientation.CCW };
 			options.SerializerOptions.Converters.Add(new NetTopologySuite.IO.Converters.GeoJsonConverterFactory(geometryFactory));
 		});
+		services.AddHostedService<CampaignAllocationBackgroundService>();
 	}
+
 	public override void ConfigureEndpoints(IEndpointRouteBuilder endpoints)
 	{
 		endpoints.MapGet("/campaign",
@@ -21,7 +23,7 @@ public class CampaignModule : Module
 		);
 
 		endpoints.MapGet("/campaign/{id}/balance",
-			[AllowAnonymous] (CampaignService campaignService, int id) => campaignService.GetBalance(id)
+			[AllowAnonymous] (CampaignService campaignService, int id) => campaignService.GetTotalBalance(id)
 		);
 
 		endpoints.MapGet("/campaign/{id}/share",
@@ -32,13 +34,8 @@ public class CampaignModule : Module
 			[AllowAnonymous] (CampaignService campaignService, int id) => campaignService.GetDonationData(id)
 		);
 
-		endpoints.MapPost("/campaign/{id}/allocate",
-			(CampaignService campaignService, int id, Dictionary<string, string> destinationByPaymentMethodIdentifier)
-				=> campaignService.Allocate(id, destinationByPaymentMethodIdentifier)
-		);
-
-		endpoints.MapPost("/campaign/{id}/declare-allocation-phase",
-			(CampaignService campaignService, int id) => campaignService.DeclareAllocationPhase(id)
+		endpoints.MapPost("/campaign/{id}/initiate-validation",
+			(CampaignService campaignService, int id) => campaignService.InitiateValidation(id)
 		);
 
 		endpoints.MapPost("/campaign",
@@ -52,6 +49,19 @@ public class CampaignModule : Module
 		endpoints.MapDelete("/campaign/{id}",
 			(CampaignService campaignService, int id) => campaignService.Delete(id)
 		);
+
+		endpoints.MapGet("/campaign/{id}/vote",
+			(CampaignService campaignService, int id) => campaignService.GetVote(id)
+		);
+
+		endpoints.MapGet("/campaign/{id}/votes",
+			[AllowAnonymous] (CampaignService campaignService, int id) => campaignService.GetVotes(id)
+		);
+
+		endpoints.MapPost("/campaign/{id}/vote",
+			(CampaignService campaignService, int id, [FromBody] bool vote) => campaignService.Vote(id, vote)
+		);
+
 		endpoints.MapGet("/media/{id}",
 			[AllowAnonymous] (CampaignMediaService campaignMediaService, int id) => campaignMediaService.Get(id)
 		);

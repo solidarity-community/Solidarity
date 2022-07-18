@@ -8,15 +8,15 @@ public class AccountService : CrudService<Account>
 	public AccountService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService, HandshakeService handshakeService) : base(database, paymentMethodProvider, currentUserService)
 		=> _handshakeService = handshakeService;
 
-	public Task<Account> Get()
+	public async Task<Account?> Get()
 	{
-		return base.Get(_currentUserService.Id ?? throw new NotAuthenticatedException());
+		return !_currentUserService.Id.HasValue ? null : await base.Get(_currentUserService.Id.Value);
 	}
 
-	public async Task<Account> GetWithoutAuthentication(int? id)
+	public async Task<Account?> GetWithoutAuthentication()
 	{
-		var account = id.HasValue ? await Get(id.Value) : await Get();
-		return account.WithoutAuthenticationData();
+		var account = await Get();
+		return account?.WithoutAuthenticationData();
 	}
 
 	public async Task<Account> GetByUsername(string username)

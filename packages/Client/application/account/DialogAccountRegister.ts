@@ -1,4 +1,4 @@
-import { component, DialogComponent, html, state } from '@3mo/model'
+import { component, DialogComponent, html, state } from '@3mo/modelx'
 import { AccountService } from 'sdk'
 import JSEncrypt from 'jsencrypt'
 
@@ -15,7 +15,7 @@ export class DialogAccountRegister extends DialogComponent {
 			publicKey: privateKey.getPublicKeyB64(),
 		})
 		const account = await AccountService.get()
-		this.idAndPrivateKey = `${account.id}@${privateKey.getPrivateKey()}`
+		this.idAndPrivateKey = `${account!.id}@${privateKey.getPrivateKey()}`
 	}
 
 	protected override get template() {

@@ -37,8 +37,8 @@ public class DatabaseContext : DbContext, IDatabase
 	public DbSet<Campaign> Campaigns { get; set; } = null!;
 	public DbSet<CampaignMedia> CampaignMedia { get; set; } = null!;
 	public DbSet<CampaignExpenditure> CampaignExpenditures { get; set; } = null!;
-	public DbSet<Validation> Validations { get; set; } = null!;
-	public DbSet<Vote> Votes { get; set; } = null!;
+	public DbSet<CampaignValidation> CampaignValidations { get; set; } = null!;
+	public DbSet<CampaignValidationVote> CampaignValidationVotes { get; set; } = null!;
 	public DbSet<CampaignPaymentMethod> CampaignPaymentMethods { get; set; } = null!;
 	public DbSet<PaymentMethodKey> PaymentMethodKeys { get; set; } = null!;
 
@@ -64,13 +64,19 @@ public class DatabaseContext : DbContext, IDatabase
 			.HasValue<PasswordAuthenticationMethod>(AuthenticationMethodType.Password);
 
 		modelBuilder.Entity<Campaign>().HasOne(c => c.Validation).WithOne(v => v.Campaign);
+		modelBuilder.Entity<Campaign>().HasOne(c => c.Allocation).WithOne(a => a.Campaign);
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Media).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Expenditures).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.ActivatedPaymentMethods).WithOne(pm => pm.Campaign);
 
 		modelBuilder.Entity<PaymentMethodKey>().HasKey(pmk => pmk.PaymentMethodIdentifier);
 
-		modelBuilder.Entity<Validation>().HasMany(v => v.Votes).WithOne(v => v.Validation);
+		modelBuilder.Entity<CampaignValidation>().HasMany(v => v.Votes).WithOne(v => v.Validation);
+
+		modelBuilder.Entity<CampaignValidationVote>().Ignore(v => v.Id);
+		modelBuilder.Entity<CampaignValidationVote>().HasKey(v => new { v.ValidationId, v.AccountId });
+
+		modelBuilder.Entity<CampaignAllocation>().HasMany(a => a.Entries).WithOne(e => e.CampaignAllocation);
 	}
 
 	public override int SaveChanges()

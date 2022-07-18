@@ -1,4 +1,4 @@
-import { DialogDefault, NotificationHost } from '@3mo/model'
+import { DialogDefault, NotificationHost } from '@3mo/modelx'
 
 export class Service {
 	static notifyInfo(...parameters: Parameters<typeof NotificationHost.instance.notifyInfo>) {
@@ -16,7 +16,6 @@ export class Service {
 	static notifyError(...parameters: Parameters<typeof NotificationHost.instance.notifyError>) {
 		return NotificationHost.instance.notifyError(...parameters)
 	}
-
 
 	static throwAndNotify(errorOrErrorMessage: Error | string) {
 		this.notifyError(typeof errorOrErrorMessage === 'string' ? errorOrErrorMessage : errorOrErrorMessage.message)

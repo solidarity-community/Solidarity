@@ -1,4 +1,4 @@
-import { ApplicationLogo } from '@3mo/model'
+import { ApplicationLogo } from '@3mo/modelx'
 
 const logo = `
 	<svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1999.06 1999.06">

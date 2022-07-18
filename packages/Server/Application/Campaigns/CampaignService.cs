@@ -3,144 +3,141 @@ namespace Solidarity.Application.Campaigns;
 [TransientService]
 public class CampaignService : CrudService<Campaign>
 {
-	private readonly PaymentMethodService _paymentMethodService;
 	private readonly AccountService _accountService;
+	public CampaignService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService, AccountService accountService) : base(database, paymentMethodProvider, currentUserService)
+		=> _accountService = accountService;
 
-	public CampaignService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService, PaymentMethodService paymentMethodService, AccountService accountService) : base(database, paymentMethodProvider, currentUserService)
-	{
-		_paymentMethodService = paymentMethodService;
-		_accountService = accountService;
-	}
-
-	public override async Task<Campaign> Get(int id)
-	{
-		return (await base.Get(id)).WithoutAuthenticationData();
-	}
-
-	public override async Task<IEnumerable<Campaign>> GetAll()
-	{
-		return (await base.GetAll()).Select(campaign => campaign.WithoutAuthenticationData());
-	}
-
-	public async Task<decimal> GetBalance(int id, int? accountId = null)
+	private async Task<Campaign> GetAndEnsureCreatedByCurrentUser(int id)
 	{
 		var campaign = await Get(id);
-		var account = accountId is null ? null : await _accountService.Get((int)accountId);
-		var balances = await Task.WhenAll(
-			campaign.ActivatedPaymentMethods.Select(pm => _paymentMethodProvider.Get(pm.Identifier).GetBalance(campaign, account))
-		);
-		return balances?.Sum() ?? 0;
+		return campaign.CreatorId != _currentUserService.Id
+			? throw new InvalidOperationException("Operation is only allowed for the campaign creator.")
+			: campaign;
 	}
 
-	public Task<decimal> GetShare(int id)
-		=> _currentUserService.Id is null ? Task.FromResult(0m) : GetBalance(id, _currentUserService.Id);
+	public async Task<double> GetBalance(int id, int? accountId = null)
+	{
+		var campaign = await Get(id);
+		var account = accountId.HasValue is false ? null : await _accountService.Get(accountId.Value);
+		return await campaign.GetBalance(_paymentMethodProvider, account);
+	}
+
+	public async Task<double> GetTotalBalance(int id)
+	{
+		var campaign = await Get(id);
+		return await campaign.GetTotalBalance(_paymentMethodProvider);
+	}
+
+	public Task<double> GetShare(int id) => GetBalance(id, _currentUserService.Id);
 
 	public async Task<Dictionary<string, string>> GetDonationData(int campaignId)
 	{
 		var campaign = await Get(campaignId);
-		var account = _currentUserService.Id is null ? null : await _accountService.Get((int)_currentUserService.Id);
-		var activatedPaymentMethods = _paymentMethodService.GetAll().Where(pm => campaign.ActivatedPaymentMethods.Any(apm => apm.Identifier == pm.Identifier)).ToList();
-		var data = await Task.WhenAll(activatedPaymentMethods.Select(pm => pm.GetDonationData(campaign, account)));
-		return data.Select((d, i) => new { d, i = activatedPaymentMethods[i].Identifier }).ToDictionary(d => d.i, d => d.d);
+		var activatedPaymentMethods = campaign.ActivatedPaymentMethods.Select(pm => _paymentMethodProvider.Get(pm.Identifier)).ToList();
+		var account = await _accountService.Get();
+
+		var totalDonations = await campaign.GetTotalBalance(_paymentMethodProvider);
+		var publicDonations = await campaign.GetBalance(_paymentMethodProvider, null);
+		var privateDonations = totalDonations - publicDonations;
+
+		if (account is null && privateDonations / campaign.TotalExpenditure <= CampaignValidation.ApprovalThresholdPercentage)
+		{
+			throw new PublicDonationsLockedException();
+		}
+
+		var data = await Task.WhenAll(activatedPaymentMethods.Select(pm => pm.GetChannel(campaign).GetDonationData(account)));
+		return data
+			.Select((d, i) => new { d, i = activatedPaymentMethods[i].Identifier })
+			.ToDictionary(d => d.i, d => d.d);
 	}
 
 	public override async Task<Campaign> Create(Campaign campaign)
 	{
-		if (campaign.TotalExpenditure == 0)
-		{
-			throw new CampaignExpenditureTooLowException();
-		}
-		campaign.AllocationDate = null;
-		campaign.CompletionDate = null;
+		ValidateAllocationDestinations(campaign);
+		campaign.ValidateForCreation();
 		await base.Create(campaign);
-		return campaign.WithoutAuthenticationData();
+		return campaign;
 	}
 
 	public override async Task<Campaign> Update(Campaign campaign)
 	{
-		var entity = await Get(campaign.Id);
-
-		if (entity.CreatorId != _currentUserService.Id)
-		{
-			throw new Exception("You are not allowed to edit this campaign");
-		}
-
-		if (campaign.TotalExpenditure == 0)
-		{
-			throw new CampaignExpenditureTooLowException();
-		}
-
-		entity.Media = campaign.Media;
-		entity.Expenditures = campaign.Expenditures;
-		entity.ActivatedPaymentMethods = campaign.ActivatedPaymentMethods.Any()
-			? campaign.ActivatedPaymentMethods
-			: _paymentMethodService
-				.GetAll()
-				.Select(pm => new CampaignPaymentMethod
-				{
-					Identifier = pm.Identifier,
-					CampaignId = entity.Id
-				}).ToList();
-
-		return (await base.Update(campaign)).WithoutAuthenticationData();
+		ValidateAllocationDestinations(campaign);
+		var entity = await GetAndEnsureCreatedByCurrentUser(campaign.Id);
+		entity.Update(campaign);
+		return await base.Update(campaign);
 	}
 
-	public async Task DeclareAllocationPhase(int campaignId)
+	private void ValidateAllocationDestinations(Campaign campaign)
+		=> campaign.ActivatedPaymentMethods.ForEach(pm => _paymentMethodProvider.Get(pm.Identifier).ValidateAllocationDestination(pm.AllocationDestination));
+
+	public async Task InitiateValidation(int campaignId)
 	{
-		var campaign = await Get(campaignId);
+		var campaign = await GetAndEnsureCreatedByCurrentUser(campaignId);
 
-		if (_currentUserService.Id != campaign.CreatorId)
-		{
-			throw new Exception("You are not allowed to declare allocation phase of this campaign.");
-		}
+		var balance = await GetTotalBalance(campaignId);
+		campaign.TransitionToValidationPhase(balance);
 
-		if (campaign.Status != CampaignStatus.Funding)
-		{
-			throw new Exception("The campaign is not in the funding phase.");
-		}
-
-		campaign.TargetAllocationDate = DateTime.Now;
-		campaign.AllocationDate = DateTime.Now;
 		await _database.CommitChangesAsync();
 	}
 
-	public async Task Allocate(int campaignId, Dictionary<string, string> destinationByPaymentMethodIdentifier)
+	public async Task AllocateAllValidated()
+	{
+		var campaigns = await _database.Campaigns
+			.IncludeAll()
+			.Where(campaign => campaign.AllocationId == null && campaign.ValidationId != null && campaign.Validation!.Expiration < DateTime.Now)
+			.ToArrayAsync();
+
+		foreach (var campaign in campaigns)
+		{
+			var votesStatus = await GetVotes(campaign.Id);
+
+			var endorsedRatio = votesStatus.EndorsedBalance / votesStatus.Balance;
+
+			if (double.IsNaN(endorsedRatio))
+			{
+				await Delete(campaign.Id);
+				return;
+			}
+
+			await (endorsedRatio < votesStatus.ApprovalThreshold
+				? campaign.Refund(_paymentMethodProvider)
+				: campaign.Fund(_paymentMethodProvider));
+
+			await _database.CommitChangesAsync();
+		}
+	}
+
+	public async Task<bool?> GetVote(int campaignId)
 	{
 		var campaign = await Get(campaignId);
+		return campaign.Validation?.Votes.Find(v => v.AccountId == _currentUserService.Id)?.Value;
+	}
 
-		if (_currentUserService.Id != campaign.CreatorId)
+	public async Task<CampaignVotes> GetVotes(int id)
+	{
+		var campaign = await Get(id);
+		campaign.EnsureNotInStatus(CampaignStatus.Funding, CampaignStatus.Allocation);
+		var balance = await GetTotalBalance(id);
+		var endorsedDonations = 0d;
+		foreach (var vote in campaign.Validation!.Votes.Where(vote => vote.Value == true))
 		{
-			throw new Exception("You are not allowed to allocate the funds of this campaign");
+			endorsedDonations += await GetBalance(id, vote.AccountId);
 		}
+		return new(endorsedDonations, balance, campaign.Validation!.ApprovalThreshold);
+	}
 
-		if (Enumerable.SequenceEqual(campaign.ActivatedPaymentMethods.Select(p => p.Identifier), destinationByPaymentMethodIdentifier.Keys) == false)
-		{
-			throw new ArgumentException("The number of payment methods does not match the number of destinations",
-				nameof(destinationByPaymentMethodIdentifier));
-		}
-
-		if (campaign.Status != CampaignStatus.Allocation)
-		{
-			throw new Exception("The campaign is not in the allocation phase.");
-		}
-
-		Task AllocatePaymentMethod(CampaignPaymentMethod p) =>
-			_paymentMethodService.Get(p.Identifier).Allocate(campaign, destinationByPaymentMethodIdentifier.TryGet(p.Identifier));
-
-		await Task.WhenAll(campaign.ActivatedPaymentMethods.Select(p => AllocatePaymentMethod(p)));
-		campaign.CompletionDate = DateTime.Now;
+	public async Task Vote(int campaignId, bool vote)
+	{
+		var campaign = await Get(campaignId);
+		campaign.Vote(_currentUserService.Id!.Value, vote);
 		await _database.CommitChangesAsync();
 	}
 
 	public override async Task<Campaign> Delete(int id)
 	{
-		await Refund(id);
+		var campaign = await Get(id);
+		campaign.EnsureNotInStatus(CampaignStatus.Allocation);
+		await campaign.Refund(_paymentMethodProvider);
 		return await base.Delete(id);
-	}
-
-	private async Task Refund(int campaignId)
-	{
-		var campaign = await Get(campaignId);
-		await Task.WhenAll(campaign.ActivatedPaymentMethods.Select(p => _paymentMethodService.Get(p.Identifier).Refund(campaign, null)));
 	}
 }

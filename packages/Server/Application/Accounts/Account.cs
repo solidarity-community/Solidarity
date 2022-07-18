@@ -2,6 +2,7 @@
 
 public class Account : Model
 {
+	// TODO: Use semi-auto property feature of C# 11 after upgrade
 	[MaxLength(50), Required(ErrorMessage = "Username cannot be null")]
 	private string username = null!;
 	public string Username { get => username; set => username = value.ToLower(); }
@@ -13,7 +14,12 @@ public class Account : Model
 
 	public List<Campaign> Campaigns { get; set; } = new();
 
-	public List<Vote> Votes { get; set; } = new();
+	public List<CampaignValidationVote> Votes { get; set; } = new();
+
+	public string IssueToken(TimeSpan expiration)
+	{
+		return TokenIssuer.IssueForAccount(this, expiration);
+	}
 }
 
 public static class AccountExtensions

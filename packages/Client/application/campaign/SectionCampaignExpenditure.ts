@@ -1,5 +1,5 @@
-import { Component, component, css, html, nothing, property } from '@3mo/model'
-import { Campaign, CampaignExpenditure } from 'sdk'
+import { Component, component, css, html, nothing, property } from '@3mo/modelx'
+import { Campaign, CampaignExpenditure, CampaignStatus } from 'sdk'
 
 @component('solid-section-campaign-expenditure')
 export class SectionCampaignExpenditure extends Component {
@@ -36,7 +36,7 @@ export class SectionCampaignExpenditure extends Component {
 					></mo-icon-button>
 				`}
 
-				<mo-grid alignItems='end' columns='3* * auto 2* auto 2*' gap='10px'>
+				<mo-grid alignItems=${this.editable ? 'center' : 'end'} columns='3* * auto 2* auto 2*' gap='10px'>
 					${this.campaign.expenditures.map(expenditure => html`
 						${this.getNameTemplate(expenditure)}
 						${this.getQuantityTemplate(expenditure)}
@@ -57,6 +57,7 @@ export class SectionCampaignExpenditure extends Component {
 	private getNameTemplate(expenditure: CampaignExpenditure) {
 		return this.editable ? html`
 			<mo-field-text dense label='Item name'
+				?readonly=${this.campaign.status !== CampaignStatus.Funding}
 				value=${expenditure.name}
 				@change=${(e: CustomEvent<string>) => expenditure.name = e.detail}
 			></mo-field-text>
@@ -68,6 +69,7 @@ export class SectionCampaignExpenditure extends Component {
 	private getQuantityTemplate(expenditure: CampaignExpenditure) {
 		return this.editable ? html`
 			<mo-field-number dense label='Quantity'
+				?readonly=${this.campaign.status !== CampaignStatus.Funding}
 				value=${expenditure.quantity}
 				@change=${(e: CustomEvent<number>) => { expenditure.quantity = e.detail; this.requestUpdate() }}
 			></mo-field-number>
@@ -79,6 +81,7 @@ export class SectionCampaignExpenditure extends Component {
 	private getUnitPriceTemplate(expenditure: CampaignExpenditure) {
 		return this.editable ? html`
 			<solid-field-amount dense label='Unit Price'
+				?readonly=${this.campaign.status !== CampaignStatus.Funding}
 				value=${expenditure.unitPrice}
 				@change=${(e: CustomEvent<number>) => { expenditure.unitPrice = e.detail; this.requestUpdate() }}
 			></solid-field-amount>

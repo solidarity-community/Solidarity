@@ -1,42 +1,25 @@
-import { Component, css, html, TemplateResult } from '@3mo/model'
+import { Component, html, TemplateResult } from '@3mo/modelx'
 
 export abstract class Progress extends Component {
 	protected abstract get progress(): number
-	protected abstract get progressTemplate(): string | TemplateResult<1>
-
-	static override get styles() {
-		return css`
-			:host {
-				display: block;
-				width: 75px;
-				height: 75px;
-				aspect-ratio: 1 / 1;
-				--mdc-circular-progress-track-color: var(--mo-color-transparent-gray-3);
-			}
-
-			mo-div {
-				position: absolute;
-				left: 50%;
-				top: 50%;
-				transform: translate(-50%, -50%);
-				white-space: nowrap;
-				text-align: center;
-			}
-
-			mo-circular-progress {
-				aspect-ratio: 1 / 1;
-				width: 100%;
-				height: 100%;
-			}
-		`
-	}
+	protected abstract get heading(): string
+	protected abstract get value(): string | TemplateResult<1>
 
 	protected override get template() {
 		return html`
-			<mo-flex alignItems='center' justifyContent='center' position='relative' width='100%' height='100%'>
-				<mo-circular-progress progress=${this.progress}></mo-circular-progress>
-				<mo-div>${this.progressTemplate}</mo-div>
+			<mo-flex gap='2px'>
+				<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center'>
+					<mo-div fontSize='var(--mo-font-size-s)' foreground='var(--mo-color-gray)'>${this.heading}</mo-div>
+					<mo-div>${this.value}</mo-div>
+				</mo-flex>
+				${this.progressBarTemplate}
 			</mo-flex>
+		`
+	}
+
+	protected get progressBarTemplate() {
+		return html`
+			<mo-linear-progress progress=${this.progress}></mo-linear-progress>
 		`
 	}
 }

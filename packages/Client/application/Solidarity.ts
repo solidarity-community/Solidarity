@@ -1,9 +1,10 @@
-import { Application, application, component, html, ThemeHelper, Color } from '@3mo/model'
+import { Application, application, component, html, ThemeHelper, Color, DataGrid } from '@3mo/modelx'
 import { DialogAuthenticator, PageAccount } from 'application'
 import * as Solid from '.'
 import './Logo.svg'
 
 ThemeHelper.accent.value = new Color('rgb(104, 159, 56)', 'rgb(124, 179, 76)', 'rgb(144, 199, 96)')
+DataGrid.hasAlternatingBackground.value = false
 
 @application()
 @component('solid-application')

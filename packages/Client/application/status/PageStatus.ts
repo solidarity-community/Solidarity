@@ -1,4 +1,4 @@
-import { component, PageComponent, html, route, Task, TemplateResult, nothing, css, styleMap, state } from '@3mo/model'
+import { component, PageComponent, html, route, TemplateResult, nothing, css, styleMap, state } from '@3mo/modelx'
 import { Health, HealthCheck, HealthService } from 'sdk'
 import { IntervalController } from 'application'
 

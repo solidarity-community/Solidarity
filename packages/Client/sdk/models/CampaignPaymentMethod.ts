@@ -5,4 +5,5 @@ import { PaymentMethod, PaymentMethodIdentifier } from './PaymentMethod'
 export class CampaignPaymentMethod extends PaymentMethod {
 	override readonly identifier!: PaymentMethodIdentifier
 	readonly campaign!: Campaign
+	allocationDestination?: string
 }
