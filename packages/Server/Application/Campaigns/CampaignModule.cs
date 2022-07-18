@@ -23,7 +23,7 @@ public class CampaignModule : Module
 		);
 
 		endpoints.MapGet("/campaign/{id}/balance",
-			[AllowAnonymous] (CampaignService campaignService, int id) => campaignService.GetBalance(id)
+			[AllowAnonymous] (CampaignService campaignService, int id) => campaignService.GetTotalBalance(id)
 		);
 
 		endpoints.MapGet("/campaign/{id}/share",

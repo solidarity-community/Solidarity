@@ -13,9 +13,9 @@ public class AccountService : CrudService<Account>
 		return !_currentUserService.Id.HasValue ? null : await base.Get(_currentUserService.Id.Value);
 	}
 
-	public async Task<Account?> GetWithoutAuthentication(int? id)
+	public async Task<Account?> GetWithoutAuthentication()
 	{
-		var account = id.HasValue ? await Get(id.Value) : await Get();
+		var account = await Get();
 		return account?.WithoutAuthenticationData();
 	}
 

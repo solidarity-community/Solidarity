@@ -19,7 +19,16 @@ public class BitcoinChannel : PaymentChannel
 
 	public override async Task<double> GetBalance(Account? account)
 	{
-		var utxos = await GetUTxOs(account);
+		var utxos = await GetUTxOs(account ?? new());
+		var balanceDecimal = utxos.Select(utxo => utxo.Coin.Amount)
+			.Aggregate(Money.Zero, (a, b) => a + b)
+			.ToDecimal(MoneyUnit.Satoshi);
+		return (double)balanceDecimal;
+	}
+
+	public override async Task<double> GetTotalBalance()
+	{
+		var utxos = await GetUTxOs();
 		var balanceDecimal = utxos.Select(utxo => utxo.Coin.Amount)
 			.Aggregate(Money.Zero, (a, b) => a + b)
 			.ToDecimal(MoneyUnit.Satoshi);

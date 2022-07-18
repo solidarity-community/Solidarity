@@ -2,8 +2,8 @@
 
 public class CampaignValidation : Model
 {
+	public const double ApprovalThresholdPercentage = 0.75f;
 	private const int ValidationDays = 7;
-	private const double ApprovalThresholdPercentage = 0.75f;
 
 	public Campaign Campaign { get; set; } = null!;
 

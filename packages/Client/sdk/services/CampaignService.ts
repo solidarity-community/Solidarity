@@ -1,4 +1,4 @@
-import { API, Service, Campaign, PaymentMethodService, CampaignPaymentMethod, PaymentMethodIdentifier } from 'sdk'
+import { API, Service, Campaign, PaymentMethodIdentifier, HttpError } from 'sdk'
 
 export class CampaignService extends Service {
 	static get(id: number) {
@@ -18,8 +18,13 @@ export class CampaignService extends Service {
 	}
 
 	static async getDonationData(campaignId: number) {
-		const response = await API.get<Record<PaymentMethodIdentifier, string>>(`/campaign/${campaignId}/donation-data`)
-		return new Map(Object.entries(response)) as Map<PaymentMethodIdentifier, string>
+		try {
+			const response = await API.get<Record<PaymentMethodIdentifier, string>>(`/campaign/${campaignId}/donation-data`)
+			return new Map(Object.entries(response)) as Map<PaymentMethodIdentifier, string>
+		} catch (error) {
+			Service.notifyError((error as HttpError).message)
+			throw error
+		}
 	}
 
 	static async initiateValidation(campaignId: number) {

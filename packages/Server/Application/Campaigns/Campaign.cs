@@ -95,6 +95,18 @@ public class Campaign : Model
 		return balances?.Sum() ?? 0;
 	}
 
+	public async Task<double> GetTotalBalance(IPaymentMethodProvider paymentMethodProvider)
+	{
+		var balances = await Task.WhenAll(
+			ActivatedPaymentMethods.Select(pm => paymentMethodProvider
+				.Get(pm.Identifier)
+				.GetChannel(this)
+				.GetTotalBalance()
+			)
+		);
+		return balances?.Sum() ?? 0;
+	}
+
 	public void Vote(int accountId, bool value)
 	{
 		EnsureNotInStatus(CampaignStatus.Allocation, CampaignStatus.Funding);

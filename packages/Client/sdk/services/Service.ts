@@ -17,7 +17,6 @@ export class Service {
 		return NotificationHost.instance.notifyError(...parameters)
 	}
 
-
 	static throwAndNotify(errorOrErrorMessage: Error | string) {
 		this.notifyError(typeof errorOrErrorMessage === 'string' ? errorOrErrorMessage : errorOrErrorMessage.message)
 		throw typeof errorOrErrorMessage === 'string' ? new Error(errorOrErrorMessage) : errorOrErrorMessage

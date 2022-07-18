@@ -22,14 +22,29 @@ public class CampaignService : CrudService<Campaign>
 		return await campaign.GetBalance(_paymentMethodProvider, account);
 	}
 
-	public Task<double> GetShare(int id)
-		=> _currentUserService.Id.HasValue is false ? Task.FromResult(0d) : GetBalance(id, _currentUserService.Id.Value);
+	public async Task<double> GetTotalBalance(int id)
+	{
+		var campaign = await Get(id);
+		return await campaign.GetTotalBalance(_paymentMethodProvider);
+	}
+
+	public Task<double> GetShare(int id) => GetBalance(id, _currentUserService.Id);
 
 	public async Task<Dictionary<string, string>> GetDonationData(int campaignId)
 	{
 		var campaign = await Get(campaignId);
+		var activatedPaymentMethods = campaign.ActivatedPaymentMethods.Select(pm => _paymentMethodProvider.Get(pm.Identifier)).ToList();
 		var account = await _accountService.Get();
-		var activatedPaymentMethods = _paymentMethodProvider.GetAll().Where(pm => campaign.ActivatedPaymentMethods.Any(apm => apm.Identifier == pm.Identifier)).ToList();
+
+		var totalDonations = await campaign.GetTotalBalance(_paymentMethodProvider);
+		var publicDonations = await campaign.GetBalance(_paymentMethodProvider, null);
+		var privateDonations = totalDonations - publicDonations;
+
+		if (account is null && privateDonations / campaign.TotalExpenditure <= CampaignValidation.ApprovalThresholdPercentage)
+		{
+			throw new PublicDonationsLockedException();
+		}
+
 		var data = await Task.WhenAll(activatedPaymentMethods.Select(pm => pm.GetChannel(campaign).GetDonationData(account)));
 		return data
 			.Select((d, i) => new { d, i = activatedPaymentMethods[i].Identifier })
@@ -59,7 +74,7 @@ public class CampaignService : CrudService<Campaign>
 	{
 		var campaign = await GetAndEnsureCreatedByCurrentUser(campaignId);
 
-		var balance = await GetBalance(campaignId);
+		var balance = await GetTotalBalance(campaignId);
 		campaign.TransitionToValidationPhase(balance);
 
 		await _database.CommitChangesAsync();
@@ -102,7 +117,7 @@ public class CampaignService : CrudService<Campaign>
 	{
 		var campaign = await Get(id);
 		campaign.EnsureNotInStatus(CampaignStatus.Funding, CampaignStatus.Allocation);
-		var balance = await GetBalance(id);
+		var balance = await GetTotalBalance(id);
 		var endorsedDonations = 0d;
 		foreach (var vote in campaign.Validation!.Votes.Where(vote => vote.Value == true))
 		{

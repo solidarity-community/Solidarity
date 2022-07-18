@@ -17,7 +17,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 
 	@state() private balance = 0
 	@state() private balanceShare = 0
-	@queryAll('mo-button.action') private actionButtonElements!: Array<Button>
+	@queryAll('.action') private actionButtonElements!: Array<Button>
 
 	private get campaign() {
 		return this.fetchCampaignTask.value
@@ -82,9 +82,9 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 				<mo-button class='action' icon='share' @click=${this.share}>Share</mo-button>
 
 				${this.campaign?.status !== CampaignStatus.Funding ? nothing : html`
-					<mo-button class='action' icon='volunteer_activism'
+					<mo-loading-button class='action' icon='volunteer_activism'
 						@click=${() => !this.campaign ? void 0 : new DialogDonate({ campaign: this.campaign }).confirm()}
-					>Donate</mo-button>
+					>Donate</mo-loading-button>
 				`}
 
 				${this.campaign?.status !== CampaignStatus.Allocation ? nothing : html`

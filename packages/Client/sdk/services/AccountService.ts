@@ -2,7 +2,7 @@ import { API, Account } from 'sdk'
 
 export class AccountService {
 	static get() {
-		return API.get<Account>(`/account`)
+		return !API.authenticator?.isAuthenticated() ? Promise.resolve(undefined) : API.get<Account>(`/account`)
 	}
 
 	static async create(account: Account) {
