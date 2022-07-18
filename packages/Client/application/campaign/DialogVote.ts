@@ -1,18 +1,23 @@
-import { component, css, DialogComponent, FormatHelper, html, NotificationHost, event, Task, nothing } from '@3mo/modelx'
+import { component, css, DialogComponent, FormatHelper, html, NotificationHost, event, nothing, state } from '@3mo/modelx'
 import { Campaign, CampaignService } from 'sdk'
 
 @component('solid-dialog-vote')
 export class DialogVote extends DialogComponent<{ readonly campaign: Campaign }> {
 	@event() static readonly voteCast: EventDispatcher
 
-	private readonly fetchShareTask = new Task(this, () => CampaignService.getShare(this.parameters.campaign.id!))
-	private get share() { return this.fetchShareTask.value }
+	@state() private share?: number
+	@state() private vote?: boolean
 
-	private readonly fetchVoteTask = new Task(this, () => CampaignService.getVote(this.parameters.campaign.id!), () => [])
-	private get vote() { return this.fetchVoteTask.value }
+	private async fetchShare() {
+		this.share = await CampaignService.getShare(this.parameters.campaign.id!)
+	}
+
+	private async fetchVote() {
+		this.vote = await CampaignService.getVote(this.parameters.campaign.id!)
+	}
 
 	override async confirm(...parameters: Parameters<DialogComponent<{ readonly campaign: Campaign }>['confirm']>) {
-		await this.fetchShareTask.run()
+		await this.fetchShare()
 		if (this.share === 0) {
 			NotificationHost.instance.notifyAndThrowError('You didn\'t donate to this campaign.')
 		}
@@ -71,6 +76,6 @@ export class DialogVote extends DialogComponent<{ readonly campaign: Campaign }>
 	private async handleVoteButtonClick(vote: boolean) {
 		await CampaignService.vote(this.parameters.campaign.id!, vote)
 		DialogVote.voteCast.dispatch()
-		await this.fetchVoteTask.run()
+		await this.fetchVote()
 	}
 }

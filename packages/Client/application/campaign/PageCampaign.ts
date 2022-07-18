@@ -1,26 +1,39 @@
-import { component, PageComponent, html, route, PageError, HttpErrorCode, nothing, state, DialogAcknowledge, NotificationHost, Task, TaskStatus, queryAll, Button, ButtonType, choose } from '@3mo/modelx'
-import { CampaignService, CampaignStatus } from 'sdk'
-import { DialogCampaign, DialogVote, PageCampaigns, DialogDonate, DialogAuthenticator, DialogCampaignAllocations } from 'application'
+import { component, PageComponent, html, route, PageError, HttpErrorCode, nothing, state, DialogAcknowledge, NotificationHost, queryAll, Button, ButtonType } from '@3mo/modelx'
+import { Campaign, CampaignService, CampaignStatus } from 'sdk'
+import { DialogCampaign, DialogVote, PageCampaigns, DialogDonate, DialogAuthenticator, DialogCampaignAllocations, TimerController } from 'application'
 
 @route('/campaign/:id')
 @component('solid-page-campaign')
 export class PageCampaign extends PageComponent<{ readonly id: number }> {
-	private readonly fetchCampaignTask = new Task(this, async () => {
-		try {
-			CampaignService.getShare(this.parameters.id).then(balanceShare => this.balanceShare = balanceShare)
-			return await CampaignService.get(this.parameters.id)
-		} catch (error) {
-			new PageError({ error: HttpErrorCode.NotFound, message: 'Campaign not found' }).navigate()
-			throw error
-		}
-	}, () => [])
-
+	@state() private campaign?: Campaign
 	@state() private balance = 0
 	@state() private balanceShare = 0
+
 	@queryAll('.action') private actionButtonElements!: Array<Button>
 
-	private get campaign() {
-		return this.fetchCampaignTask.value
+	protected readonly campaignFetcherTimer = new TimerController(this, 10_000, () => this.fetch())
+
+	private async fetchCampaign() {
+		try {
+			this.campaign = await CampaignService.get(this.parameters.id)
+		} catch (error) {
+			new PageError({ error: HttpErrorCode.NotFound, message: 'Campaign not found' }).navigate()
+		}
+	}
+
+	private async fetchShare() {
+		this.balanceShare = await CampaignService.getShare(this.parameters.id)
+	}
+
+	private async fetch() {
+		await Promise.all([
+			this.fetchCampaign(),
+			this.fetchShare()
+		])
+	}
+
+	protected override initialized() {
+		this.fetch()
 	}
 
 	private get authenticatedUserId() {
@@ -39,39 +52,36 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 
 	protected override get template() {
 		return html`
-			<mo-page style='--mo-page-margin: 0px' heading=${`Campaign ${!this.campaign ? '' : `"${this.campaign?.title}"`}`} ?fullHeight=${this.fetchCampaignTask.status !== TaskStatus.COMPLETE}>
-				${this.fetchCampaignTask.render({
-					pending: () => html`
-						<mo-flex alignItems='center' justifyContent='center'>
-							<mo-circular-progress indeterminate></mo-circular-progress>
-						</mo-flex>
-					`,
-					complete: campaign => html`
-						<mo-flex direction='horizontal' alignItems='center' padding='20px' background='var(--mo-color-transparent-gray-2)' gap='50px'>
-							<solid-campaign-progress width='*' .campaign=${campaign} alwaysShowValidationApprovalThreshold
-								@balanceChange=${(e: CustomEvent<number>) => this.balance = e.detail}
-							></solid-campaign-progress>
-						
-							${this.actionButtonsTemplate}
-						</mo-flex>
+			<mo-page style='--mo-page-margin: 0px' heading=${`Campaign ${!this.campaign ? '' : `"${this.campaign?.title}"`}`} ?fullHeight=${!this.campaign}>
+				${!this.campaign ? html`
+					<mo-flex alignItems='center' justifyContent='center'>
+						<mo-circular-progress indeterminate></mo-circular-progress>
+					</mo-flex>
+				` : html`
+					<mo-flex direction='horizontal' alignItems='center' padding='20px' background='var(--mo-color-transparent-gray-2)' gap='50px'>
+						<solid-campaign-progress width='*' .campaign=${this.campaign} alwaysShowValidationApprovalThreshold
+							@balanceChange=${(e: CustomEvent<number>) => this.balance = e.detail}
+						></solid-campaign-progress>
+					
+						${this.actionButtonsTemplate}
+					</mo-flex>
 
-						<mo-grid columns='2* *' rows='435px *' gap='25px' padding='20px'>
-							<mo-section heading='Gallery'>
-								<solid-campaign-slider readOnly .campaign=${campaign}></solid-campaign-slider>
-							</mo-section>
+					<mo-grid columns='2* *' rows='435px *' gap='25px' padding='20px'>
+						<mo-section heading='Gallery'>
+							<solid-campaign-slider readOnly .campaign=${this.campaign}></solid-campaign-slider>
+						</mo-section>
 
-							<mo-section heading='Location'>
-								<solid-map readOnly .selectedArea=${campaign.location}></solid-map>
-							</mo-section>
+						<mo-section heading='Location'>
+							<solid-map readOnly .selectedArea=${this.campaign.location}></solid-map>
+						</mo-section>
 
-							<mo-section heading='Overview'>
-								${campaign.description}
-							</mo-section>
+						<mo-section heading='Overview'>
+							${this.campaign.description}
+						</mo-section>
 
-							<solid-section-campaign-expenditure .campaign=${campaign}></solid-section-campaign-expenditure>
-						</mo-grid>
-					`
-				})}
+						<solid-section-campaign-expenditure .campaign=${this.campaign}></solid-section-campaign-expenditure>
+					</mo-grid>
+				`}
 			</mo-page>
 		`
 	}
@@ -153,7 +163,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 			if (acknowledged) {
 				try {
 					await CampaignService.initiateValidation(this.campaign.id)
-					await this.fetchCampaignTask.run()
+					await this.fetchCampaign()
 				} catch (error: any) {
 					NotificationHost.instance.notifyError(error.message)
 				}
@@ -165,7 +175,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 		const id = this.campaign?.id
 		if (id) {
 			await new DialogCampaign({ id }).confirm()
-			await this.fetchCampaignTask.run()
+			await this.fetchCampaign()
 		}
 	}
 

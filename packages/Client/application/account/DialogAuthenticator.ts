@@ -15,9 +15,9 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 	private async fetchUser() {
 		const account = await AccountService.get()
 		const user: User = {
-			id: account.id ?? 0,
-			name: account.username ?? '',
-			email: account.username ?? '',
+			id: account!.id ?? 0,
+			name: account!.username ?? '',
+			email: account!.username ?? '',
 		}
 		DialogAuthenticator.authenticatedUser.value = user
 		return user
