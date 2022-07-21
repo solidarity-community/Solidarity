@@ -59,7 +59,7 @@ export class PageCampaigns extends PageComponent {
 							${fabTemplate}
 						</mo-grid>
 					`}
-				`})}
+				`}
 			</mo-page>
 		`
 	}
