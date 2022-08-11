@@ -30,25 +30,22 @@ export class Map extends Component {
 	}) readOnly = false
 
 	@property({
-		type: Object,
+		type: Array,
 		bindingDefault: true,
 		event: 'selectedAreaChange',
 		updated(this: Map) {
-			this.layers = this.selectedArea?.geometries.map(geo => geoJSON(geo)) ?? []
+			this.layers = this.selectedAreas?.flatMap(a => a.geometries).map(g => geoJSON(g)) ?? []
+			Promise.delegateToEventLoop(() => this.fitBoundsToLayers())
+		}
+	}) selectedAreas?: Array<GeometryCollection>
+
+	@property({
+		type: Object,
+		updated(this: Map) {
+			this.layers = this.selectedArea?.geometries?.map(g => geoJSON(g)) ?? []
+			Promise.delegateToEventLoop(() => this.fitBoundsToLayers())
 		}
 	}) selectedArea?: GeometryCollection
-
-	private get layers() { return this.map?.pm.getGeomanLayers() as Array<Layer> ?? [] }
-	private set layers(layers: Array<Layer>) {
-		this.mapUpdated.then(map => {
-			this.layers.forEach(layer => map.removeLayer(layer))
-			for (const layer of layers) {
-				(layer as any).setStyle({ color: 'var(--mo-color-accent)' })
-				map.addLayer(layer)
-			}
-			new Promise(r => setTimeout(() => this.fitBounds().then(r), 100))
-		})
-	}
 
 	@query('div#map') readonly mapElement!: HTMLDivElement
 
@@ -139,6 +136,17 @@ export class Map extends Component {
 			.on('pm:resize', dispatchChange)
 			.on('pm:remove', dispatchChange)
 			.on('pm:drag', dispatchChange)
+	}
+
+	private get layers() { return this.map.pm.getGeomanLayers() as Array<Layer> }
+	private set layers(value) {
+		this.layers.forEach(layer => layer.remove())
+		value.forEach(layer => this.map.addLayer(layer))
+	}
+
+	private fitBoundsToLayers() {
+		const bounds = new FeatureGroup(this.layers).getBounds()
+		this.map.fitBounds(bounds)
 	}
 }
 
