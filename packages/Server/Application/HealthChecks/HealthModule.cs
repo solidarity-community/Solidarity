@@ -16,6 +16,6 @@ public class HealthModule : Module
 				);
 				await context.Response.WriteAsync(result);
 			}
-		});
+		}).AllowAnonymous();
 	}
 }
