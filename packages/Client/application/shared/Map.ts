@@ -27,27 +27,15 @@ export class Map extends Component {
 		}
 	}) readOnly = false
 
-	@property({
-		type: Object,
-		updated(this: Map) {
-			this.layers.forEach(layer => layer.remove())
+	@property({ type: Array, updated(this: Map) {
+		this.layers = this.selectedAreas?.flatMap(a => a.geometries).map(g => geoJSON(g)) ?? []
+		Promise.delegateToEventLoop(() => this.fitBoundsToLayers())
+	}}) selectedAreas?: Array<GeometryCollection>
 
-			if (!this.selectedArea) {
-				return
-			}
-
-			this.selectedArea.geometries.forEach(geo => {
-				const layer = geoJSON(geo)
-				layer.setStyle({ color: 'var(--mo-accent)' })
-				this.map.addLayer(layer)
-			})
-
-			Promise.delegateToEventLoop(() => {
-				const bounds = new FeatureGroup(this.layers).getBounds()
-				this.map.fitBounds(bounds)
-			})
-		}
-	}) selectedArea?: GeometryCollection
+	@property({ type: Object, updated(this: Map) {
+		this.layers = this.selectedArea?.geometries?.map(g => geoJSON(g)) ?? []
+		Promise.delegateToEventLoop(() => this.fitBoundsToLayers())
+	}}) selectedArea?: GeometryCollection
 
 	@query('div#map') readonly mapElement!: HTMLDivElement
 
@@ -128,8 +116,15 @@ export class Map extends Component {
 			.on('pm:drag', dispatchChange)
 	}
 
-	private get layers() {
-		return this.map.pm.getGeomanLayers() as Array<Layer>
+	private get layers() { return this.map.pm.getGeomanLayers() as Array<Layer> }
+	private set layers(value) {
+		this.layers.forEach(layer => layer.remove())
+		value.forEach(layer => this.map.addLayer(layer))
+	}
+
+	private fitBoundsToLayers() {
+		const bounds = new FeatureGroup(this.layers).getBounds()
+		this.map.fitBounds(bounds)
 	}
 }
 
