@@ -8,9 +8,13 @@ public class FileModule : Module
 
 		endpoints.MapGet("/file/allowed-extensions", () => FileService.AllowedFileExtensions);
 
-		endpoints.MapGet("/file/{guid}", (FileService fileService, Guid guid) => Results.File(fileService.Get(guid), "application/octet-stream"));
+		endpoints.MapGet("/file/{guid}", [AllowAnonymous] (FileService fileService, Guid guid) => Results.File(fileService.Get(guid), "application/octet-stream"));
 
-		endpoints.MapPost("/file", (FileService fileService, IFormFile file) => fileService.Save(file, null));
+		endpoints.MapPost("/file", async (FileService fileService, HttpRequest request) =>
+		{
+			var file = request.Form.Files.GetFile("file") ?? throw new InvalidOperationException("No file was provided");
+			return await fileService.Save(file, null);
+		});
 
 		endpoints.MapDelete("/file/{guid}", (FileService fileService, Guid guid) => fileService.Delete(guid));
 	}

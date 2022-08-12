@@ -67,7 +67,10 @@ export class API {
 			credentials: 'omit',
 			headers: new Headers({
 				Accept: 'application/json',
-				'Content-Type': body instanceof FormData ? 'multipart/form-data' : 'application/json'
+				...(body instanceof FormData
+					? { encType: 'multipart/form-data' }
+					: { 'Content-Type': 'application/json' }
+				)
 			}),
 			referrer: 'no-referrer',
 			body: body

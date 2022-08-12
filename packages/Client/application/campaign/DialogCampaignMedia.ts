@@ -7,7 +7,7 @@ export class DialogCampaignMedia extends DialogComponent<{ readonly campaign?: C
 	@state() private mediaType?: CampaignMediaType
 	@state() private content?: string
 
-	@query('solid-button-file-upload') private readonly buttonFileUpload?: ButtonFileUpload
+	@query('solid-button-file-upload') private readonly fileUploadButtonElement?: ButtonFileUpload
 
 	protected override get template() {
 		return html`
@@ -70,10 +70,10 @@ export class DialogCampaignMedia extends DialogComponent<{ readonly campaign?: C
 		}
 
 		if (this.mediaType === CampaignMediaType.File) {
-			if (!this.buttonFileUpload?.file) {
+			if (!this.fileUploadButtonElement?.file) {
 				throw new Error('File not selected')
 			}
-			await this.buttonFileUpload?.uploadSelectedFile()
+			await this.fileUploadButtonElement?.uploadSelectedFile()
 		}
 
 		if (!this.content) {
