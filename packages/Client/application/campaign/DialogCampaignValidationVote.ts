@@ -6,10 +6,15 @@ export class DialogCampaignValidationVote extends DialogComponent<{ readonly cam
 	@event() static readonly voteCast: EventDispatcher
 
 	@state() private share?: number
+	@state() private balance?: number
 	@state() private vote?: boolean
 
 	private async fetchShare() {
 		this.share = await CampaignService.getShare(this.parameters.campaign.id!)
+	}
+
+	private async fetchBalance() {
+		this.balance = await CampaignService.getBalance(this.parameters.campaign.id!)
 	}
 
 	private async fetchVote() {
@@ -17,10 +22,12 @@ export class DialogCampaignValidationVote extends DialogComponent<{ readonly cam
 	}
 
 	override async confirm(...parameters: Parameters<DialogComponent<{ readonly campaign: Campaign }>['confirm']>) {
-		await this.fetchShare()
+		await Promise.all([ this.fetchShare(), this.fetchBalance() ])
+
 		if (this.share === 0) {
 			NotificationHost.instance.notifyAndThrowError('You didn\'t donate to this campaign.')
 		}
+	
 		return await super.confirm(...parameters)
 	}
 
@@ -42,7 +49,7 @@ export class DialogCampaignValidationVote extends DialogComponent<{ readonly cam
 							Voting ends
 							<solid-timer foreground='var(--mo-accent)' fontWeight='bold' .end=${this.parameters.campaign.validation?.expiration}></solid-timer>
 							and your vote weighs
-							<mo-div foreground='var(--mo-accent)' fontWeight='bold'>${FormatHelper.percent(this.share! / this.parameters.campaign.totalExpenditure * 100)}%</mo-div>
+							<mo-div foreground='var(--mo-accent)' fontWeight='bold'>${FormatHelper.percent(this.share! / this.balance! * 100)}%</mo-div>
 							towards the integrity of the campaign.
 						</mo-div>
 					</mo-flex>
