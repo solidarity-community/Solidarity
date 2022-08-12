@@ -29,12 +29,12 @@ export class Map extends Component {
 
 	@property({ type: Array, updated(this: Map) {
 		this.layers = this.selectedAreas?.flatMap(a => a.geometries).map(g => geoJSON(g)) ?? []
-		Promise.delegateToEventLoop(() => this.fitBoundsToLayers())
+		this.fitBoundsToLayers()
 	}}) selectedAreas?: Array<GeometryCollection>
 
 	@property({ type: Object, updated(this: Map) {
 		this.layers = this.selectedArea?.geometries?.map(g => geoJSON(g)) ?? []
-		Promise.delegateToEventLoop(() => this.fitBoundsToLayers())
+		this.fitBoundsToLayers()
 	}}) selectedArea?: GeometryCollection
 
 	@query('div#map') readonly mapElement!: HTMLDivElement
@@ -122,9 +122,11 @@ export class Map extends Component {
 		value.forEach(layer => this.map.addLayer(layer))
 	}
 
-	private fitBoundsToLayers() {
+	private async fitBoundsToLayers() {
+		await this.updateComplete
 		const bounds = new FeatureGroup(this.layers).getBounds()
-		this.map.fitBounds(bounds)
+		try { this.map.fitBounds(bounds) }
+		catch { }
 	}
 }
 
