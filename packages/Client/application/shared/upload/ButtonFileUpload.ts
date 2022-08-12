@@ -23,7 +23,7 @@ export class ButtonFileUpload extends Component {
 		return html`
 			<mo-loading-button icon='upload_file' preventClickEventInference
 				?loading=${this.isUploading}
-				@click=${() => this.shadowRoot.querySelector('solid-file-upload')?.openExplorer()}
+				@click=${() => this.renderRoot.querySelector('solid-file-upload')?.openExplorer()}
 			>${this.fileName ?? 'Upload File'}</mo-loading-button>
 
 			<solid-file-upload

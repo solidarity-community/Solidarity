@@ -17,13 +17,13 @@ export class DialogAuthenticationMethods extends DialogComponent<{ readonly type
 		`
 	}
 
-	protected override primaryButtonAction() {
-		return this.content?.primaryButtonAction()
+	protected override primaryAction() {
+		return this.content?.primaryAction()
 	}
 
 	private get content() {
 		const contentByTab = new Map([
-			[AuthenticationMethodType.Password, { header: 'Password Authentication', template: this.passwordTemplate, primaryButtonAction: () => this.savePassword() }]
+			[AuthenticationMethodType.Password, { header: 'Password Authentication', template: this.passwordTemplate, primaryAction: () => this.savePassword() }]
 		])
 		return contentByTab.get(this.parameters.type)
 	}

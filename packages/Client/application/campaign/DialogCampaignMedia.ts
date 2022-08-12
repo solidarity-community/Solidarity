@@ -64,7 +64,7 @@ export class DialogCampaignMedia extends DialogComponent<{ readonly campaign?: C
 		`
 	}
 
-	protected override async primaryButtonAction() {
+	protected override async primaryAction() {
 		if (this.mediaType === undefined) {
 			throw new Error('Media type not selected')
 		}

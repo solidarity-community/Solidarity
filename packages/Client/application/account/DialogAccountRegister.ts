@@ -32,7 +32,7 @@ export class DialogAccountRegister extends DialogComponent {
 		`
 	}
 
-	protected override primaryButtonAction() {
+	protected override primaryAction() {
 		if (!this.idAndPrivateKey) {
 			throw new Error('You are not registered')
 		}

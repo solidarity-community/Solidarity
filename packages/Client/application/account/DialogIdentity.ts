@@ -34,7 +34,7 @@ export class DialogIdentity extends DialogComponent<{ readonly accountId: number
 		`
 	}
 
-	protected override async primaryButtonAction() {
+	protected override async primaryAction() {
 		await IdentityService.createOrUpdate(this.identity)
 	}
 }

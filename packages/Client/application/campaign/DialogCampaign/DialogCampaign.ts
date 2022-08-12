@@ -77,5 +77,5 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 		`
 	}
 
-	protected override primaryButtonAction = () => CampaignService.save(this.campaign)
+	protected override primaryAction = () => CampaignService.save(this.campaign)
 }

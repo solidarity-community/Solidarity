@@ -20,7 +20,7 @@ export class DialogAccountReset extends DialogComponent {
 		`
 	}
 
-	protected override async primaryButtonAction() {
+	protected override async primaryAction() {
 		if (!this.idAndPrivateKey) {
 			throw new Error('Enter your private-key')
 		}

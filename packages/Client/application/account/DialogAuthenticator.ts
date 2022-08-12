@@ -52,9 +52,4 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 		this.requestApplicationUpdate()
 		this.close()
 	}
-
-	private requestApplicationUpdate() {
-		MoDeL.application.requestUpdate()
-		MoDeL.application.pageHost.currentPage?.requestUpdate()
-	}
 }

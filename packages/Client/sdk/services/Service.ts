@@ -27,7 +27,7 @@ export class Service {
 			heading: parameters?.heading || 'Confirm Deletion',
 			content: parameters?.content || 'Are you sure you want to delete this irreversibly?',
 			primaryButtonText: 'Delete',
-			primaryButtonAction: () => handleDeletion(),
+			primaryAction: () => handleDeletion(),
 			secondaryButtonText: 'Cancel',
 		}).confirm()
 	}
