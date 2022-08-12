@@ -59,44 +59,7 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.ToTable("Accounts");
                 });
 
-            modelBuilder.Entity("Solidarity.Application.Accounts.Handshake", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Creation")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatorId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Expiration")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("LastModification")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("LastModifierId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Phrase")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.ToTable("Handshakes");
-                });
-
-            modelBuilder.Entity("Solidarity.Application.Accounts.Identity", b =>
+            modelBuilder.Entity("Solidarity.Application.Accounts.AccountProfile", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -137,7 +100,44 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.HasIndex("AccountId")
                         .IsUnique();
 
-                    b.ToTable("Identities");
+                    b.ToTable("AccountProfiles");
+                });
+
+            modelBuilder.Entity("Solidarity.Application.Accounts.AccountRecoveryHandshake", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Creation")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("CreatorId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Expiration")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("LastModification")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("LastModifierId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Phrase")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("AccountRecoveryHandshakes");
                 });
 
             modelBuilder.Entity("Solidarity.Application.Authentication.AuthenticationMethod", b =>
@@ -509,22 +509,22 @@ namespace Solidarity.Infrastructure.Persistence.Migrations
                     b.HasDiscriminator().HasValue(0);
                 });
 
-            modelBuilder.Entity("Solidarity.Application.Accounts.Handshake", b =>
+            modelBuilder.Entity("Solidarity.Application.Accounts.AccountProfile", b =>
                 {
                     b.HasOne("Solidarity.Application.Accounts.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
+                        .WithOne()
+                        .HasForeignKey("Solidarity.Application.Accounts.AccountProfile", "AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Account");
                 });
 
-            modelBuilder.Entity("Solidarity.Application.Accounts.Identity", b =>
+            modelBuilder.Entity("Solidarity.Application.Accounts.AccountRecoveryHandshake", b =>
                 {
                     b.HasOne("Solidarity.Application.Accounts.Account", "Account")
-                        .WithOne()
-                        .HasForeignKey("Solidarity.Application.Accounts.Identity", "AccountId")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
