@@ -35,15 +35,8 @@ export class DialogAccountRegister extends DialogComponent {
 
 	protected override async primaryAction() {
 		await AccountService.create({
-			// TODO: either random string or prompt user
 			username: this.username,
-			publicKey: this.privateKey!.getPublicKeyB64(),
+			publicKey: this.privateKey.getPublicKey(),
 		})
-		const account = await AccountService.get()
-
-		if (!this.privateKey) {
-			throw new Error('You are not registered')
-		}
-		return Promise.resolve()
 	}
 }

@@ -51,14 +51,12 @@ public class AccountService : CrudService<Account>
 	public async Task<string> ResetByUsername(string username)
 	{
 		var account = await GetByUsername(username);
-		return await Reset(account.Id);
-	}
-
-	public async Task<string> Reset(int id)
-	{
-		var account = await Get(id);
 
 		var phrase = RandomStringGenerator.Generate(64);
+
+		var publicRsaKey = RSA.Create();
+		publicRsaKey.ImportFromPem(account.PublicKey);
+		var encryptedPhrase = Convert.ToBase64String(publicRsaKey.Encrypt(Encoding.ASCII.GetBytes(phrase), RSAEncryptionPadding.Pkcs1));
 
 		_database.AccountRecoveryHandshakes.Add(new()
 		{
@@ -67,33 +65,28 @@ public class AccountService : CrudService<Account>
 		});
 		await _database.CommitChangesAsync();
 
-		var publicRsaKey = RSA.Create();
-		// TODO This fails
-		publicRsaKey.ImportRSAPublicKey(Convert.FromBase64String(account.PublicKey), out _);
-		// Encrypt Handshake with the public key of the SignDataToString(handshake.Phrase);
-		var encryptedHandshake = publicRsaKey.SignDataToString(phrase) ?? throw new Exception("Cannot sign data");
-		return encryptedHandshake;
+		return encryptedPhrase;
 	}
 
 	public async Task<string> Recover(string phrase)
 	{
-		var handshake = await GetRecoveryHandshakeByPhrase(phrase);
+		foreach (var expiredHandshake in _database.AccountRecoveryHandshakes.Where(e => e.Expiration <= DateTime.Now))
+		{
+			_database.AccountRecoveryHandshakes.Remove(expiredHandshake);
+		}
+
+		await _database.CommitChangesAsync();
+
+		var handshake = await _database.AccountRecoveryHandshakes.IncludeAll().FirstOrDefaultAsync(hs => hs.Phrase == phrase)
+			?? throw new EntityNotFoundException<AccountRecoveryHandshake>();
+
 		var token = handshake.Account.IssueToken(TimeSpan.FromDays(30));
+
 		handshake.Account.AuthenticationMethods = new();
-		_database.AuthenticationMethods.RemoveRange(_database.AuthenticationMethods.Where(e => e.AccountId == handshake.Account.Id));
+		_database.AuthenticationMethods.RemoveRange(_database.AuthenticationMethods.Where(e => e.AccountId == handshake.AccountId));
 		_database.AccountRecoveryHandshakes.Remove(handshake);
+
 		await _database.CommitChangesAsync();
 		return token;
-	}
-
-	public async Task<AccountRecoveryHandshake> GetRecoveryHandshakeByPhrase(string phrase)
-	{
-		_database.AccountRecoveryHandshakes
-			.Where(e => e.Expiration <= DateTime.Now)
-			.ToList()
-			.ForEach(handshake => _database.AccountRecoveryHandshakes.Remove(handshake));
-		await _database.CommitChangesAsync();
-		return await _database.AccountRecoveryHandshakes.IncludeAll().FirstOrDefaultAsync(hs => hs.Phrase == phrase)
-			?? throw new EntityNotFoundException<AccountRecoveryHandshake>();
 	}
 }

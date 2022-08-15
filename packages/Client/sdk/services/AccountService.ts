@@ -18,12 +18,12 @@ export class AccountService {
 		return API.put<Account>(`/account`, account)
 	}
 
-	static reset(id: number) {
-		return API.get<string>(`/account/${id}/reset`)
+	static reset(username: string) {
+		return API.get<string>(`/account/${username}/reset`)
 	}
 
 	static async recover(phrase: string) {
-		const token = await API.get<string>(`/recover?phrase=${phrase}`)
+		const token = await API.get<string>(`/account/recover?phrase=${phrase}`)
 		API.authenticator?.authenticate(token)
 	}
 }

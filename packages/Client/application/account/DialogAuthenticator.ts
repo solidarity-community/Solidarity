@@ -1,6 +1,6 @@
 import { component, DialogAuthenticator as DialogAuthenticatorBase, User, authenticator, html } from '@3mo/modelx'
 import { AccountService, AuthenticationService } from 'sdk'
-import { DialogAccountRegister, DialogAccountReset } from 'application'
+import { DialogAccountRegister, DialogAccountRecover } from 'application'
 
 @authenticator()
 @component('solid-dialog-authenticator')
@@ -33,7 +33,7 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 	}
 
 	protected async resetPasswordProcess() {
-		await new DialogAccountReset().confirm()
+		await new DialogAccountRecover().confirm()
 		await this.fetchUser()
 		this.requestApplicationUpdate()
 		this.close()

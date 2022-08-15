@@ -20,8 +20,8 @@ public class AccountModule : Module
 			(AccountService accountService, Account account) => accountService.Update(account)
 		);
 
-		endpoints.MapGet("/account/{id}/reset",
-			[AllowAnonymous] (AccountService accountService, int id) => accountService.Reset(id)
+		endpoints.MapGet("/account/{username}/reset",
+			[AllowAnonymous] (AccountService accountService, string username) => accountService.ResetByUsername(username)
 		);
 
 		endpoints.MapGet("/account/recover",
