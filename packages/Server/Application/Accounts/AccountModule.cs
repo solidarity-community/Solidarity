@@ -12,12 +12,16 @@ public class AccountModule : Module
 			[AllowAnonymous] (AccountService accountService, Account account) => accountService.CreateAndIssueToken(account)
 		);
 
+		endpoints.MapGet("/account/is-username-available/{username}",
+			[AllowAnonymous] (AccountService accountService, string username) => accountService.IsUsernameAvailable(username)
+		);
+
 		endpoints.MapPut("/account",
 			(AccountService accountService, Account account) => accountService.Update(account)
 		);
 
-		endpoints.MapGet("/account/{id}/reset",
-			[AllowAnonymous] (AccountService accountService, int id) => accountService.Reset(id)
+		endpoints.MapGet("/account/{username}/reset",
+			[AllowAnonymous] (AccountService accountService, string username) => accountService.ResetByUsername(username)
 		);
 
 		endpoints.MapGet("/account/recover",
