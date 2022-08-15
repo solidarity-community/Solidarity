@@ -9,9 +9,9 @@ export class DialogAccountRecover extends DialogComponent {
 
 	protected override get template() {
 		return html`
-			<mo-dialog heading='Reset Account'>
+			<mo-dialog heading='Recover Account'>
 				<mo-loading-button slot='primaryAction' type='raised' ?disabled=${!this.username || !this.privateKey}>
-					Reset
+					Recover
 				</mo-loading-button>
 
 				<mo-flex gap='var(--mo-thickness-m)'>

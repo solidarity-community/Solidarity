@@ -13,7 +13,7 @@ export class DialogAccountRegister extends DialogComponent {
 		return html`
 			<mo-dialog heading='Register Account'>
 				<mo-loading-button slot='primaryAction' type='raised' ?disabled=${!this.securityConfirmation || !this.isUsernameValid}>
-					Register & Continue
+					Register
 				</mo-loading-button>
 
 				<mo-flex gap='var(--mo-thickness-m)'>

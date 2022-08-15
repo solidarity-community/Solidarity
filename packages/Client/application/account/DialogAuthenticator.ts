@@ -1,10 +1,17 @@
-import { component, DialogAuthenticator as DialogAuthenticatorBase, User, authenticator, html } from '@3mo/modelx'
+import { component, DialogAuthenticator as DialogAuthenticatorBase, User, authenticator, html, css } from '@3mo/modelx'
 import { AccountService, AuthenticationService } from 'sdk'
 import { DialogAccountRegister, DialogAccountRecover } from 'application'
 
 @authenticator()
 @component('solid-dialog-authenticator')
 export class DialogAuthenticator extends DialogAuthenticatorBase {
+	static override get styles() {
+		return css`
+			${super.styles}
+			a { display: none; }
+		`
+	}
+
 	protected async authenticateProcess() {
 		await AuthenticationService.authenticateWithPassword(this.username, this.password)
 		const user = await this.fetchUser()
@@ -15,9 +22,9 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 	private async fetchUser() {
 		const account = await AccountService.get()
 		const user: User = {
-			id: account!.id ?? 0,
-			name: account!.username ?? '',
-			email: account!.username ?? '',
+			id: account?.id ?? 0,
+			name: account?.username ?? '',
+			email: '',
 		}
 		DialogAuthenticator.authenticatedUser.value = user
 		return user
@@ -33,16 +40,15 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 	}
 
 	protected async resetPasswordProcess() {
-		await new DialogAccountRecover().confirm()
-		await this.fetchUser()
-		this.requestApplicationUpdate()
-		this.close()
+		throw new NotImplementedError()
 	}
 
-	protected override get contentTemplate() {
+	protected override get additionalTemplate() {
 		return html`
-			${super.contentTemplate}
-			<mo-button @click=${() => this.register()}>Or Create an Account</mo-button>
+			<mo-flex slot='footer' direction='horizontal' width='*' gap='4px'>
+				<mo-button type='outlined' @click=${() => this.register()}>Register</mo-button>
+				<mo-button type='outlined' @click=${() => this.recover()}>Recover</mo-button>
+			</mo-flex>
 		`
 	}
 
@@ -51,5 +57,12 @@ export class DialogAuthenticator extends DialogAuthenticatorBase {
 		await this.fetchUser()
 		this.requestApplicationUpdate()
 		this.close()
+	}
+
+	private async recover() {
+		await new DialogAccountRecover().confirm()
+		await this.fetchUser()
+		this.requestApplicationUpdate()
+		this.close()	
 	}
 }
