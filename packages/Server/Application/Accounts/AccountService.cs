@@ -24,13 +24,14 @@ public class AccountService : CrudService<Account>
 
 	public async Task<bool> IsUsernameAvailable(string username)
 	{
-		return await _database.Accounts.SingleOrDefaultAsync(a => a.Username == username.ToLower()) == null;
+		return string.IsNullOrWhiteSpace(username) is false
+			&& await _database.Accounts.SingleOrDefaultAsync(a => a.Username == username.ToLower()) == null;
 	}
 
 	public override async Task<Account> Create(Account account)
 	{
-		return string.IsNullOrWhiteSpace(account.Username) == false && await IsUsernameAvailable(account.Username) == false
-			? throw new AccountTakenException("This username is not available")
+		return await IsUsernameAvailable(account.Username) == false
+			? throw new UsernameUnavailableException()
 			: await base.Create(account);
 	}
 
