@@ -5,6 +5,10 @@ export class AccountService {
 		return !API.authenticator?.isAuthenticated() ? Promise.resolve(undefined) : API.get<Account>(`/account`)
 	}
 
+	static isUsernameAvailable(username: string) {
+		return API.get<boolean>(`/account/is-username-available/${username}`)
+	}
+
 	static async create(account: Account) {
 		const token = await API.post<string>(`/account`, account)
 		API.authenticator?.authenticate(token)

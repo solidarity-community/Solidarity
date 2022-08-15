@@ -4,36 +4,44 @@ import JSEncrypt from 'jsencrypt'
 
 @component('solid-dialog-account-register')
 export class DialogAccountRegister extends DialogComponent {
-	@state() private idAndPrivateKey?: string
+	@state() private username = ''
+	@state() private privateKey = new JSEncrypt
+	@state() private isUsernameValid = false
 	@state() private securityConfirmation = false
-
-	protected override async initialized() {
-		const privateKey = new JSEncrypt
-		await AccountService.create({
-			// TODO: either random string or prompt user
-			username: `arshia11d${String(Math.random()).slice(2, 5)}`,
-			publicKey: privateKey.getPublicKeyB64(),
-		})
-		const account = await AccountService.get()
-		this.idAndPrivateKey = `${account!.id}@${privateKey.getPrivateKey()}`
-	}
 
 	protected override get template() {
 		return html`
 			<mo-dialog heading='Register Account'>
-				<mo-button slot='primaryAction' type='raised' ?disabled=${this.securityConfirmation === false}>Register & Continue</mo-button>
+				<mo-loading-button slot='primaryAction' type='raised' ?disabled=${!this.securityConfirmation || !this.isUsernameValid}>
+					Register & Continue
+				</mo-loading-button>
 
 				<mo-flex gap='var(--mo-thickness-m)'>
-					<mo-div>Safeguard your private-key as it is the only way you can recover your account. Copy it to clipboard by clicking the block.</mo-div>
-					<solid-clipboard-text-block>${this.idAndPrivateKey}</solid-clipboard-text-block>
-					<mo-checkbox @change=${(e: CustomEvent<CheckboxValue>) => this.securityConfirmation = e.detail === 'checked'}>I have secured my private-key</mo-checkbox>
+					<solid-field-username label='Username'
+						@change=${(e: CustomEvent<string>) => this.username = e.detail}
+						@validityChange=${(e: CustomEvent<boolean>) => this.isUsernameValid = e.detail}
+					></solid-field-username>
+
+					<mo-div>Safeguard your private-key as it is the only way you can recover your account in combination with your username.</mo-div>
+					<solid-clipboard-text-block>${this.privateKey.getPrivateKey()}</solid-clipboard-text-block>
+
+					<mo-checkbox @change=${(e: CustomEvent<CheckboxValue>) => this.securityConfirmation = e.detail === 'checked'}>
+						I have secured my private-key
+					</mo-checkbox>
 				</mo-flex>
 			</mo-dialog>
 		`
 	}
 
-	protected override primaryAction() {
-		if (!this.idAndPrivateKey) {
+	protected override async primaryAction() {
+		await AccountService.create({
+			// TODO: either random string or prompt user
+			username: this.username,
+			publicKey: this.privateKey!.getPublicKeyB64(),
+		})
+		const account = await AccountService.get()
+
+		if (!this.privateKey) {
 			throw new Error('You are not registered')
 		}
 		return Promise.resolve()
