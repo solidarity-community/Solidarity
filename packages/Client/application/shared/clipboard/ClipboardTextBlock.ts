@@ -1,4 +1,4 @@
-import { Component, component, css, html, NotificationHost } from '@3mo/modelx'
+import { Component, component, css, html, NotificationHost } from '@3mo/model'
 
 @component('solid-clipboard-text-block')
 export class ClipboardTextBlock extends Component {

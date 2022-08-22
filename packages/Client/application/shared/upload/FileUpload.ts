@@ -1,7 +1,7 @@
-import { Component, component, event, html, query, property, NotificationHost } from '@3mo/modelx'
+import { Component, component, event, html, query, property, NotificationHost } from '@3mo/model'
 import { FileService } from 'sdk'
 
-/** 
+/**
  * @fires change {CustomEvent<string | undefined>}
  * @fires uploading {CustomEvent}
  * @fires upload {CustomEvent<string>}

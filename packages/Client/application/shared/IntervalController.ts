@@ -1,4 +1,4 @@
-import { ReactiveControllerHost, Controller } from '@3mo/modelx'
+import { ReactiveControllerHost, Controller } from '@3mo/model'
 
 export class IntervalController extends Controller {
 	private timerId = -1

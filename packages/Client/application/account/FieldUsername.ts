@@ -1,4 +1,4 @@
-import { component, FieldTextBase, html, property } from '@3mo/modelx'
+import { component, FieldTextBase, html, property } from '@3mo/model'
 import { AccountService } from 'sdk'
 
 @component('solid-field-username')

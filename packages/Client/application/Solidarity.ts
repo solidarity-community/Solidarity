@@ -1,4 +1,4 @@
-import { Application, application, component, html, ThemeHelper, Color, DataGrid } from '@3mo/modelx'
+import { Application, application, component, html, ThemeHelper, Color, DataGrid } from '@3mo/model'
 import { DialogAuthenticator, PageAccount } from 'application'
 import * as Solid from '.'
 import './Logo.svg'

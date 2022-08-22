@@ -1,4 +1,4 @@
-import { component, PageComponent, html, route, state, PageError, HttpErrorCode, nothing, authentication } from '@3mo/modelx'
+import { component, PageComponent, html, route, state, PageError, HttpErrorCode, nothing, authentication } from '@3mo/model'
 import { Account, AccountService, AuthenticationMethodType, AuthenticationService, AccountProfile, AccountProfileService } from 'sdk'
 import { DialogAccountProfile, DialogAuthenticationMethods, DialogAuthenticator } from 'application'
 
@@ -6,7 +6,7 @@ import { DialogAccountProfile, DialogAuthenticationMethods, DialogAuthenticator 
 @route('/account')
 @component('solid-page-account')
 export class PageAccount extends PageComponent {
-	@state() private account: Account = {}
+	@state() private account?: Account
 	@state() private profile?: AccountProfile
 	@state() private isNewByAuthenticationMethod = new Map<AuthenticationMethodType, boolean>()
 
@@ -34,7 +34,7 @@ export class PageAccount extends PageComponent {
 	}
 
 	private async fetchAccount() {
-		this.account = (await AccountService.get())!
+		this.account = await AccountService.get()
 	}
 
 	private async fetchAuthenticationMethods() {
@@ -61,7 +61,7 @@ export class PageAccount extends PageComponent {
 
 	private get topBarTemplate() {
 		const name = `${this.profile?.firstName ?? ''} ${this.profile?.lastName ?? ''}`
-		const username = this.account.username
+		const username = this.account?.username
 		const hasName = !!name.trim()
 		return html`
 			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center'>
@@ -79,11 +79,10 @@ export class PageAccount extends PageComponent {
 	}
 
 	private editProfile = async () => {
-		if (!this.account.id) {
-			return
+		if (this.account?.id) {
+			await new DialogAccountProfile({ accountId: this.account.id }).confirm()
+			await this.fetchData()
 		}
-		await new DialogAccountProfile({ accountId: this.account.id }).confirm()
-		await this.fetchData()
 	}
 
 	private get activitiesTemplate() {
@@ -97,8 +96,8 @@ export class PageAccount extends PageComponent {
 		return html`
 			<mo-group-box heading='Activities'>
 				<mo-flex direction='horizontal' justifyContent='space-around'>
-					${getScoreTemplate('Campaigns', this.account.campaigns?.length ?? 0)}
-					${getScoreTemplate('Votes', this.account.votes?.length ?? 0)}
+					${getScoreTemplate('Campaigns', this.account?.campaigns?.length ?? 0)}
+					${getScoreTemplate('Votes', this.account?.votes?.length ?? 0)}
 				</mo-flex>
 			</mo-group-box>
 		`

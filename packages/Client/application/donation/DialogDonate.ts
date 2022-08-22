@@ -1,4 +1,4 @@
-import { component, css, DialogComponent, html, state, nothing } from '@3mo/modelx'
+import { component, css, DialogComponent, html, state, nothing } from '@3mo/model'
 import { Account, AccountService, Campaign, CampaignService, PaymentMethodIdentifier } from 'sdk'
 
 @component('solid-dialog-donate')
@@ -88,7 +88,7 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 
 	protected override get template() {
 		return html`
-			<mo-dialog heading='Donate' primaryButtonText=''>
+			<mo-dialog heading='Donate'>
 				${!this.selectedPaymentMethodIdentifier ? this.selectionTemplate : this.donationTemplate }
 			</mo-dialog>
 		`

@@ -1,4 +1,4 @@
-import { component, Component, css, html, property } from '@3mo/modelx'
+import { component, Component, css, html, property } from '@3mo/model'
 import { Campaign, FileService } from 'sdk'
 
 @component('solid-campaign-card')

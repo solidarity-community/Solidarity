@@ -1,4 +1,4 @@
-import { HttpErrorCode } from '@3mo/modelx'
+import { HttpErrorCode } from '@3mo/model'
 
 export type AspNetError = {
 	readonly title: string,

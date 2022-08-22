@@ -1,4 +1,4 @@
-import { Component, component, css, html, ifDefined, MaterialIcon, property, unsafeCSS } from '@3mo/modelx'
+import { Component, component, css, html, ifDefined, MaterialIcon, property, unsafeCSS } from '@3mo/model'
 import { HealthCheckStatus } from 'sdk'
 
 @component('solid-status')

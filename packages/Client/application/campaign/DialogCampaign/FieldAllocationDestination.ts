@@ -1,4 +1,4 @@
-import { component, FieldTextBase, html, property } from '@3mo/modelx'
+import { component, FieldTextBase, html, property } from '@3mo/model'
 import { PaymentMethodIdentifier, PaymentMethodService } from 'sdk'
 
 @component('solid-field-allocation-destination')

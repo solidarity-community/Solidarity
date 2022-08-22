@@ -1,4 +1,4 @@
-import { Controller, ReactiveControllerHost } from '@3mo/modelx'
+import { Controller, ReactiveControllerHost } from '@3mo/model'
 
 export class ResizeController extends Controller {
 	protected observer?: ResizeObserver

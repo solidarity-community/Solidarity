@@ -1,4 +1,4 @@
-import { component, PageComponent, html, route, PageError, HttpErrorCode, nothing, state, DialogAcknowledge, NotificationHost, queryAll, Button, ButtonType } from '@3mo/modelx'
+import { component, PageComponent, html, route, PageError, HttpErrorCode, nothing, state, DialogAcknowledge, NotificationHost, queryAll, Button, ButtonType } from '@3mo/model'
 import { Campaign, CampaignService, CampaignStatus } from 'sdk'
 import { DialogCampaign, DialogCampaignValidationVote, PageCampaigns, DialogDonate, DialogAuthenticator, DialogCampaignAllocations, TimerController } from 'application'
 

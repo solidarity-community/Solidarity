@@ -1,4 +1,4 @@
-import '@3mo/modelx'
+import '@3mo/model'
 import 'leaflet'
 import '@geoman-io/leaflet-geoman-free'
 import '@a11d/lit-slider'

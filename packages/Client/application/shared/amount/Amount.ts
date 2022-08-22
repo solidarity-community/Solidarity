@@ -1,4 +1,4 @@
-import { FormatHelper, component, Amount as AmountBase } from '@3mo/modelx'
+import { FormatHelper, component, Amount as AmountBase } from '@3mo/model'
 import { amountComponent, IAmountComponent } from './amountComponent'
 import { amountModeStorage } from './amountModeStorage'
 

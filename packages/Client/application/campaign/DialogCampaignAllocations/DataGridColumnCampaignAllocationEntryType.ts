@@ -1,4 +1,4 @@
-import { component, DataGridColumn, html, ifDefined } from '@3mo/modelx'
+import { component, DataGridColumn, html, ifDefined } from '@3mo/model'
 import { CampaignAllocationEntryType } from 'sdk'
 
 @component('solid-data-grid-column-campaign-allocation-entry-type')

@@ -1,4 +1,4 @@
-import { component, ContextMenuHost, css, DialogAuthenticator, homePage, html, PageComponent, route, state } from '@3mo/modelx'
+import { component, ContextMenuHost, css, DialogAuthenticator, homePage, html, PageComponent, route, state } from '@3mo/model'
 import { DialogCampaign, PageCampaign } from 'application'
 import { Campaign, CampaignService } from 'sdk'
 
@@ -50,7 +50,7 @@ export class PageCampaigns extends PageComponent {
 									tabIndex='0'
 									.campaign=${campaign}
 									@click=${() => new PageCampaign({ id: campaign.id! }).navigate()}
-									@contextmenu=${(event: MouseEvent) => campaign.creatorId !== DialogAuthenticator.authenticatedUser.value?.id ? void 0 : ContextMenuHost.openMenu(event, html`
+									@contextmenu=${(event: MouseEvent) => campaign.creatorId !== DialogAuthenticator.authenticatedUser.value?.id ? void 0 : ContextMenuHost.open(event, html`
 										<mo-context-menu-item icon='edit' @click=${() => this.open(campaign.id)}>Edit</mo-context-menu-item>
 										<mo-context-menu-item icon='delete' @click=${() => this.delete(campaign.id!)}>Delete</mo-context-menu-item>
 									`)}

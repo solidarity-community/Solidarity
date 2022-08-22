@@ -1,4 +1,4 @@
-import { component, css, DialogComponent, FormatHelper, html, NotificationHost, event, nothing, state } from '@3mo/modelx'
+import { component, css, DialogComponent, FormatHelper, html, NotificationHost, event, nothing, state } from '@3mo/model'
 import { Campaign, CampaignService } from 'sdk'
 
 @component('solid-dialog-campaign-validation-vote')
@@ -41,7 +41,7 @@ export class DialogCampaignValidationVote extends DialogComponent<{ readonly cam
 
 	protected override get template() {
 		return html`
-			<mo-dialog heading='Vote' primaryButtonText=''>
+			<mo-dialog heading='Vote'>
 				<mo-flex gap='16px'>
 					<mo-flex>
 						<mo-div>Endorse or oppose the integrity of "${this.parameters.campaign.title}".</mo-div>

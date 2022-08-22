@@ -1,4 +1,4 @@
-import { component, DataGridColumn, html, nothing } from '@3mo/modelx'
+import { component, DataGridColumn, html, nothing } from '@3mo/model'
 import { PaymentMethod, PaymentMethodIdentifier } from 'sdk'
 
 @component('solid-data-grid-column-payment-method')

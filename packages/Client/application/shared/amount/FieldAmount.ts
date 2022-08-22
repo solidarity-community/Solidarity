@@ -1,4 +1,4 @@
-import { component, FieldAmount as FieldAmountBase, FormatHelper } from '@3mo/modelx'
+import { component, FieldAmount as FieldAmountBase, FormatHelper } from '@3mo/model'
 import { amountModeStorage } from '.'
 import { amountComponent, IAmountComponent } from './amountComponent'
 

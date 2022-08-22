@@ -1,4 +1,4 @@
-import { Background, Component, component, html, query, SlotController, ThemeHelper } from '@3mo/modelx'
+import { Background, Component, component, html, query, SlotController, ThemeHelper } from '@3mo/model'
 import * as QRCode from 'qrcode'
 
 @component('solid-qr-code')

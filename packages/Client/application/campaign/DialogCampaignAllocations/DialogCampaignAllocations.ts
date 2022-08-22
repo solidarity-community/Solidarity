@@ -1,11 +1,11 @@
-import { component, DialogComponent, html, ifDefined } from '@3mo/modelx'
+import { component, DialogComponent, html, ifDefined } from '@3mo/model'
 import { Campaign, CampaignAllocationEntry } from 'sdk'
 
 @component('solid-dialog-campaign-allocations')
 export class DialogCampaignAllocations extends DialogComponent<{ readonly campaign: Campaign }> {
 	protected override get template() {
 		return html`
-			<mo-dialog size='medium' heading='Allocations' primaryButtonText=''>
+			<mo-dialog size='medium' heading='Allocations'>
 				<style>
 					mo-dialog::part(content) {
 						padding: 0;

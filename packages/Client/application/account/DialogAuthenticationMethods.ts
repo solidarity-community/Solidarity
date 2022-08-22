@@ -1,4 +1,4 @@
-import { component, DialogComponent, html, nothing, state } from '@3mo/modelx'
+import { component, DialogComponent, html, nothing, state } from '@3mo/model'
 import { AuthenticationMethodType, AuthenticationService } from 'sdk'
 
 @component('solid-dialog-authentication-methods')
@@ -11,7 +11,7 @@ export class DialogAuthenticationMethods extends DialogComponent<{ readonly type
 
 	protected override get template() {
 		return html`
-			<mo-dialog heading=${this.content?.header ?? ''}>
+			<mo-dialog heading=${this.content?.header ?? ''} primaryButtonText='Save'>
 				${this.content?.template ?? nothing}
 			</mo-dialog>
 		`

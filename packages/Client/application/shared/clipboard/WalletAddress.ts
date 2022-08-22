@@ -1,4 +1,4 @@
-import { component, html, property, nothing } from '@3mo/modelx'
+import { component, html, property, nothing } from '@3mo/model'
 import { ClipboardTextBlock } from './ClipboardTextBlock'
 
 @component('solid-wallet-address')

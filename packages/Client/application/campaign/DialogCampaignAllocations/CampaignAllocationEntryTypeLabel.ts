@@ -1,4 +1,4 @@
-import { Component, component, html, property, nothing, css } from '@3mo/modelx'
+import { Component, component, html, property, nothing, css } from '@3mo/model'
 import { CampaignAllocationEntryType } from 'sdk'
 
 @component('solid-campaign-allocation-entry-type-label')

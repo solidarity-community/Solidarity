@@ -1,4 +1,4 @@
-import { Component, html, TemplateResult } from '@3mo/modelx'
+import { Component, html, TemplateResult } from '@3mo/model'
 
 export abstract class Progress extends Component {
 	protected abstract get progress(): number

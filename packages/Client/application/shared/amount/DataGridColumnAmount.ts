@@ -1,4 +1,4 @@
-import { component, DataGridColumnNumberBase, html } from '@3mo/modelx'
+import { component, DataGridColumnNumberBase, html } from '@3mo/model'
 
 @component('solid-data-grid-column-amount')
 export class DataGridColumnAmount<TData> extends DataGridColumnNumberBase<TData> {

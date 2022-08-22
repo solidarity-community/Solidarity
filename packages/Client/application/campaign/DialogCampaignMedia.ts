@@ -1,4 +1,4 @@
-import { cache, component, DialogComponent, html, ifDefined, query, state } from '@3mo/modelx'
+import { cache, component, DialogComponent, html, ifDefined, query, state } from '@3mo/model'
 import { CampaignMedia, CampaignMediaType, CampaignMediaService, Campaign } from 'sdk'
 import { ButtonFileUpload } from 'application'
 
