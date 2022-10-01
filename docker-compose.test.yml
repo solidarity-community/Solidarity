@@ -9,53 +9,42 @@ services:
       -printtoconsole=1
       -maxuploadtarget=5000
       -txindex=1
-      -dbcache=1024
       -rpcallowip=172.0.0.0/8
       -rpcbind=0.0.0.0
       -rpcport=18333
       -rpcuser=solidarity
-      -rpcpassword=Dev_Passw0rd
+      -rpcpassword=\${CRYPTO_PASSWORD}
+      -dbcache=1024
     volumes:
       - ~/bitcoin:/home/bitcoin/.bitcoin
 
   database:
     image: mcr.microsoft.com/mssql/server
     restart: always
+    user: root
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=Dev_Passw0rd
-      - MSSQL_SA_PASSWORD=Dev_Passw0rd
+      - SA_PASSWORD=\${DATABASE_PASSWORD}
       - MSSQL_PID=Express
     volumes:
-     - "~/solidarity/dev/database:/var/opt/mssql"
+      - "~/solidarity/test/database:/var/opt/mssql"
 
   server:
+    image: solidarity_server:latest
     restart: always
-    depends_on:
-      - database
-    build:
-      context: ./packages/Server
-    volumes:
-      - "./packages/Server:/Solidarity"
     environment:
       - ASPNETCORE_URLS=http://+:80
-      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
       - DATABASE_SERVER=database,1433
       - DATABASE_USER=SA
-      - DATABASE_PASSWORD=Dev_Passw0rd
-      - JWT_KEY=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
+      - DATABASE_PASSWORD=\${DATABASE_PASSWORD}
+      - JWT_KEY=\${JWT_KEY}
       - PAYMENT_METHODS=BTC_TESTNET
       - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://crypto_bitcoin_testnet:18333/
       - PAYMENT_METHOD_BTC_TESTNET_USERNAME=solidarity
-      - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=Dev_Passw0rd
+      - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=\${CRYPTO_PASSWORD}
 
   client:
+    image: solidarity_client:latest
     restart: always
-    depends_on:
-      - server
-    build:
-      context: ./packages/Client
     ports:
-      - "80:80"
-    volumes:
-      - "./packages/Client:/Solidarity"
+      - "81:80"

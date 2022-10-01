@@ -54,10 +54,10 @@ jobs:
             username: ${{ secrets.SSH_USERNAME }}
             password: ${{ secrets.SSH_PASSWORD }}
             port: ${{ secrets.SSH_PORT }}
-            source: "solidarity_server_image,solidarity_client_image,docker-compose.prod.yml"
+            source: "solidarity_server_image,solidarity_client_image,docker-compose.test.yml,docker-compose.prod.yml"
             target: "~"
             overwrite: true
-          
+
         - uses: appleboy/ssh-action@master
           with:
             host: ${{ secrets.SSH_HOST }}
@@ -68,7 +68,7 @@ jobs:
               export DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
               export JWT_KEY=${{ secrets.JWT_KEY }}
               export CRYPTO_PASSWORD=${{ secrets.CRYPTO_PASSWORD }}
-              docker-compose -f ./docker-compose.prod.yml down solidarity_client solidarity_server
               docker load -i ./solidarity_server_image
               docker load -i ./solidarity_client_image
-              docker-compose -f ./docker-compose.prod.yml up -d
+              export COMPOSE_PROJECT_NAME=solidarity_test
+              docker-compose -f ./docker-compose.test.yml up -d

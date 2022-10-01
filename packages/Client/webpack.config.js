@@ -16,12 +16,12 @@ module.exports = (_, arguments) => MoDeLWebpackConfigFactory(arguments.mode, {
 	},
 	devServer: {
 		host: '0.0.0.0',
-		port: 8080,
+		port: 80,
 		contentBase: path.join(__dirname, 'dist'),
 		historyApiFallback: true,
 		proxy: {
 			'/api': {
-				target: 'http://solidarity_server',
+				target: 'http://server',
 				pathRewrite: { '^/api': '' },
 				secure: false,
 				changeOrigin: true,
