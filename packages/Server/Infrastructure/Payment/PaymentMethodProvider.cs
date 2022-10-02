@@ -29,12 +29,14 @@ public class PaymentMethodProvider : IPaymentMethodProvider, IHealthCheck
 		var healthChecksByKey = healthCheckTasksByKey.ToDictionary(kvp => kvp.Key, kvp => kvp.Value.Result);
 
 		return new HealthCheckResult(
-			data: healthChecksByKey.ToDictionary(kvp => kvp.Key, kvp => (object)kvp.Value),
-			status: healthChecksByKey.Any(hc => hc.Value.Status == HealthStatus.Unhealthy)
-				? HealthStatus.Unhealthy
-				: healthChecksByKey.Any(hc => hc.Value.Status == HealthStatus.Degraded)
-					? HealthStatus.Degraded
-					: HealthStatus.Healthy
+			description: string.Join(", ", healthChecksByKey.Select(hc => hc.Value.Description)),
+			status: healthChecksByKey switch
+			{
+				{ } when healthChecksByKey.Any(kvp => kvp.Value.Status == HealthStatus.Unhealthy) => HealthStatus.Unhealthy,
+				{ } when healthChecksByKey.Any(kvp => kvp.Value.Status == HealthStatus.Degraded) => HealthStatus.Degraded,
+				_ => HealthStatus.Healthy
+			},
+			data: healthChecksByKey!.ToDictionary(kvp => kvp.Key, kvp => (object)kvp.Value)
 		);
 	}
 }

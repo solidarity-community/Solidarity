@@ -3,16 +3,23 @@ namespace Solidarity.Infrastructure.Payment.Bitcoin;
 public class BitcoinClient
 {
 	private const string WalletName = "wallet";
+
 	private readonly RPCClient _client;
-	public BitcoinClient(Bitcoin bitcoin)
+
+	public string Name => $"Bitcoin {(_client.Network == Network.Main ? "" : "Testnet")}";
+
+	public BitcoinClient(Bitcoin bitcoin, ILogger logger)
 	{
 		var server = Environment.GetEnvironmentVariable($"PAYMENT_METHOD_{bitcoin.Identifier}_SERVER") ?? throw new InvalidOperationException($"PAYMENT_METHOD_{bitcoin.Identifier}_SERVER environment variable is not set");
 		var username = Environment.GetEnvironmentVariable($"PAYMENT_METHOD_{bitcoin.Identifier}_USERNAME") ?? throw new InvalidOperationException($"PAYMENT_METHOD_{bitcoin.Identifier}_USERNAME environment variable is not set");
 		var password = Environment.GetEnvironmentVariable($"PAYMENT_METHOD_{bitcoin.Identifier}_PASSWORD") ?? throw new InvalidOperationException($"PAYMENT_METHOD_{bitcoin.Identifier}_PASSWORD environment variable is not set");
+
 		_client = new RPCClient(
 			network: bitcoin.Network,
 			credentials: new() { Server = server, UserPassword = new(username, password) }
 		);
+
+		logger.LogInformation($"Initialized connection to {Name} with username {username} and password {password[..2]}**{password[^2..]}");
 	}
 
 	public Network Network => _client.Network;

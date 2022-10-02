@@ -9,7 +9,7 @@ services:
       -printtoconsole=1
       -maxuploadtarget=5000
       -txindex=1
-      -rpcallowip=172.0.0.0/8
+      -rpcallowip=0.0.0.0/0
       -rpcbind=0.0.0.0
       -rpcport=18333
       -rpcuser=solidarity

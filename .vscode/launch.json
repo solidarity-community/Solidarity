@@ -12,7 +12,7 @@
 				"pipeArgs": [
 					"exec",
 					"-i",
-					"solidarity_server"
+					"solidarity-server-1"
 				],
 				"debuggerPath": "/vsdbg/vsdbg",
 				"pipeCwd": "${workspaceRoot}/packages/Server",

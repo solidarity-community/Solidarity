@@ -7,13 +7,13 @@ public abstract class Bitcoin : PaymentMethod
 		{ Network.TestNet, 1 },
 	};
 
-	public override string Name => $"Bitcoin {(Client.Network == Network.Main ? "" : "Testnet")}";
+	public override string Name => Client.Name;
 
 	public BitcoinClient Client { get; }
 	public BitcoinExtKey ExtendedPrivateKey { get; }
 	public Network Network { get; }
 
-	public Bitcoin(Network network, IDatabase database) : base(database)
+	public Bitcoin(Network network, IDatabase database, ILogger logger) : base(database)
 	{
 		if (network != Network.Main && network != Network.TestNet)
 		{
@@ -21,7 +21,7 @@ public abstract class Bitcoin : PaymentMethod
 		}
 
 		Network = network;
-		Client = new(this);
+		Client = new(this, logger);
 
 		if (Key is null)
 		{
@@ -43,9 +43,9 @@ public abstract class Bitcoin : PaymentMethod
 				? HealthCheckResult.Degraded($"{Name} is currently downloading the blockchain at {blockchainInfo.VerificationProgress * 100}%")
 				: HealthCheckResult.Healthy();
 		}
-		catch
+		catch (Exception e)
 		{
-			return HealthCheckResult.Unhealthy($"No connection to the {Name} RPC");
+			return HealthCheckResult.Unhealthy($"No connection to the {Name} RPC. {e}");
 		}
 	}
 
