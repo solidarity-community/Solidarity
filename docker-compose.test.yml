@@ -13,7 +13,7 @@ services:
       -rpcbind=0.0.0.0
       -rpcport=18333
       -rpcuser=solidarity
-      -rpcpassword=\${CRYPTO_PASSWORD}
+      -rpcpassword=${CRYPTO_PASSWORD}
       -dbcache=1024
     volumes:
       - ~/bitcoin:/home/bitcoin/.bitcoin
@@ -24,7 +24,7 @@ services:
     user: root
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=\${DATABASE_PASSWORD}
+      - SA_PASSWORD=${DATABASE_PASSWORD}
       - MSSQL_PID=Express
     volumes:
       - "~/solidarity/test/database:/var/opt/mssql"
@@ -36,12 +36,12 @@ services:
       - ASPNETCORE_URLS=http://+:80
       - DATABASE_SERVER=database,1433
       - DATABASE_USER=SA
-      - DATABASE_PASSWORD=\${DATABASE_PASSWORD}
-      - JWT_KEY=\${JWT_KEY}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - JWT_KEY=${JWT_KEY}
       - PAYMENT_METHODS=BTC_TESTNET
       - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://crypto_bitcoin_testnet:18333/
       - PAYMENT_METHOD_BTC_TESTNET_USERNAME=solidarity
-      - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=\${CRYPTO_PASSWORD}
+      - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=${CRYPTO_PASSWORD}
 
   client:
     image: solidarity_client:latest
