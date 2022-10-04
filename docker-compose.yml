@@ -1,7 +1,7 @@
 version: "3"
 services:
   crypto_bitcoin_testnet:
-    image: ruimarinho/bitcoin-core
+    image: ruimarinho/bitcoin-core:23
     restart: always
     command:
       -chain=test
@@ -9,12 +9,12 @@ services:
       -printtoconsole=1
       -maxuploadtarget=5000
       -txindex=1
-      -dbcache=1024
       -rpcallowip=0.0.0.0/0
       -rpcbind=0.0.0.0
       -rpcport=18333
       -rpcuser=solidarity
       -rpcpassword=Dev_Passw0rd
+      -dbcache=8192
     volumes:
       - ~/bitcoin:/home/bitcoin/.bitcoin
 

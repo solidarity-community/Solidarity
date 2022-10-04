@@ -33,7 +33,7 @@ public class BitcoinClient
 			return;
 		}
 
-		try { await _client.CreateWalletAsync(WalletName); }
+		try { await _client.CreateWalletAsync(WalletName, new() { Descriptors = false }); }
 		catch (RPCException)
 		{
 			try { await _client.LoadWalletAsync(WalletName); }

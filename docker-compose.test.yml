@@ -1,7 +1,7 @@
 version: "3"
 services:
   crypto_bitcoin_testnet:
-    image: ruimarinho/bitcoin-core
+    image: ruimarinho/bitcoin-core:23
     restart: always
     command:
       -chain=test
