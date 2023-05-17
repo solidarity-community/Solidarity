@@ -1,4 +1,5 @@
-import { component, DataGridColumn, html } from '@3mo/model'
+import { component, html } from '@a11d/lit'
+import { DataGridColumn } from '@3mo/data-grid'
 
 @component('solid-data-grid-column-clipboard-text-block')
 export class DataGridColumnClipboardTextBlock<TData> extends DataGridColumn<TData, string> {

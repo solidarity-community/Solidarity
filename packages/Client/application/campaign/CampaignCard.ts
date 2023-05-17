@@ -1,4 +1,4 @@
-import { component, Component, css, html, property } from '@3mo/model'
+import { component, Component, css, html, property, style } from '@a11d/lit'
 import { Campaign, FileService } from 'sdk'
 
 @component('solid-campaign-card')
@@ -30,14 +30,14 @@ export class CampaignCard extends Component {
 		return html`
 			<mo-card cursor='pointer'>
 				${!this.campaign.coverImageUri ? html`
-					<mo-flex slot='media' alignItems='center' justifyContent='center' background='var(--mo-accent-gradient-transparent)'>
-						<mo-icon icon='campaign' foreground='var(--mo-color-gray)'></mo-icon>
+					<mo-flex slot='media' alignItems='center' justifyContent='center' ${style({ background: 'var(--mo-color-accent-gradient-transparent)' })}>
+						<mo-icon icon='campaign' ${style({ color: 'var(--mo-color-gray)' })}></mo-icon>
 					</mo-flex>
 				` : html`
 					<img slot='media' src=${FileService.getPath(this.campaign.coverImageUri)} />
 				`}
-				<mo-div slot='heading' textAlign='center' fontSize='var(--mo-font-size-l)' fontWeight='bold'>${this.campaign.title}</mo-div>
-				<mo-div>${this.campaign.description}</mo-div>
+				<div slot='heading' ${style({ textAlign: 'center', fontSize: 'large', fontWeight: 'bold' })}>${this.campaign.title}</div>
+				<div>${this.campaign.description}</div>
 				<solid-campaign-progress slot='footer' .campaign=${this.campaign}></solid-campaign-progress>
 			</mo-card>
 		`

@@ -1,15 +1,15 @@
-import { API, AccountProfile } from 'sdk'
+import { Api, AccountProfile } from 'sdk'
 
 export class AccountProfileService {
 	static get(id: number) {
-		return API.get<AccountProfile>(`/account/profile/${id}`)
+		return Api.get<AccountProfile>(`/account/profile/${id}`)
 	}
 
 	static getByAccountId(accountId?: number) {
-		return API.get<AccountProfile>(accountId ? `/account/${accountId}/profile` : '/account/profile')
+		return Api.get<AccountProfile>(accountId ? `/account/${accountId}/profile` : '/account/profile')
 	}
 
 	static createOrUpdate(profile: AccountProfile) {
-		return API.post<AccountProfile>(`/account/profile`, profile)
+		return Api.post<AccountProfile>(`/account/profile`, profile)
 	}
 }

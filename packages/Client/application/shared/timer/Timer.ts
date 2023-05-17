@@ -1,11 +1,11 @@
-import { Component, component, css, html, join, nothing, property } from '@3mo/model'
-import { TimerController } from '../utilities'
+import { Component, component, css, html, join, nothing, property, style } from '@a11d/lit'
+import { IntervalController } from '@3mo/interval-controller'
 
 @component('solid-timer')
 export class Timer extends Component {
-	@property({ type: Object }) end = new MoDate
+	@property({ type: Object }) end = new DateTime
 
-	protected _ = new TimerController(this, 1000, this.requestUpdate.bind(this))
+	protected _ = new IntervalController(this, 1000, this.requestUpdate.bind(this))
 
 	static override get styles() {
 		return css`
@@ -16,7 +16,7 @@ export class Timer extends Component {
 	}
 
 	protected get remainingTimeSpan() {
-		return new MoDate().until(this.end)
+		return new DateTime().until(this.end)
 	}
 
 	protected override get template() {
@@ -26,7 +26,7 @@ export class Timer extends Component {
 	}
 
 	protected get overOneDayTemplate() {
-		return html`${this.remainingTimeSpan.toString({ style: 'short' })}`
+		return html`${this.remainingTimeSpan.format({ style: 'short' })}`
 	}
 
 	protected get belowOneDayTemplate() {
@@ -34,13 +34,13 @@ export class Timer extends Component {
 		const minutes = this.remainingTimeSpan.milliseconds < 0 ? 0 : Math.floor((this.remainingTimeSpan.milliseconds % (1000 * 60 * 60)) / (1000 * 60))
 		const seconds = this.remainingTimeSpan.milliseconds < 0 ? 0 : Math.floor((this.remainingTimeSpan.milliseconds % (1000 * 60)) / 1000)
 		const hoursAndMinutesTemplate = join([
-			!hours ? undefined : html`<mo-div>${this.padWithZero(hours)}</mo-div>`,
-			html`<mo-div>${this.padWithZero(minutes)}</mo-div>`
+			!hours ? undefined : html`<div>${this.padWithZero(hours)}</div>`,
+			html`<div>${this.padWithZero(minutes)}</div>`
 		].filter(Boolean), html`:`)
 		return html`
 			in
 			${hoursAndMinutesTemplate}
-			${hours ? nothing : html`<mo-div fontSize='75%'>${this.padWithZero(seconds)}</mo-div>`}
+			${hours ? nothing : html`<div ${style({ fontSize: '75%' })}>${this.padWithZero(seconds)}</div>`}
 		`
 	}
 

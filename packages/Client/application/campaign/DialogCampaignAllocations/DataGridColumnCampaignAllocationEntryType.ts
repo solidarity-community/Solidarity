@@ -1,12 +1,10 @@
-import { component, DataGridColumn, html, ifDefined } from '@3mo/model'
+import { component, html, ifDefined, property } from '@a11d/lit'
+import { DataGridColumn } from '@3mo/data-grid'
 import { CampaignAllocationEntryType } from 'sdk'
 
 @component('solid-data-grid-column-campaign-allocation-entry-type')
 export class DataGridColumnCampaignAllocationEntryType<TData> extends DataGridColumn<TData, CampaignAllocationEntryType> {
-	constructor() {
-		super()
-		this.width = '60px'
-	}
+	@property() override width = '60px'
 
 	getContentTemplate(value?: CampaignAllocationEntryType) {
 		return html`<solid-campaign-allocation-entry-type-label type=${ifDefined(value)}></solid-campaign-allocation-entry-type-label>`

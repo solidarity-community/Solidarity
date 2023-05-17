@@ -1,7 +1,8 @@
-import { Component, component, css, html, property, query, event, ThemeHelper, Background } from '@3mo/model'
+import { Component, component, css, html, property, query, event } from '@a11d/lit'
+import { Theme, Background } from '@3mo/theme'
+import { ResizeController } from '@3mo/resize-observer'
 import { Map as LMap, TileLayer, Circle, PM, Layer, geoJSON, FeatureGroup } from 'leaflet'
 import { GeometryCollection, Feature } from 'geojson'
-import { ResizeController } from './utilities'
 
 /** @fires selectedAreaChange CustomEvent<Geography | undefined> */
 @component('solid-map')
@@ -38,11 +39,11 @@ export class Map extends Component {
 
 			this.selectedArea.geometries.forEach(geo => {
 				const layer = geoJSON(geo)
-				layer.setStyle({ color: 'var(--mo-accent)' })
+				layer.setStyle({ color: 'var(--mo-color-accent)' })
 				this.map.addLayer(layer)
 			})
 
-			Promise.delegateToEventLoop(() => {
+			new Promise(r => setTimeout(r, 0)).then(() => {
 				const bounds = new FeatureGroup(this.layers).getBounds()
 				this.map.fitBounds(bounds)
 			})
@@ -53,7 +54,7 @@ export class Map extends Component {
 
 	private map!: LMap
 
-	protected readonly resizeController = new ResizeController(this, () => this.map.invalidateSize())
+	protected readonly resizeController = new ResizeController(this, { callback: () => this.map.invalidateSize() })
 
 	static override get styles() {
 		return css`
@@ -79,13 +80,13 @@ export class Map extends Component {
 	}
 
 	protected override initialized() {
-		ThemeHelper.background.changed.subscribe(() => this.initializeMap())
+		Theme.background.changed.subscribe(() => this.initializeMap())
 		this.initializeMap()
 	}
 
 	protected initializeMap() {
 		// @ts-expect-error
-		const styleLayers = () => this.layers.forEach(layer => layer.setStyle({ color: 'var(--mo-accent)' }))
+		const styleLayers = () => this.layers.forEach(layer => layer.setStyle({ color: 'var(--mo-color-accent)' }))
 
 		const dispatchChange = () => {
 			const geometries = this.layers.map(layer => {
@@ -113,7 +114,7 @@ export class Map extends Component {
 			this.selectedAreaChange.dispatch(geometryCollection)
 		}
 
-		const url = ThemeHelper.background.calculatedValue === Background.Dark ? Map.tileLayerUrlDark : Map.tileLayerUrlLight
+		const url = Theme.background.calculatedValue === Background.Dark ? Map.tileLayerUrlDark : Map.tileLayerUrlLight
 
 		this.map = new LMap(this.mapElement)
 			.setView([0, 0], 2)

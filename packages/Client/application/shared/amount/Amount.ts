@@ -1,22 +1,50 @@
-import { FormatHelper, component, Amount as AmountBase } from '@3mo/model'
-import { amountComponent, IAmountComponent } from './amountComponent'
+import { component, Component, property, css, html } from '@a11d/lit'
+import { AmountController } from './AmountController'
 import { amountModeStorage } from './amountModeStorage'
 
 @component('solid-amount')
-@amountComponent()
-export class Amount extends AmountBase implements IAmountComponent {
-	override readonly currencySymbol = amountModeStorage.getCurrencySymbol()
+export class Amount extends Component {
+	protected readonly amountController = new AmountController(this)
 
-	protected override get amountText() {
+	@property({ type: Number }) value = 0
+
+	static override get styles() {
+		return css`
+			div {
+				white-space: nowrap;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				color: var(--mo-amount-color);
+			}
+
+			:host([negative][redNegative]) div {
+				color: var(--mo-color-error);
+			}
+
+			span {
+				color: inherit;
+			}
+		`
+	}
+
+	protected override get template() {
+		return html`
+			<div>
+				<span>${this.amountText}</span>
+				<span>${this.currencySymbolText}</span>
+			</div>
+		`
+	}
+
+	protected get amountText() {
 		const value = amountModeStorage.getAmountBySatoshi(this.value)
-		return FormatHelper.amount(value, {
-			signDisplay: this.signDisplay,
+		return value.formatAsCurrency({
 			minimumFractionDigits: amountModeStorage.getFractionDigits(),
 			maximumFractionDigits: amountModeStorage.getFractionDigits(),
 		})
 	}
 
-	protected override get currencySymbolText() {
+	protected get currencySymbolText() {
 		return amountModeStorage.getCurrencySymbol()
 	}
 }

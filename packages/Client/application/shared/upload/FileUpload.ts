@@ -1,5 +1,8 @@
-import { Component, component, event, html, query, property, NotificationHost } from '@3mo/model'
+import { Component, component, event, html, query, property } from '@a11d/lit'
+import { NotificationHost } from '@a11d/lit-application'
 import { FileService } from 'sdk'
+
+// TODO: Migrate
 
 /**
  * @fires change {CustomEvent<string | undefined>}
@@ -34,7 +37,7 @@ export class FileUpload extends Component {
 			this.inputElement.value = ''
 			this.change.dispatch(undefined)
 		} catch (error) {
-			NotificationHost.instance.notifyError('Upload has failed. Try again.')
+			NotificationHost.instance?.notifyError('Upload has failed. Try again.')
 		}
 	}
 

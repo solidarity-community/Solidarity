@@ -1,4 +1,5 @@
-import { component, css, DialogComponent, html, state, nothing } from '@3mo/model'
+import { component, css, html, state, nothing } from '@a11d/lit'
+import { DialogComponent } from '@a11d/lit-application'
 import { Account, AccountService, Campaign, CampaignService, PaymentMethodIdentifier } from 'sdk'
 
 @component('solid-dialog-donate')
@@ -20,11 +21,11 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 		}
 		return this.donationDataByPaymentMethod
 	}
-	
+
 	private async fetchAccount() {
-		this.currentAccount = await AccountService.get()
+		this.currentAccount = await AccountService.getAuthenticated()
 	}
-	
+
 	private get selectedPaymentMethod() {
 		return this.parameters.campaign.activatedPaymentMethods
 			.find(dc => dc.identifier === this.selectedPaymentMethodIdentifier)
@@ -58,7 +59,7 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 			}
 
 			li::marker {
-				color: var(--mo-accent);
+				color: var(--mo-color-accent);
 				font-weight: bold;
 				font-size: larger;
 			}
@@ -68,12 +69,12 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 			}
 
 			li span, mo-flex[slot=header] span {
-				color: var(--mo-accent);
+				color: var(--mo-color-accent);
 				font-weight: bold;
 			}
 
-			mo-flex[slot=header] mo-div {
-				background: var(--mo-accent-gradient-transparent);
+			mo-flex[slot=header] div {
+				background: var(--mo-color-accent-gradient-transparent);
 				padding: 3px 6px;
 				border-radius: 0 6px 6px 0;
 			}
@@ -99,7 +100,7 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 			<mo-list>
 				${this.parameters.campaign.activatedPaymentMethods.map(paymentMethod => html`
 					<mo-list-item @click=${() => this.selectedPaymentMethodIdentifier = paymentMethod.identifier}>
-						<img slot='graphic' src=${paymentMethod.logoSource} />
+						<img width='30px' src=${paymentMethod.logoSource} />
 						${paymentMethod.name}
 					</mo-list-item>
 				`)}
@@ -111,7 +112,7 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 		const listItemsTemplate = html`
 			<li>
 				<mo-flex gap='10px'>
-					<mo-div><span>Donate.</span> Send <b>${this.selectedPaymentMethod?.name}</b> funds to this campaign via the following information:</mo-div>
+					<div><span>Donate.</span> Send <b>${this.selectedPaymentMethod?.name}</b> funds to this campaign via the following information:</div>
 					${this.paymentMethodTemplate}
 				</mo-flex>
 			</li>
@@ -128,9 +129,9 @@ export class DialogDonate extends DialogComponent<{ readonly campaign: Campaign 
 			<mo-flex slot='header' alignItems='center' direction='horizontal'>
 				<img src=${this.selectedPaymentMethod!.logoSource} />
 				${this.isPublicDonation ? html`
-					<mo-div><span>Public</span> donation</mo-div>
+					<div><span>Public</span> donation</div>
 				` : html`
-					<mo-div>Donate as <span>${this.currentAccount!.username}</span></mo-div>
+					<div>Donate as <span>${this.currentAccount!.username}</span></div>
 				`}
 			</mo-flex>
 

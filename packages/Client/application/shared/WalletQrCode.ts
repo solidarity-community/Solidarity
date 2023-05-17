@@ -1,4 +1,4 @@
-import { component, property } from '@3mo/model'
+import { component, property } from '@a11d/lit'
 import { QrCode } from './QrCode'
 
 @component('solid-wallet-qr-code')

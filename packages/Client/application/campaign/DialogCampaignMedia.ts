@@ -1,4 +1,5 @@
-import { cache, component, DialogComponent, html, ifDefined, query, state } from '@3mo/model'
+import { cache, component, html, ifDefined, query, state, style } from '@a11d/lit'
+import { DialogComponent } from '@a11d/lit-application'
 import { CampaignMedia, CampaignMediaType, CampaignMediaService, Campaign } from 'sdk'
 import { ButtonFileUpload } from 'application'
 
@@ -33,9 +34,9 @@ export class DialogCampaignMedia extends DialogComponent<{ readonly campaign?: C
 	private get selectionTemplate() {
 		return html`
 			<mo-flex direction='horizontal' gap='10px'>
-				<mo-button type='outlined' height='50px' @click=${() => this.mediaType = CampaignMediaType.File}>Image file</mo-button>
-				<mo-button type='outlined' height='50px' @click=${() => this.mediaType = CampaignMediaType.YouTube}>YouTube video</mo-button>
-				<mo-button type='outlined' height='50px' @click=${() => this.mediaType = CampaignMediaType.Twitch}>Twitch video</mo-button>
+				<mo-button type='outlined' ${style({ height: '50px' })} @click=${() => this.mediaType = CampaignMediaType.File}>Image file</mo-button>
+				<mo-button type='outlined' ${style({ height: '50px' })} @click=${() => this.mediaType = CampaignMediaType.YouTube}>YouTube video</mo-button>
+				<mo-button type='outlined' ${style({ height: '50px' })} @click=${() => this.mediaType = CampaignMediaType.Twitch}>Twitch video</mo-button>
 			</mo-flex>
 		`
 	}

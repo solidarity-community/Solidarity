@@ -1,4 +1,4 @@
-import { Component, component, html, property, nothing, css } from '@3mo/model'
+import { Component, component, html, property, nothing, css, style } from '@a11d/lit'
 import { CampaignAllocationEntryType } from 'sdk'
 
 @component('solid-campaign-allocation-entry-type-label')
@@ -14,20 +14,20 @@ export class CampaignAllocationEntryTypeLabel extends Component {
 			}
 
 			:host([type="${CampaignAllocationEntryType.Fund}"]) mo-flex {
-				background: var(--mo-accent-gradient-transparent);
-				color: var(--mo-accent);
+				background: var(--mo-color-accent-gradient-transparent);
+				color: var(--mo-color-accent);
 			}
 
 			:host([type="${CampaignAllocationEntryType.Refund}"]) mo-flex {
-				background: rgba(var(--mo-color-error-base), 0.12);
-				color: rgba(var(--mo-color-error-base), 1);
+				background: rgba(var(--mo-color-red-base), 0.12);
+				color: rgba(var(--mo-color-red-base), 1);
 			}
 		`
 	}
 
 	protected override get template() {
 		return this.type === undefined ? nothing : html`
-			<mo-flex alignItems='center' justifyContent='center' height='100%' padding='0px 10px' borderRadius='var(--mo-border-radius)'>
+			<mo-flex alignItems='center' justifyContent='center' ${style({ height: '100%', padding: '0px 10px', borderRadius: 'var(--mo-border-radius)' })}>
 				${this.type === CampaignAllocationEntryType.Fund ? 'Fund' : 'Refund'}
 			</mo-flex>
 		`

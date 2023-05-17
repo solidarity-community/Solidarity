@@ -1,8 +1,10 @@
-import { component, PageComponent, html, route, state, PageError, HttpErrorCode, nothing, authentication } from '@3mo/model'
-import { Account, AccountService, AuthenticationMethodType, AuthenticationService, AccountProfile, AccountProfileService } from 'sdk'
-import { DialogAccountProfile, DialogAuthenticationMethods, DialogAuthenticator } from 'application'
+import { component, nothing, html, state, style } from '@a11d/lit'
+import { PageComponent, PageError, route, HttpErrorCode } from '@a11d/lit-application'
+import { requiresAuthentication } from '@a11d/lit-application-authentication'
+import { Account, AccountService, AuthenticationMethodType, AccountProfile, AccountProfileService } from 'sdk'
+import { DialogAccountProfile, DialogAuthenticationMethods, DialogAuthentication } from 'application'
 
-@authentication()
+@requiresAuthentication()
 @route('/account')
 @component('solid-page-account')
 export class PageAccount extends PageComponent {
@@ -24,7 +26,7 @@ export class PageAccount extends PageComponent {
 	}
 
 	private async redirectToErrorPageIfNotAuthenticated() {
-		const isAuthenticated = await AuthenticationService.isAuthenticated()
+		const isAuthenticated = await AccountService.isAuthenticated()
 		if (isAuthenticated === false) {
 			new PageError({
 				error: HttpErrorCode.Unauthorized,
@@ -34,11 +36,11 @@ export class PageAccount extends PageComponent {
 	}
 
 	private async fetchAccount() {
-		this.account = await AccountService.get()
+		this.account = await AccountService.getAuthenticated()
 	}
 
 	private async fetchAuthenticationMethods() {
-		this.isNewByAuthenticationMethod = await AuthenticationService.getAll()
+		this.isNewByAuthenticationMethod = await AccountService.getAllAuthentications()
 	}
 
 	private async fetchProfile() {
@@ -48,9 +50,9 @@ export class PageAccount extends PageComponent {
 	protected override get template() {
 		return html`
 			<mo-page heading='Account'>
-				<mo-flex height='100%' width='100%' maxWidth='1028px' margin='auto' gap='24px'>
+				<mo-flex gap='24px' ${style({ height: '100%', width: '100%', maxWidth: '1028px', margin: 'auto' })}>
 					${this.topBarTemplate}
-					<mo-grid height='*' gap='16px'>
+					<mo-grid gap='16px' ${style({ flex: '1' })}>
 						${this.activitiesTemplate}
 						${this.securityTemplate}
 					</mo-grid>
@@ -66,10 +68,12 @@ export class PageAccount extends PageComponent {
 		return html`
 			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center'>
 				<mo-flex alignItems='center' direction='horizontal' gap='12px'>
-					<mo-avatar width='50px' height='50px' fontSize='var(--mo-font-size-xl)' foreground='var(--mo-color-accessible)'>${(this.profile?.firstName || DialogAuthenticator.authenticatedUser.value?.name || '').charAt(0).toUpperCase()}</mo-avatar>
+					<mo-avatar ${style({ width: '50px', height: '50px', fontSize: 'x-large', color: 'var(--mo-color-accessible)' })}>
+						${(this.profile?.firstName || this.account?.username || '').charAt(0).toUpperCase()}
+					</mo-avatar>
 					<mo-flex>
 						<mo-heading typography='heading3'>${hasName ? name : username}</mo-heading>
-						${!hasName ? nothing : html`<mo-heading typography='heading5' foreground='var(--mo-color-gray)'>${username}</mo-heading>`}
+						${!hasName ? nothing : html`<mo-heading typography='heading5' ${style({ color: 'var(--mo-color-gray)' })}>${username}</mo-heading>`}
 					</mo-flex>
 				</mo-flex>
 
@@ -88,8 +92,8 @@ export class PageAccount extends PageComponent {
 	private get activitiesTemplate() {
 		const getScoreTemplate = (header: string, score: number) => html`
 			<mo-flex alignItems='center' justifyContent='center'>
-				<mo-div>${header}</mo-div>
-				<mo-heading typography='heading3' foreground='var(--mo-accent)'>${score}</mo-heading>
+				<div>${header}</div>
+				<mo-heading typography='heading3' ${style({ color: 'var(--mo-color-accent)' })}>${score}</mo-heading>
 			</mo-flex>
 		`
 
@@ -107,10 +111,12 @@ export class PageAccount extends PageComponent {
 		const getAuthenticationMethodTemplate = (name: string, activated = false, editAction?: () => Promise<void> | void, deleteAction?: () => Promise<void> | void) => html`
 			<mo-card class='authenticationMethod'>
 				<mo-flex direction='horizontal'>
-					<mo-icon foreground=${activated ? 'var(--mo-accent)' : 'var(--mo-color-gray)'} icon=${activated ? 'verified' : 'gpp_maybe'}></mo-icon>
-					<mo-div fontSize='var(--mo-font-size-m)' width='*'>${name}</mo-div>
+					<mo-icon icon=${activated ? 'verified' : 'gpp_maybe'}
+						${style({ color: activated ? 'var(--mo-color-accent)' : 'var(--mo-color-gray)' })}
+					></mo-icon>
+					<div ${style({ flex: '1' })}>${name}</div>
 					${!editAction ? nothing : html`<mo-icon-button icon='edit' @click=${editAction}></mo-icon-button>`}
-					${!deleteAction ? nothing : html`<mo-icon-button icon='delete' foreground='var(--mo-color-error)' @click=${deleteAction}></mo-icon-button>`}
+					${!deleteAction ? nothing : html`<mo-icon-button icon='delete' ${style({ color: 'var(--mo-color-red)' })} @click=${deleteAction}></mo-icon-button>`}
 				</mo-flex>
 			</mo-card>
 		`

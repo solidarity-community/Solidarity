@@ -1,4 +1,5 @@
-import { component, DialogComponent, html, state } from '@3mo/model'
+import { component, html, state } from '@a11d/lit'
+import { DialogComponent } from '@a11d/lit-application'
 import { AccountService } from 'sdk'
 import JSEncrypt from 'jsencrypt'
 
@@ -16,13 +17,13 @@ export class DialogAccountRegister extends DialogComponent {
 					Register
 				</mo-loading-button>
 
-				<mo-flex gap='var(--mo-thickness-m)'>
+				<mo-flex gap='8px'>
 					<solid-field-username label='Username'
 						@change=${(e: CustomEvent<string>) => this.username = e.detail}
 						@validityChange=${(e: CustomEvent<boolean>) => this.isUsernameValid = e.detail}
 					></solid-field-username>
 
-					<mo-div>Safeguard your private-key as it is the only way you can recover your account in combination with your username.</mo-div>
+					<div>Safeguard your private-key as it is the only way you can recover your account in combination with your username.</div>
 					<solid-clipboard-text-block>${this.privateKey.getPrivateKey()}</solid-clipboard-text-block>
 
 					<mo-checkbox @change=${(e: CustomEvent<CheckboxValue>) => this.securityConfirmation = e.detail === 'checked'}>

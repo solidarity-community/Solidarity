@@ -1,6 +1,10 @@
-import { component, PageComponent, html, route, PageError, HttpErrorCode, nothing, state, DialogAcknowledge, NotificationHost, queryAll, Button, ButtonType } from '@3mo/model'
-import { Campaign, CampaignService, CampaignStatus } from 'sdk'
-import { DialogCampaign, DialogCampaignValidationVote, PageCampaigns, DialogDonate, DialogAuthenticator, DialogCampaignAllocations, TimerController } from 'application'
+import { component, html, nothing, state, queryAll, style } from '@a11d/lit'
+import { PageComponent, NotificationHost, route, PageError, HttpErrorCode, } from '@a11d/lit-application'
+import { Button, ButtonType } from '@3mo/button'
+import { DialogAcknowledge } from '@3mo/standard-dialogs'
+import { IntervalController } from '@3mo/interval-controller'
+import { Account, AccountService, Campaign, CampaignService, CampaignStatus } from 'sdk'
+import { DialogCampaign, DialogCampaignValidationVote, PageCampaigns, DialogDonate, DialogCampaignAllocations } from 'application'
 
 @route('/campaign/:id')
 @component('solid-page-campaign')
@@ -8,10 +12,11 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 	@state() private campaign?: Campaign
 	@state() private balance = 0
 	@state() private balanceShare = 0
+	@state() private authenticatedAccount?: Account
 
 	@queryAll('.action') private actionButtonElements!: Array<Button>
 
-	protected readonly campaignFetcherTimer = new TimerController(this, 10_000, () => this.fetch())
+	protected readonly campaignFetcherTimer = new IntervalController(this, 10_000, () => this.fetch())
 
 	private async fetchCampaign() {
 		try {
@@ -25,10 +30,15 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 		this.balanceShare = await CampaignService.getShare(this.parameters.id)
 	}
 
+	private async fetchAuthenticatedAccount() {
+		this.authenticatedAccount = await AccountService.getAuthenticated()
+	}
+
 	private async fetch() {
 		await Promise.all([
 			this.fetchCampaign(),
-			this.fetchShare()
+			this.fetchShare(),
+			this.fetchAuthenticatedAccount(),
 		])
 	}
 
@@ -36,12 +46,8 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 		this.fetch()
 	}
 
-	private get authenticatedUserId() {
-		return DialogAuthenticator.authenticatedUser.value?.id
-	}
-
 	private get isAuthenticatedUserTheCreator() {
-		return this.authenticatedUserId === this.campaign?.creatorId
+		return this.authenticatedAccount?.id === this.campaign?.creatorId
 	}
 
 	protected override updated() {
@@ -58,15 +64,16 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 						<mo-circular-progress indeterminate></mo-circular-progress>
 					</mo-flex>
 				` : html`
-					<mo-flex direction='horizontal' alignItems='center' padding='20px' background='var(--mo-color-transparent-gray-2)' gap='50px'>
-						<solid-campaign-progress width='*' .campaign=${this.campaign} alwaysShowValidationApprovalThreshold
+					<mo-flex direction='horizontal' alignItems='center' gap='50px' ${style({ padding: '20px', background: 'var(--mo-color-transparent-gray-2)' })}>
+						<solid-campaign-progress .campaign=${this.campaign} alwaysShowValidationApprovalThreshold
+							${style({ flex: 1 })}
 							@balanceChange=${(e: CustomEvent<number>) => this.balance = e.detail}
 						></solid-campaign-progress>
-					
+
 						${this.actionButtonsTemplate}
 					</mo-flex>
 
-					<mo-grid columns='2* *' rows='435px *' gap='25px' padding='20px'>
+					<mo-grid columns='2* *' rows='435px *' gap='25px' ${style({ padding: '20px' })}>
 						<mo-section heading='Gallery'>
 							<solid-campaign-slider readOnly .campaign=${this.campaign}></solid-campaign-slider>
 						</mo-section>
@@ -103,15 +110,15 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 					>Allocations</mo-button>
 				`}
 
-				${!this.authenticatedUserId || !this.balanceShare || this.campaign?.status !== CampaignStatus.Validation ? nothing : html`
+				${!this.authenticatedAccount?.id || !this.balanceShare || this.campaign?.status !== CampaignStatus.Validation ? nothing : html`
 					<mo-button class='action' icon='how_to_vote'
 						@click=${() => !this.campaign || !this.balanceShare ? void 0 : new DialogCampaignValidationVote({ campaign: this.campaign }).confirm()}
 					>
 						<mo-flex direction='horizontal' gap='5px' alignItems='baseline'>
-							<mo-div>Vote</mo-div>
-							<mo-div fontSize='var(--mo-font-size-s)' foreground='var(--mo-color-foreground)' opacity='0.75' style='letter-spacing: 0px; text-transform: initial;'>
+							<div>Vote</div>
+							<div ${style({ fontSize: 'small', color: 'var(--mo-color-foreground)', opacity: '0.75', letterSpacing: '0px', textTransform: 'initial' })}>
 								Ends <solid-timer .end=${this.campaign?.validation?.expiration}></solid-timer>
-							</mo-div>
+							</div>
 						</mo-flex>
 					</mo-button>
 				`}
@@ -154,7 +161,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 						<li>You won't be able to edit campaign's location and expenditures.</li>
 						<li>All donors will be notified to initiate the validation voting procedures.</li>
 						<li>The campaign cannot transition back to the funding status.</li>
-					</ul> 
+					</ul>
 					Are you sure you want to initiate the validation?
 				`,
 				primaryButtonText: 'Proceed',
@@ -165,7 +172,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 					await CampaignService.initiateValidation(this.campaign.id)
 					await this.fetchCampaign()
 				} catch (error: any) {
-					NotificationHost.instance.notifyError(error.message)
+					NotificationHost.instance?.notifyError(error.message)
 				}
 			}
 		}

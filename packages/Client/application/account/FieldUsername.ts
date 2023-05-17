@@ -1,23 +1,24 @@
-import { component, FieldTextBase, html, property } from '@3mo/model'
+import { component, html, property, style } from '@a11d/lit'
+import { FieldText } from '@3mo/text-fields'
 import { AccountService } from 'sdk'
+import { tooltip } from '@3mo/tooltip'
 
 @component('solid-field-username')
-export class FieldUsername extends FieldTextBase {
+export class FieldUsername extends FieldText {
 	@property() override label = 'Username'
 
-	protected override get template() {
+	protected override get endSlotTemplate() {
 		return html`
-			${super.template}
+			${super.endSlotTemplate}
 			${this.validationTemplate}
 		`
 	}
 
 	private get validationTemplate() {
 		return html`
-			<mo-icon
-				foreground=${this.invalid ? 'var(--mo-color-error)' : 'var(--mo-accent)'}
-				title=${this.invalid ? 'Username unavailable' : 'Username available'}
-				icon=${this.invalid ? 'error' : 'done'}
+			<mo-icon slot='end' icon=${this.invalid ? 'error' : 'done'}
+				${style({ color: this.invalid ? 'var(--mo-color-red)' : 'var(--mo-color-accent)' })}
+				${tooltip(this.invalid ? 'Username unavailable' : 'Username available')}
 			></mo-icon>
 		`
 	}

@@ -1,4 +1,4 @@
-import { Component, component, html, event, state, query } from '@3mo/model'
+import { Component, component, html, event, state, query } from '@a11d/lit'
 import { FileUpload } from '.'
 
 /** @fires upload CustomEvent<string> */

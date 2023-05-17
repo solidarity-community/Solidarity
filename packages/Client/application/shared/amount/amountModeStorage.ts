@@ -1,11 +1,11 @@
-import { LocalStorageEntry } from '@3mo/model'
+import { LocalStorage } from '@a11d/local-storage'
 
 export const enum AmountMode {
 	Satoshi = 1,
 	Bitcoin = 100_000_000,
 }
 
-export const amountModeStorage = new class extends LocalStorageEntry<AmountMode> {
+export const amountModeStorage = new class extends LocalStorage<AmountMode> {
 	constructor() {
 		super('Solidarity.Amount.Mode', AmountMode.Satoshi)
 	}

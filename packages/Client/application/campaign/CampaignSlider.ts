@@ -1,4 +1,4 @@
-import { Component, component, html, css, property, ifDefined, styleMap, when, query, nothing } from '@3mo/model'
+import { Component, component, html, css, property, ifDefined, when, query, nothing, style } from '@a11d/lit'
 import { Campaign, CampaignMedia, CampaignMediaType, FileService } from 'sdk'
 import { DialogCampaignMedia } from 'application'
 import { Slider } from '@a11d/lit-slider'
@@ -20,7 +20,7 @@ export class CampaignSlider extends Component {
 				min-height: 400px;
 			}
 
-			mo-error {
+			mo-empty-state {
 				min-height: 400px;
 			}
 
@@ -37,7 +37,7 @@ export class CampaignSlider extends Component {
 			}
 
 			lit-slider::part(previousButton), lit-slider::part(nextButton) {
-				background-color: var(--mo-accent);
+				background-color: var(--mo-color-accent);
 				border-radius: 100px;
 				width: 50px;
 				height: 50px;
@@ -52,18 +52,18 @@ export class CampaignSlider extends Component {
 	protected override get template() {
 		return html`
 			${!this.campaign.media?.length ? html`
-				<mo-error icon='collections' height='100%'>
+				<mo-empty-state icon='collections' ${style({ height: '100%' })}>
 					No media
-				</mo-error>
+				</mo-empty-state>
 			` : html`
 				<lit-slider hasPagination hasNavigation>
 					${this.campaign.media?.map(media => this.getSlideTemplate(media))}
 				</lit-slider>
 			`}
 			${when(!this.readOnly, () => html`
-				<mo-fab icon='add' right='8px' @click=${() => this.create()}>Add</mo-fab>
+				<mo-fab icon='add' ${style({ right: '8px' })} @click=${() => this.create()}>Add</mo-fab>
 				${when(!!this.campaign.media.length, () => html`
-					<mo-fab icon='delete' left='8px' @click=${() => this.deleteSelectedMedia()}>Delete</mo-fab>
+					<mo-fab icon='delete' ${style({ left: '8px' })} @click=${() => this.deleteSelectedMedia()}>Delete</mo-fab>
 				`)}
 			`)}
 		`
@@ -101,14 +101,14 @@ export class CampaignSlider extends Component {
 
 	private getFileSlideTemplate(media: CampaignMedia) {
 		return !media.uri ? nothing : html`
-			<lit-slide style=${styleMap({ background: `url(${FileService.getPath(media.uri)})` })}></lit-slide>
+			<lit-slide ${style({ background: `url(${FileService.getPath(media.uri)})` })}></lit-slide>
 		`
 	}
 
 	private getYouTubeSlideTemplate(media: CampaignMedia) {
 		return html`
 			<lit-slide>
-				<iframe type='text/html' style=${styleMap({ width: '100%', height: '100%' })}
+				<iframe type='text/html' ${style({ width: '100%', height: '100%' })}
 					src=${ifDefined(!media.uri ? undefined : `http://www.youtube.com/embed/${media.uri}`)}
 				></iframe>
 			</lit-slide>
@@ -119,7 +119,7 @@ export class CampaignSlider extends Component {
 	private getTwitchSlideTemplate(media: CampaignMedia) {
 		return html`
 			<lit-slide>
-				<iframe type='text/html' style=${styleMap({ width: '100%', height: '100%' })}
+				<iframe type='text/html' ${style({ width: '100%', height: '100%' })}
 					src=${ifDefined(!media.uri ? undefined : `https://player.twitch.tv/?channel=${media.uri}&html5&parent=${window.location.hostname}`)}
 				></iframe>
 			</lit-slide>

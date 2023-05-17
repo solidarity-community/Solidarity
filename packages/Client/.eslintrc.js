@@ -1,6 +1,6 @@
 export default {
 	extends: [
-		"./node_modules/@3mo/model/.eslintrc.json"
+		"./node_modules/@a11d/lit/.eslintrc.json"
 	],
 	parserOptions: {
 		"tsconfigRootDir": __dirname

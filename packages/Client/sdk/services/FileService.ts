@@ -1,19 +1,19 @@
-import { API } from 'sdk'
+import { Api } from 'sdk'
 
 export class FileService {
 	static getPath(uri: string) {
-		return `${API.url}/file/${uri}`
+		return `${Api.url}/file/${uri}`
 	}
 
 	static getAllowedExtensions() {
-		return API.get<Array<string>>('/file/allowed-extensions')
+		return Api.get<Array<string>>('/file/allowed-extensions')
 	}
 
 	static getMaximumSizeInMB() {
-		return API.get<number>('/file/max-size')
+		return Api.get<number>('/file/max-size')
 	}
 
 	static save(file: File) {
-		return API.postFile<string>('/file', file)
+		return Api.post<string>('/file', file)
 	}
 }

@@ -1,12 +1,13 @@
-import { component, DialogComponent, html, nothing, state } from '@3mo/model'
-import { AuthenticationMethodType, AuthenticationService } from 'sdk'
+import { component, html, nothing, state } from '@a11d/lit'
+import { DialogComponent } from '@a11d/lit-application'
+import { AuthenticationMethodType, AccountService } from 'sdk'
 
 @component('solid-dialog-authentication-methods')
 export class DialogAuthenticationMethods extends DialogComponent<{ readonly type: AuthenticationMethodType }> {
 	@state() private isNewByAuthenticationMethod = new Map<AuthenticationMethodType, boolean>()
 
 	protected override async initialized() {
-		this.isNewByAuthenticationMethod = await AuthenticationService.getAll()
+		this.isNewByAuthenticationMethod = await AccountService.getAllAuthentications()
 	}
 
 	protected override get template() {
@@ -33,7 +34,7 @@ export class DialogAuthenticationMethods extends DialogComponent<{ readonly type
 	@state() private newPasswordRepeat = ''
 	private get passwordTemplate() {
 		return html`
-			<mo-flex gap='var(--mo-thickness-m)'>
+			<mo-flex gap='8px'>
 				<mo-field-password label='Old Password'
 					?hidden=${this.isNewByAuthenticationMethod.get(AuthenticationMethodType.Password) === false}
 					value=${this.oldPassword}
@@ -57,6 +58,6 @@ export class DialogAuthenticationMethods extends DialogComponent<{ readonly type
 		if (this.newPasswordRepeat !== this.newPassword) {
 			throw new Error('Password confirmation failed')
 		}
-		return AuthenticationService.updatePassword(this.newPassword, this.oldPassword)
+		return AccountService.updatePassword(this.newPassword, this.oldPassword)
 	}
 }

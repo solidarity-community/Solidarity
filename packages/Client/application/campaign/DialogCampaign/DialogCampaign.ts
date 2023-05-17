@@ -1,4 +1,5 @@
-import { component, DialogComponent, html, ifDefined, state } from '@3mo/model'
+import { component, html, ifDefined, state, style } from '@a11d/lit'
+import { DialogComponent } from '@a11d/lit-application'
 import { Campaign, CampaignPaymentMethod, CampaignService, CampaignStatus, PaymentMethod, PaymentMethodService } from 'sdk'
 import { GeometryCollection } from 'geojson'
 
@@ -26,11 +27,11 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 		return html`
 			<mo-dialog size='medium' heading='Campaign' primaryButtonText=${this.parameters?.id ? 'Edit' : 'Create'}>
 				${!this.campaign ? html`
-					<mo-flex alignItems='center' justifyContent='center' height='100%'>
+					<mo-flex alignItems='center' justifyContent='center' ${style({ height: '100%' })}>
 						<mo-circular-progress indeterminate></mo-circular-progress>
 					</mo-flex>
 				` : html`
-					<mo-flex gap='var(--mo-thickness-xl)'>
+					<mo-flex gap='14px'>
 						<mo-field-text label='Title'
 							value=${this.campaign.title ?? ''}
 							@change=${(e: CustomEvent<string>) => this.campaign.title = e.detail}
@@ -43,7 +44,7 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 
 						<solid-campaign-slider .campaign=${this.campaign}></solid-campaign-slider>
 
-						<solid-map height='400px'
+						<solid-map ${style({ height: '400px' })}
 							?readOnly=${this.campaign.status !== CampaignStatus.Funding}
 							.selectedArea=${this.campaign.location}
 							@selectedAreaChange=${(e: CustomEvent<GeometryCollection>) => this.campaign.location = e.detail}
@@ -59,7 +60,7 @@ export class DialogCampaign extends DialogComponent<undefined | { readonly id: n
 										@change=${(e: CustomEvent<CheckboxValue>) => { this.campaign.activatedPaymentMethods = e.detail === 'checked' ? [...this.campaign.activatedPaymentMethods, new CampaignPaymentMethod(pm.identifier)] : this.campaign.activatedPaymentMethods.filter(dc => dc.identifier !== pm.identifier); this.requestUpdate() }}
 									></mo-checkbox>
 
-									<solid-field-allocation-destination width='*'
+									<solid-field-allocation-destination ${style({ flex: 1 })}
 										paymentMethodIdentifier=${pm.identifier}
 										?readonly=${this.campaign?.status === CampaignStatus.Allocation}
 										?disabled=${!this.campaign.activatedPaymentMethods.some(dc => dc.identifier === pm.identifier)}

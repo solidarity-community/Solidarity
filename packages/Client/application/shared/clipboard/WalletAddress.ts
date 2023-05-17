@@ -1,5 +1,6 @@
-import { component, html, property, nothing } from '@3mo/model'
+import { component, html, property, nothing } from '@a11d/lit'
 import { ClipboardTextBlock } from './ClipboardTextBlock'
+import { tooltip } from '@3mo/tooltip'
 
 @component('solid-wallet-address')
 export class WalletAddress extends ClipboardTextBlock {
@@ -9,7 +10,7 @@ export class WalletAddress extends ClipboardTextBlock {
 		return html`
 			${super.actionsTemplate}
 			${!this.protocol ? nothing : html`
-				<mo-icon-button small icon='launch' title='Open in a client' @click=${this.openClient}></mo-icon-button>
+				<mo-icon-button dense icon='launch' ${tooltip('Open in a client')} @click=${this.openClient}></mo-icon-button>
 			`}
 		`
 	}

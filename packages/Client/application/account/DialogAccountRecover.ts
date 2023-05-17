@@ -1,4 +1,5 @@
-import { component, DialogComponent, html, state } from '@3mo/model'
+import { component, html, state } from '@a11d/lit'
+import { DialogComponent } from '@a11d/lit-application'
 import { AccountService } from 'sdk'
 import JSEncrypt from 'jsencrypt'
 
@@ -14,10 +15,10 @@ export class DialogAccountRecover extends DialogComponent {
 					Recover
 				</mo-loading-button>
 
-				<mo-flex gap='var(--mo-thickness-m)'>
+				<mo-flex gap='8px'>
 					<span>To recover your account enter your username and the private key you were provided during account registration.</span>
 					<mo-field-text label='Username' @input=${(e: CustomEvent<string>) => this.username = e.detail}></mo-field-text>
-					<mo-text-area label='Private-Key' rows='10' @input=${(e: CustomEvent<string>) => this.privateKey = e.detail}></mo-text-area>
+					<mo-field-text-area label='Private-Key' @input=${(e: CustomEvent<string>) => this.privateKey = e.detail}></mo-field-text-area>
 				</mo-flex>
 			</mo-dialog>
 		`

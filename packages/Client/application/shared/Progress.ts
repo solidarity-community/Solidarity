@@ -1,4 +1,4 @@
-import { Component, html, TemplateResult } from '@3mo/model'
+import { Component, html, TemplateResult, style } from '@a11d/lit'
 
 export abstract class Progress extends Component {
 	protected abstract get progress(): number
@@ -9,8 +9,8 @@ export abstract class Progress extends Component {
 		return html`
 			<mo-flex gap='2px'>
 				<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center'>
-					<mo-div fontSize='var(--mo-font-size-s)' foreground='var(--mo-color-gray)'>${this.heading}</mo-div>
-					<mo-div>${this.value}</mo-div>
+					<div ${style({ fontSize: 'small', color: 'var(--mo-color-gray)' })}>${this.heading}</div>
+					<div>${this.value}</div>
 				</mo-flex>
 				${this.progressBarTemplate}
 			</mo-flex>

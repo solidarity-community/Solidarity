@@ -1,25 +1,25 @@
-import { API, Service, Campaign, PaymentMethodIdentifier, HttpError } from 'sdk'
+import { Api, Service, Campaign, PaymentMethodIdentifier, HttpError } from 'sdk'
 
 export class CampaignService extends Service {
 	static get(id: number) {
-		return API.get<Campaign>(`/campaign/${id}`)
+		return Api.get<Campaign>(`/campaign/${id}`)
 	}
 
 	static getAll() {
-		return API.get<Array<Campaign>>('/campaign')
+		return Api.get<Array<Campaign>>('/campaign')
 	}
 
 	static getBalance(campaignId: number) {
-		return API.get<number>(`/campaign/${campaignId}/balance`)
+		return Api.get<number>(`/campaign/${campaignId}/balance`)
 	}
 
 	static getShare(campaignId: number) {
-		return API.get<number>(`/campaign/${campaignId}/share`)
+		return Api.get<number>(`/campaign/${campaignId}/share`)
 	}
 
 	static async getDonationData(campaignId: number) {
 		try {
-			const response = await API.get<Record<PaymentMethodIdentifier, string>>(`/campaign/${campaignId}/donation-data`)
+			const response = await Api.get<Record<PaymentMethodIdentifier, string>>(`/campaign/${campaignId}/donation-data`)
 			return new Map(Object.entries(response)) as Map<PaymentMethodIdentifier, string>
 		} catch (error) {
 			Service.notifyError((error as HttpError).message)
@@ -28,16 +28,16 @@ export class CampaignService extends Service {
 	}
 
 	static async initiateValidation(campaignId: number) {
-		await API.post(`/campaign/${campaignId}/initiate-validation`)
+		await Api.post(`/campaign/${campaignId}/initiate-validation`)
 	}
 
 	static async getVote(campaignId: number) {
-		const vote = await API.get<boolean | null>(`/campaign/${campaignId}/vote`)
+		const vote = await Api.get<boolean | null>(`/campaign/${campaignId}/vote`)
 		return vote ?? undefined
 	}
 
 	static getVotes(campaignId: number) {
-		return API.get<{
+		return Api.get<{
 			readonly balance: number,
 			readonly endorsedBalance: number,
 			readonly approvalThreshold: number,
@@ -45,17 +45,17 @@ export class CampaignService extends Service {
 	}
 
 	static async vote(campaignId: number, value: boolean) {
-		await API.post(`/campaign/${campaignId}/vote`, value)
+		await Api.post(`/campaign/${campaignId}/vote`, value)
 	}
 
 	static save(campaign: Campaign) {
 		return campaign.id
-			? API.put<Campaign>(`/campaign/${campaign.id}`, campaign)
-			: API.post<Campaign>('/campaign', campaign)
+			? Api.put<Campaign>(`/campaign/${campaign.id}`, campaign)
+			: Api.post<Campaign>('/campaign', campaign)
 	}
 
 	static delete(id: number) {
-		return this.confirmDeletion(() => API.delete(`/campaign/${id}`), {
+		return this.confirmDeletion(() => Api.delete(`/campaign/${id}`), {
 			heading: 'Delete Campaign',
 			content: 'Are you sure you want to delete this campaign irreversibly? All donations will be refunded.',
 		})

@@ -1,4 +1,6 @@
-import { Component, component, css, html, NotificationHost } from '@3mo/model'
+import { Component, component, css, html } from '@a11d/lit'
+import { NotificationHost } from '@a11d/lit-application'
+import { tooltip } from '@3mo/tooltip'
 
 @component('solid-clipboard-text-block')
 export class ClipboardTextBlock extends Component {
@@ -31,7 +33,7 @@ export class ClipboardTextBlock extends Component {
 			mo-flex mo-icon-button {
 				border-radius: 50%;
 				background: rgba(var(--mo-color-accessible-base), 0.75);
-				color: var(--mo-accent);
+				color: var(--mo-color-accent);
 			}
 
 			:host(:hover) mo-flex {
@@ -53,14 +55,14 @@ export class ClipboardTextBlock extends Component {
 
 	protected get actionsTemplate() {
 		return html`
-			<mo-icon-button small icon='copy' title='Copy to clipboard' @click=${this.copyContentToClipboard}></mo-icon-button>
+			<mo-icon-button dense icon='copy' ${tooltip('Copy to Clipboard')} @click=${this.copyContentToClipboard}></mo-icon-button>
 		`
 	}
 
 	protected copyContentToClipboard = async () => {
 		if (this.value) {
 			await navigator.clipboard.writeText(this.value)
-			NotificationHost.instance.notifySuccess('Value copied to clipboard')
+			NotificationHost.instance?.notifySuccess('Value copied to clipboard')
 		}
 	}
 }

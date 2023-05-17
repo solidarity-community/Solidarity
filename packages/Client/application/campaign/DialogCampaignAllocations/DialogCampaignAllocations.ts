@@ -1,4 +1,5 @@
-import { component, DialogComponent, html, ifDefined } from '@3mo/model'
+import { component, html, ifDefined, style } from '@a11d/lit'
+import { DialogComponent } from '@a11d/lit-application'
 import { Campaign, CampaignAllocationEntry } from 'sdk'
 
 @component('solid-dialog-campaign-allocations')
@@ -12,18 +13,18 @@ export class DialogCampaignAllocations extends DialogComponent<{ readonly campai
 					}
 				</style>
 				<mo-data-grid .data=${this.parameters.campaign.allocation?.entries ?? []}>
-					<solid-data-grid-column-campaign-allocation-entry-type heading='Type' dataSelector=${nameof<CampaignAllocationEntry>('type')}></solid-data-grid-column-campaign-allocation-entry-type>
-					<mo-data-grid-column-date width='100px' hidden heading='Date' dataSelector=${nameof<CampaignAllocationEntry>('creation')}></mo-data-grid-column-date>
-					<solid-data-grid-column-payment-method heading='Payment Method' dataSelector=${nameof<CampaignAllocationEntry>('paymentMethodIdentifier')}></solid-data-grid-column-payment-method>
-					<mo-data-grid-column-text width='*' heading='Transaction ID' dataSelector=${nameof<CampaignAllocationEntry>('data')}></mo-data-grid-column-text>
-					<solid-data-grid-column-amount width='100px' heading='Amount' dataSelector=${nameof<CampaignAllocationEntry>('amount')}></solid-data-grid-column-amount>
+					<solid-data-grid-column-campaign-allocation-entry-type heading='Type' dataSelector=${getKeyPath<CampaignAllocationEntry>('type')}></solid-data-grid-column-campaign-allocation-entry-type>
+					<mo-data-grid-column-date width='100px' hidden heading='Date' dataSelector=${getKeyPath<CampaignAllocationEntry>('creation')}></mo-data-grid-column-date>
+					<solid-data-grid-column-payment-method heading='Payment Method' dataSelector=${getKeyPath<CampaignAllocationEntry>('paymentMethodIdentifier')}></solid-data-grid-column-payment-method>
+					<mo-data-grid-column-text width='*' heading='Transaction ID' dataSelector=${getKeyPath<CampaignAllocationEntry>('data')}></mo-data-grid-column-text>
+					<solid-data-grid-column-amount width='100px' heading='Amount' dataSelector=${getKeyPath<CampaignAllocationEntry>('amount')}></solid-data-grid-column-amount>
 
-					<mo-data-grid-footer-sum slot='sum' heading='Allocated Refunds' foreground='var(--mo-accent)'>
-						<solid-amount fontWeight='bold' value=${ifDefined(this.parameters.campaign.allocation?.totalRefundAmount)}></solid-amount>
+					<mo-data-grid-footer-sum slot='sum' heading='Allocated Refunds' ${style({ color: 'var(--mo-color-accent)' })}>
+						<solid-amount value=${ifDefined(this.parameters.campaign.allocation?.totalRefundAmount)} ${style({ fontWeight: 'bold' })}></solid-amount>
 					</mo-data-grid-footer-sum>
 
-					<mo-data-grid-footer-sum slot='sum' heading='Allocated Funds' foreground='var(--mo-accent)'>
-						<solid-amount fontWeight='bold' value=${ifDefined(this.parameters.campaign.allocation?.totalFundAmount)}></solid-amount>
+					<mo-data-grid-footer-sum slot='sum' heading='Allocated Funds' ${style({ color: 'var(--mo-color-accent)' })}>
+						<solid-amount value=${ifDefined(this.parameters.campaign.allocation?.totalFundAmount)} ${style({ fontWeight: 'bold' })}></solid-amount>
 					</mo-data-grid-footer-sum>
 				</mo-data-grid>
 			</mo-dialog>

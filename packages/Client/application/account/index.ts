@@ -1,5 +1,5 @@
 export * from './FieldUsername'
-export * from './DialogAuthenticator'
+export * from './DialogAuthentication'
 export * from './DialogAccountRegister'
 export * from './DialogAccountRecover'
 export * from './DialogAuthenticationMethods'

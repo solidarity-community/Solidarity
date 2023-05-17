@@ -1,5 +1,9 @@
-import { Background, Component, component, html, query, SlotController, ThemeHelper } from '@3mo/model'
+import { Component, component, html, query } from '@a11d/lit'
+import { SlotController } from '@3mo/slot-controller'
+import { Theme, Background } from '@3mo/theme'
 import * as QRCode from 'qrcode'
+
+// TODO: Migrate to a11d/lit-qr-code
 
 @component('solid-qr-code')
 export class QrCode extends Component {
@@ -17,7 +21,7 @@ export class QrCode extends Component {
 	}
 
 	private updateQrCode() {
-		const backgroundTheme = ThemeHelper.background.calculatedValue
+		const backgroundTheme = Theme.background.calculatedValue
 		if (this.data) {
 			QRCode.toCanvas(this.canvasElement, this.data, {
 				margin: 0,

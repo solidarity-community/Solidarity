@@ -1,9 +1,21 @@
-import { Component, component, html, property, nothing } from '@3mo/model'
+import { Component, component, html, property, nothing, style, css } from '@a11d/lit'
 import { Campaign } from 'sdk'
 
 @component('solid-campaign-allocation-progress')
 export class CampaignAllocationProgress extends Component {
 	@property({ type: Object }) campaign?: Campaign
+
+	static override get styles() {
+		return css`
+			.amount { text-align: center; }
+			.amount > div { color: var(--mo-color-gray); }
+			.amount > solid-amount {
+				font-weight: bold;
+				font-size: large;
+				color: var(--mo-color-accent);
+			}
+		`
+	}
 
 	protected override get template() {
 		return !this.campaign?.allocation ? nothing : html`
@@ -16,9 +28,9 @@ export class CampaignAllocationProgress extends Component {
 
 	private getAmountTemplate(heading: string, amount: number) {
 		return html`
-			<mo-flex textAlign='center'>
-				<mo-div foreground='var(--mo-color-gray)'>${heading}</mo-div>
-				<solid-amount fontWeight='bold' fontSize='var(--mo-font-size-l)' foreground='var(--mo-accent)' value=${amount}></solid-amount>
+			<mo-flex class='amount'>
+				<div>${heading}</div>
+				<solid-amount value=${amount}></solid-amount>
 			</mo-flex>
 		`
 	}

@@ -1,11 +1,13 @@
-import { component, FieldAmount as FieldAmountBase, FormatHelper } from '@3mo/model'
+import { component, FieldAmount as FieldAmountBase } from '@a11d/lit'
 import { amountModeStorage } from '.'
-import { amountComponent, IAmountComponent } from './amountComponent'
+import { amountComponent, IAmountComponent } from './AmountController'
+
+// TODO: Migrate
 
 @component('solid-field-amount')
 @amountComponent()
 export class FieldAmount extends FieldAmountBase implements IAmountComponent {
-	amountModeStorageChangeHandler = () => this.value = this._value
+	amountModeChanged = () => this.value = this._value
 
 	protected override fromValue(value: number | undefined) {
 		return typeof value === 'number' ? FormatHelper.amount(amountModeStorage.getAmountBySatoshi(value), {

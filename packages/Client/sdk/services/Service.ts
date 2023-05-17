@@ -1,20 +1,25 @@
-import { DialogDefault, NotificationHost } from '@3mo/model'
+import { NotificationHost } from '@a11d/lit-application'
+import { DialogDefault } from '@3mo/standard-dialogs'
 
 export class Service {
-	static notifyInfo(...parameters: Parameters<typeof NotificationHost.instance.notifyInfo>) {
-		return NotificationHost.instance.notifyInfo(...parameters)
+	private static get notificationHostInstance() {
+		return NotificationHost.instance as NotificationHost
 	}
 
-	static notifySuccess(...parameters: Parameters<typeof NotificationHost.instance.notifySuccess>) {
-		return NotificationHost.instance.notifySuccess(...parameters)
+	static notifyInfo(...parameters: Parameters<typeof Service.notificationHostInstance.notifyInfo>) {
+		return Service.notificationHostInstance.notifyInfo(...parameters)
 	}
 
-	static notifyWarning(...parameters: Parameters<typeof NotificationHost.instance.notifyWarning>) {
-		return NotificationHost.instance.notifyWarning(...parameters)
+	static notifySuccess(...parameters: Parameters<typeof Service.notificationHostInstance.notifySuccess>) {
+		return Service.notificationHostInstance.notifySuccess(...parameters)
 	}
 
-	static notifyError(...parameters: Parameters<typeof NotificationHost.instance.notifyError>) {
-		return NotificationHost.instance.notifyError(...parameters)
+	static notifyWarning(...parameters: Parameters<typeof Service.notificationHostInstance.notifyWarning>) {
+		return Service.notificationHostInstance.notifyWarning(...parameters)
+	}
+
+	static notifyError(...parameters: Parameters<typeof Service.notificationHostInstance.notifyError>) {
+		return Service.notificationHostInstance.notifyError(...parameters)
 	}
 
 	static throwAndNotify(errorOrErrorMessage: Error | string) {

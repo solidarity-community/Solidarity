@@ -1,4 +1,4 @@
-import { API, PaymentMethod, PaymentMethodIdentifier } from 'sdk'
+import { Api, PaymentMethod, PaymentMethodIdentifier } from 'sdk'
 
 export class PaymentMethodService {
 	static async getAll() {
@@ -7,10 +7,10 @@ export class PaymentMethodService {
 	}
 
 	static getAllIdentifiers() {
-		return API.get<Array<PaymentMethodIdentifier>>('/paymentMethod')
+		return Api.get<Array<PaymentMethodIdentifier>>('/paymentMethod')
 	}
 
 	static isAllocationDestinationValid(identifier: PaymentMethodIdentifier, allocationDestination: string) {
-		return API.get<boolean>(`/paymentMethod/${identifier}/is-allocation-destination-valid/${allocationDestination}`)
+		return Api.get<boolean>(`/paymentMethod/${identifier}/is-allocation-destination-valid/${allocationDestination}`)
 	}
 }

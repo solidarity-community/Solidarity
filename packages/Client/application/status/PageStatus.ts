@@ -1,11 +1,12 @@
-import { component, PageComponent, html, route, TemplateResult, nothing, css, styleMap, state } from '@3mo/model'
+import { component, html, TemplateResult, nothing, css, style, state } from '@a11d/lit'
+import { PageComponent, route } from '@a11d/lit-application'
+import { IntervalController } from '@3mo/interval-controller'
 import { Health, HealthCheck, HealthService } from 'sdk'
-import { IntervalController } from 'application'
 
 @route('/status')
 @component('solid-page-status')
 export class PageStatus extends PageComponent {
-	protected readonly _ = new IntervalController(this, TimeSpan.fromMilliseconds(30_000), () => this.fetchHealth())
+	protected readonly _ = new IntervalController(this, 30_000, () => this.fetchHealth())
 
 	@state() private health?: Health
 
@@ -56,13 +57,13 @@ export class PageStatus extends PageComponent {
 						<mo-circular-progress indeterminate></mo-circular-progress>
 					</mo-flex>
 				` : html`
-					<mo-flex height='100%'>
-						<mo-flex direction='horizontal' background='var(--mo-color-transparent-gray-2)' foreground='var(--mo-accent)' gap='6px' padding='20px' alignItems='center' justifyContent='center' fontSize='x-large'>
-							<mo-div width='*'>Solidarity</mo-div>
+					<mo-flex ${style({ height: '100%' })}>
+						<mo-flex direction='horizontal' gap='6px' alignItems='center' justifyContent='center' ${style({ padding: '20px', background: 'var(--mo-color-transparent-gray-2)', color: 'var(--mo-color-accent)', fontSize: 'x-large' })}>
+							<div ${style({ flex: 1 })}>Solidarity</div>
 							<solid-status status=${this.health.status}></solid-status>
 						</mo-flex>
 
-						<mo-flex padding='20px'>
+						<mo-flex ${style({ padding: '20px' })}>
 							${this.getHealthChecksTemplate(this.health.checks)}
 						</mo-flex>
 					</mo-flex>
@@ -73,7 +74,7 @@ export class PageStatus extends PageComponent {
 
 	private getHealthChecksTemplate(checks: Array<HealthCheck>, index = 0): TemplateResult<1> {
 		return html`
-			<mo-flex class='checks' style=${styleMap({ marginLeft: `${index * 20}px` })}>
+			<mo-flex class='checks' ${style({ marginLeft: `${index * 20}px` })}>
 				${checks.map(check => this.getHealthCheckTemplate(check, index + 1))}
 			</mo-flex>
 		`
@@ -83,7 +84,7 @@ export class PageStatus extends PageComponent {
 		return html`
 			<mo-flex class='check'>
 				<mo-flex direction='horizontal' alignItems='center'>
-					<mo-div width='*' fontSize='large'>${check.key}</mo-div>
+					<div ${style({ flex: 1, fontSize: 'large' })}>${check.key}</div>
 					<solid-status status=${check.status}></solid-status>
 				</mo-flex>
 				${!check.checks.length ? nothing : this.getHealthChecksTemplate(check.checks, index)}

@@ -1,29 +1,52 @@
-import { API, Account } from 'sdk'
+import { Api, Account, AuthenticationMethodType } from 'sdk'
 
 export class AccountService {
-	static get() {
-		return !API.authenticator?.isAuthenticated() ? Promise.resolve(undefined) : API.get<Account>(`/account`)
+	// TODO: Migrate: This endpoint does not exist.
+	static getAuthenticated() {
+		return Api.get<Account | undefined>('/account/authenticated')
 	}
 
 	static isUsernameAvailable(username: string) {
-		return API.get<boolean>(`/account/is-username-available/${username}`)
+		return Api.get<boolean>(`/account/is-username-available/${username}`)
 	}
 
 	static async create(account: Account) {
-		const token = await API.post<string>(`/account`, account)
-		API.authenticator?.authenticate(token)
+		const token = await Api.post<string>(`/account`, account)
+		Api.authenticator?.authenticate(token)
 	}
 
 	static update(account: Account) {
-		return API.put<Account>(`/account`, account)
+		return Api.put<Account>(`/account`, account)
 	}
 
 	static reset(username: string) {
-		return API.get<string>(`/account/${username}/reset`)
+		return Api.get<string>(`/account/${username}/reset`)
 	}
 
 	static async recover(phrase: string) {
-		const token = await API.get<string>(`/account/recover?phrase=${phrase}`)
-		API.authenticator?.authenticate(token)
+		const token = await Api.get<string>(`/account/recover?phrase=${phrase}`)
+		Api.authenticator?.authenticate(token)
+	}
+
+	static async getAllAuthentications() {
+		const isNewByAuthenticationObject = await Api.get<Record<AuthenticationMethodType, boolean>>('/authentication')
+		return new Map(Object.entries(isNewByAuthenticationObject)) as Map<AuthenticationMethodType, boolean>
+	}
+
+	static async isAuthenticated() {
+		return !!Api.authenticator?.isAuthenticated() && await Api.get<boolean>(`/authentication/check`)
+	}
+
+	static async authenticateWithPassword(username: string, password: string) {
+		const token = await Api.get<string>(`/authentication/password?username=${username}&password=${password}`)
+		Api.authenticator?.authenticate(token)
+	}
+
+	static updatePassword(newPassword: string, oldPassword: string) {
+		return Api.put(`/authentication/password?newPassword=${newPassword}${oldPassword ? `&oldPassword=${oldPassword}` : ''}`)
+	}
+
+	static unauthenticate() {
+		Api.authenticator?.unauthenticate()
 	}
 }

@@ -1,7 +1,7 @@
-import { API, Health } from 'sdk'
+import { Api, Health } from 'sdk'
 
 export class HealthService {
 	static get() {
-		return API.get<Health>('/health', { noHttpErrorOnErrorStatusCode: true })
+		return Api.get<Health>('/health', { noHttpErrorOnErrorStatusCode: true })
 	}
 }

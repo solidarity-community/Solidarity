@@ -1,6 +1,7 @@
-import { component, property, nothing, state, html, event } from '@3mo/model'
+import { component, property, nothing, state, html, event, style } from '@a11d/lit'
+import { IntervalController } from '@3mo/interval-controller'
 import { Campaign, CampaignService } from 'sdk'
-import { Progress, TimerController } from 'application'
+import { Progress } from 'application'
 
 /** @fires balanceChange */
 @component('solid-campaign-funding-progress')
@@ -13,7 +14,7 @@ export class CampaignFundingProgress extends Progress {
 
 	@state() private balance = 0
 
-	protected _ = new TimerController(this, CampaignFundingProgress.balanceFetchInterval, this.fetchBalance.bind(this))
+	protected _ = new IntervalController(this, CampaignFundingProgress.balanceFetchInterval, this.fetchBalance.bind(this))
 
 	private async fetchBalance() {
 		if (this.campaign.id) {
@@ -26,8 +27,8 @@ export class CampaignFundingProgress extends Progress {
 	protected get progress() { return this.balance / this.campaign.totalExpenditure }
 	protected get value() {
 		return html`
-			<mo-flex direction='horizontal' gap='2px' foreground='var(--mo-color-gray)'>
-				<solid-amount foreground='var(--mo-color-foreground)' value=${this.balance}></solid-amount>
+			<mo-flex direction='horizontal' gap='2px' ${style({ color: 'var(--mo-color-gray)' })}>
+				<solid-amount value=${this.balance} ${style({ color: 'var(--mo-color-foreground)' })}></solid-amount>
 				/
 				<solid-amount value=${this.campaign.totalExpenditure}></solid-amount>
 			</mo-flex>

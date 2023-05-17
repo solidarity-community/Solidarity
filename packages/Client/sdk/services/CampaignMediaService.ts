@@ -1,12 +1,12 @@
-import { API, CampaignMedia, CampaignMediaType } from 'sdk'
+import { Api, CampaignMedia, CampaignMediaType } from 'sdk'
 
 export class CampaignMediaService {
 	static get(id: number) {
-		return API.get<CampaignMedia>(`/media/${id}`)
+		return Api.get<CampaignMedia>(`/media/${id}`)
 	}
 
 	static getAll() {
-		return API.get<Array<CampaignMedia>>('/media')
+		return Api.get<Array<CampaignMedia>>('/media')
 	}
 
 	static extractUriByType(content: string, type: CampaignMediaType) {
@@ -39,10 +39,10 @@ export class CampaignMediaService {
 	}
 
 	static save(media: CampaignMedia) {
-		return API.post<CampaignMedia>('/media', media)
+		return Api.post<CampaignMedia>('/media', media)
 	}
 
 	static delete(id: number) {
-		return API.delete(`/media/${id}`)
+		return Api.delete(`/media/${id}`)
 	}
 }

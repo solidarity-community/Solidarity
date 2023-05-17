@@ -1,4 +1,4 @@
-import { Component, component, css, html, nothing, property } from '@3mo/model'
+import { Component, component, css, html, nothing, property, style } from '@a11d/lit'
 import { Campaign, CampaignExpenditure, CampaignStatus } from 'sdk'
 
 @component('solid-section-campaign-expenditure')
@@ -21,8 +21,8 @@ export class SectionCampaignExpenditure extends Component {
 			}
 
 			.total {
-				color: var(--mo-accent);
-				font-size: var(--mo-font-size-l);
+				color: var(--mo-color-accent);
+				font-size: large;
 			}
 		`
 	}
@@ -40,14 +40,14 @@ export class SectionCampaignExpenditure extends Component {
 					${this.campaign.expenditures.map(expenditure => html`
 						${this.getNameTemplate(expenditure)}
 						${this.getQuantityTemplate(expenditure)}
-						<mo-div class='symbol'> × </mo-div>
+						<div class='symbol'> × </div>
 						${this.getUnitPriceTemplate(expenditure)}
-						<mo-div class='symbol'> = </mo-div>
+						<div class='symbol'> = </div>
 						<solid-amount class='sum price'
 							value=${expenditure.unitPrice * expenditure.quantity}
 						></solid-amount>
 					`)}
-					<mo-div class='total' gridColumn='1 / -2'>Total</mo-div>
+					<div class='total' ${style({ gridColumn: '1 / -2' })}>Total</div>
 					<solid-amount class='total sum price' value=${this.campaign.totalExpenditure}></solid-amount>
 				</mo-grid>
 			</mo-section>
@@ -62,7 +62,7 @@ export class SectionCampaignExpenditure extends Component {
 				@change=${(e: CustomEvent<string>) => expenditure.name = e.detail}
 			></mo-field-text>
 		` : html`
-			<mo-div>${expenditure.name}</mo-div>
+			<div>${expenditure.name}</div>
 		`
 	}
 
@@ -74,7 +74,7 @@ export class SectionCampaignExpenditure extends Component {
 				@change=${(e: CustomEvent<number>) => { expenditure.quantity = e.detail; this.requestUpdate() }}
 			></mo-field-number>
 		` : html`
-			<mo-div class='price'>${expenditure.quantity}</mo-div>
+			<div class='price'>${expenditure.quantity}</div>
 		`
 	}
 

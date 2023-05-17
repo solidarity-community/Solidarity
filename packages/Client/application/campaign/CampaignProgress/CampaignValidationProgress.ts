@@ -1,6 +1,7 @@
-import { component, property, nothing, state, html, FormatHelper } from '@3mo/model'
+import { component, property, nothing, state, html, style } from '@a11d/lit'
+import { IntervalController } from '@3mo/interval-controller'
 import { Campaign, CampaignService } from 'sdk'
-import { DialogCampaignValidationVote, Progress, TimerController } from 'application'
+import { DialogCampaignValidationVote, Progress } from 'application'
 
 @component('solid-campaign-validation-progress')
 export class CampaignValidationProgress extends Progress {
@@ -12,7 +13,7 @@ export class CampaignValidationProgress extends Progress {
 		}
 	}
 
-	protected _ = new TimerController(this, CampaignValidationProgress.votesFetchInterval, this.fetchVotes)
+	protected _ = new IntervalController(this, CampaignValidationProgress.votesFetchInterval, this.fetchVotes)
 
 	@property({ type: Boolean, reflect: true }) alwaysShowApprovalThreshold = false
 	@property({ type: Object, updated(this: CampaignValidationProgress) { this.fetchVotes() } }) campaign!: Campaign
@@ -32,16 +33,16 @@ export class CampaignValidationProgress extends Progress {
 	protected get progress() { return this.votes.endorsedBalance / this.votes.balance }
 	protected get value() {
 		return html`
-			<mo-flex direction='horizontal' gap='4px' foreground='var(--mo-color-gray)' alignItems='baseline'>
+			<mo-flex direction='horizontal' gap='4px' alignItems='baseline' ${style({ color: 'var(--mo-color-gray)' })}>
 				<mo-flex direction='horizontal' gap='3px' alignItems='baseline'>
-					<solid-amount foreground='var(--mo-color-foreground)' value=${this.votes.balance}></solid-amount>
-					<mo-div fontSize='var(--mo-font-size-s)'>Raised</mo-div>
+					<solid-amount ${style({ color: 'var(--mo-color-foreground)' })} value=${this.votes.balance}></solid-amount>
+					<div ${style({ fontSize: 'small' })}>Raised</div>
 				</mo-flex>
-				<mo-div>●</mo-div>
-				<mo-div>
-					<mo-div foreground='var(--mo-color-foreground)'>${FormatHelper.percent(this.votes.endorsedBalance / this.votes.balance * 100)}%</mo-div>
-					<mo-div fontSize='var(--mo-font-size-s)'>Endorsed</mo-div>
-				</mo-div>
+				<div>●</div>
+				<div>
+					<div ${style({ color: 'var(--mo-color-foreground)' })}>${(this.votes.endorsedBalance / this.votes.balance).formatAsPercent()}</div>
+					<div ${style({ fontSize: 'small' })}>Endorsed</div>
+				</div>
 			</mo-flex>
 		`
 	}
@@ -85,12 +86,12 @@ export class CampaignValidationProgress extends Progress {
 
 	protected override get progressBarTemplate() {
 		return html`
-			<mo-flex position='relative'>
+			<mo-flex ${style({ position: 'relative' })}>
 				${super.progressBarTemplate}
 				<span>
 					<mo-flex direction='horizontal' gap='6px' alignItems='center'>
-						<mo-div fontSize='var(--mo-font-size-s)' foreground='var(--mo-color-gray)'>Approval</mo-div>
-						<mo-div>${FormatHelper.percent(this.votes.approvalThreshold * 100)}%</mo-div>
+						<div ${style({ fontSize: 'small', color: 'var(--mo-color-gray)' })}>Approval</div>
+						<div>${this.votes.approvalThreshold.formatAsPercent()}</div>
 					</mo-flex>
 				</span>
 			</mo-flex>

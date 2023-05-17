@@ -1,4 +1,5 @@
-import { component, DialogComponent, html, state } from '@3mo/model'
+import { component, html, state } from '@a11d/lit'
+import { DialogComponent } from '@a11d/lit-application'
 import { AccountProfile, AccountProfileService } from 'sdk'
 
 @component('solid-dialog-account-profile')
@@ -14,7 +15,7 @@ export class DialogAccountProfile extends DialogComponent<{ readonly accountId: 
 	protected override get template() {
 		return html`
 			<mo-dialog heading='Profile' primaryButtonText='Save' primaryOnEnter>
-				<mo-flex gap='var(--mo-thickness-m)'>
+				<mo-flex gap='8px'>
 					<mo-field-text label='First name'
 						value=${this.profile.firstName ?? ''}
 						@change=${(e: CustomEvent<string>) => this.profile.firstName = e.detail}
