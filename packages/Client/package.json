@@ -14,6 +14,7 @@
 		"@a11d/api-jwt": "x",
 		"@a11d/api-dotnet": "x",
 		"@a11d/lit-application-authentication": "x",
+		"@a11d/lit-qr-code": "x",
 		"@geoman-io/leaflet-geoman-free": "2.x",
 		"@3mo/interval-controller": "x",
 		"@3mo/theme": "x",
@@ -62,8 +63,7 @@
 		"@3mo/entity-data-grid": "x",
 		"@3mo/date-time-value-constructor": "x",
 		"jsencrypt": "3.x",
-		"leaflet": "1.x",
-		"qrcode": "1.x"
+		"leaflet": "1.x"
 	},
 	"devDependencies": {
 		"@types/leaflet": "1.x",

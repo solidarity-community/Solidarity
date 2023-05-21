@@ -43,7 +43,7 @@ export class DialogCampaignMedia extends DialogComponent<{ readonly campaign?: C
 
 	private get fileMediaTemplate() {
 		return html`
-			<solid-button-file-upload @upload=${(e: CustomEvent<string>) => this.content = e.detail}></solid-button-file-upload>
+			<solid-button-file-upload @change=${(e: CustomEvent<string>) => this.content = e.detail}></solid-button-file-upload>
 		`
 	}
 

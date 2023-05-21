@@ -2,17 +2,20 @@ import { Component, Controller } from '@a11d/lit'
 import { amountModeStorage } from './amountModeStorage'
 
 export class AmountController extends Controller {
-	constructor(protected readonly amountComponent: { amountModeChanged?: () => void } & Component) {
+	constructor(protected readonly amountComponent: Component, protected readonly callback?: () => void) {
 		super(amountComponent)
 	}
 
 	override hostConnected() {
-		amountModeStorage.changed.subscribe(this.callback)
+		amountModeStorage.changed.subscribe(this.handleChange)
 	}
 
 	override hostDisconnected() {
-		amountModeStorage.changed.unsubscribe(this.callback)
+		amountModeStorage.changed.unsubscribe(this.handleChange)
 	}
 
-	private callback = () => this.amountComponent.amountModeChanged?.()
+	private handleChange = () => {
+		this.amountComponent.requestUpdate()
+		this.callback?.()
+	}
 }

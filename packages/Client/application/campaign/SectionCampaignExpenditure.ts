@@ -80,11 +80,11 @@ export class SectionCampaignExpenditure extends Component {
 
 	private getUnitPriceTemplate(expenditure: CampaignExpenditure) {
 		return this.editable ? html`
-			<solid-field-amount dense label='Unit Price'
+			<solid-field-currency dense label='Unit Price'
 				?readonly=${this.campaign.status !== CampaignStatus.Funding}
 				value=${expenditure.unitPrice}
 				@change=${(e: CustomEvent<number>) => { expenditure.unitPrice = e.detail; this.requestUpdate() }}
-			></solid-field-amount>
+			></solid-field-currency>
 		` : html`
 			<solid-amount class='price' value=${expenditure.unitPrice}></solid-amount>
 		`

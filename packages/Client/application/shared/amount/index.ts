@@ -1,4 +1,4 @@
 export * from './amountModeStorage'
 export * from './Amount'
-export * from './FieldAmount'
+export * from './FieldCurrency'
 export * from './DataGridColumnAmount'

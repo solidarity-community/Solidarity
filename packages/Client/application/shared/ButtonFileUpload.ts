@@ -1,36 +1,36 @@
 import { Component, component, html, event, state, query } from '@a11d/lit'
-import { FileUpload } from '.'
+import { FileUpload } from '@3mo/file-upload'
 
-/** @fires upload CustomEvent<string> */
+/** @fires change CustomEvent<string> */
 @component('solid-button-file-upload')
 export class ButtonFileUpload extends Component {
-	@event() readonly upload!: EventDispatcher<string>
+	@event() readonly change!: EventDispatcher<string | undefined>
 
 	@state() private fileName?: string
 	@state() private isUploading = false
 
-	@query('solid-file-upload') readonly fileUploadElement!: FileUpload
+	@query('mo-file-upload') readonly fileUploadElement!: FileUpload<string>
 
 	get file() {
 		return this.fileUploadElement.file
 	}
 
 	uploadSelectedFile() {
-		return this.fileUploadElement.uploadSelectedFile()
+		return this.fileUploadElement.uploadFile()
 	}
 
 	protected override get template() {
 		return html`
 			<mo-loading-button icon='upload_file' preventClickEventInference
 				?loading=${this.isUploading}
-				@click=${() => this.renderRoot.querySelector('solid-file-upload')?.openExplorer()}
+				@click=${() => this.renderRoot.querySelector('mo-file-upload')?.openExplorer()}
 			>${this.fileName ?? 'Upload File'}</mo-loading-button>
 
-			<solid-file-upload
-				@change=${(e: CustomEvent<string | undefined>) => this.fileName = e.detail}
-				@uploading=${() => this.isUploading = true}
-				@upload=${(e: CustomEvent<string>) => { this.isUploading = false; this.upload.dispatch(e.detail) }}
-			></solid-file-upload>
+			<mo-file-upload
+				@fileChange=${(e: CustomEvent<File | undefined>) => this.fileName = e.detail?.name}
+				@uploadingChange=${() => this.isUploading = true}
+				@change=${(e: CustomEvent<string | undefined>) => this.change.dispatch(e.detail)}
+			></mo-file-upload>
 		`
 	}
 }
