@@ -19,12 +19,10 @@ public class Account : Entity
 	{
 		return TokenIssuer.IssueForAccount(this, expiration);
 	}
-}
 
-public static class AccountExtensions
-{
-	public static Account WithoutCredentials(this Account account)
+	public Account WithoutCredentials()
 	{
+		var account = this.Adapt<Account>();
 		account.AuthenticationMethods = new();
 		return account;
 	}

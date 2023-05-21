@@ -50,12 +50,15 @@ public class DatabaseContext : DbContext, IDatabase
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
-		// TODO: Include alls
 		modelBuilder.Entity<Account>(a => a.HasIndex(e => e.Username).IsUnique());
 		modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne().HasForeignKey(c => c.CreatorId);
 		modelBuilder.Entity<Account>().HasMany(a => a.Votes).WithOne(v => v.Account);
+		modelBuilder.Entity<Account>().Navigation(a => a.Votes).AutoInclude();
+		modelBuilder.Entity<Account>().Navigation(a => a.AuthenticationMethods).AutoInclude();
+		modelBuilder.Entity<Account>().Navigation(a => a.Campaigns).AutoInclude();
 
 		modelBuilder.Entity<AccountProfile>().HasOne(i => i.Account).WithOne();
+		modelBuilder.Entity<AccountProfile>().Navigation(i => i.Account).AutoInclude();
 
 		modelBuilder.Entity<AccountRecoveryHandshake>().HasOne(h => h.Account);
 		modelBuilder.Entity<AccountRecoveryHandshake>().Navigation(h => h.Account).AutoInclude();
@@ -70,15 +73,21 @@ public class DatabaseContext : DbContext, IDatabase
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Media).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.Expenditures).WithOne();
 		modelBuilder.Entity<Campaign>().HasMany(c => c.ActivatedPaymentMethods).WithOne(pm => pm.Campaign);
+		modelBuilder.Entity<Campaign>().Navigation(c => c.Validation).AutoInclude();
+		modelBuilder.Entity<Campaign>().Navigation(c => c.Allocation).AutoInclude();
+		modelBuilder.Entity<Campaign>().Navigation(c => c.Media).AutoInclude();
+		modelBuilder.Entity<Campaign>().Navigation(c => c.Expenditures).AutoInclude();
 
 		modelBuilder.Entity<PaymentMethodKey>().HasKey(pmk => pmk.PaymentMethodIdentifier);
 
 		modelBuilder.Entity<CampaignValidation>().HasMany(v => v.Votes).WithOne(v => v.Validation);
+		modelBuilder.Entity<CampaignValidation>().Navigation(v => v.Votes).AutoInclude();
 
 		modelBuilder.Entity<CampaignValidationVote>().Ignore(v => v.Id);
 		modelBuilder.Entity<CampaignValidationVote>().HasKey(v => new { v.ValidationId, v.AccountId });
 
 		modelBuilder.Entity<CampaignAllocation>().HasMany(a => a.Entries).WithOne(e => e.CampaignAllocation);
+		modelBuilder.Entity<CampaignAllocation>().Navigation(a => a.Entries).AutoInclude();
 	}
 
 	public override int SaveChanges()

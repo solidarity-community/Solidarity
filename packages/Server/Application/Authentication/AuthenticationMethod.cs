@@ -27,10 +27,10 @@ public abstract class AuthenticationMethod : Entity
 
 public static class AuthenticationExtensions
 {
-	// TODO: Move all these extensions inside the classes themselves and user mapster to map them
 	public static T WithoutData<T>(this T auth) where T : AuthenticationMethod
 	{
-		auth.Data = null!;
-		return auth;
+		var authentication = auth.Adapt<T>();
+		authentication.Data = null!;
+		return authentication;
 	}
 }
