@@ -3,5 +3,8 @@
 public class PaymentModule : Module
 {
 	public override void ConfigureServices(IServiceCollection services)
-		=> services.AddHealthChecks().AddCheck<PaymentMethodProvider>("Payment Method Provider");
+	{
+		services.AddHealthChecks().AddCheck<PaymentMethodProvider>("Payment Method Provider");
+		services.AddTransient<IPaymentMethodProvider, PaymentMethodProvider>();
+	}
 }

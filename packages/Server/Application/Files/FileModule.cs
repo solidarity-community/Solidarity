@@ -2,6 +2,8 @@ namespace Solidarity.Application.Files;
 
 public class FileModule : Module
 {
+	public override void ConfigureServices(IServiceCollection services) => services.AddTransient<FileService>();
+
 	public override void ConfigureEndpoints(IEndpointRouteBuilder endpoints)
 	{
 		endpoints.MapGet("/file/max-size", () => FileService.MaxFileSizeInMB);

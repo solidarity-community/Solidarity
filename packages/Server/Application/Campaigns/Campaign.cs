@@ -2,7 +2,7 @@
 
 public enum CampaignStatus { Funding, Validation, Allocation }
 
-public class Campaign : Model
+public class Campaign : Entity
 {
 	[Required, MaxLength(50)] public string Title { get; set; } = null!;
 
@@ -46,7 +46,7 @@ public class Campaign : Model
 
 	public void ValidateForCreation()
 	{
-		Validate();
+		// Validate();
 		EnsureTotalExpenditureNotTooLow();
 		ValidationId = null;
 		Validation = null;
@@ -56,7 +56,7 @@ public class Campaign : Model
 
 	public void Update(Campaign updated)
 	{
-		updated.Validate();
+		// updated.Validate();
 		updated.EnsureTotalExpenditureNotTooLow();
 
 		if (Status is not CampaignStatus.Funding && Location != updated.Location)
@@ -170,17 +170,19 @@ public class Campaign : Model
 
 	public void EnsureTotalExpenditureNotTooLow()
 	{
-		if (TotalExpenditure == 0)
-		{
-			throw new CampaignExpenditureTooLowException();
-		}
+		TotalExpenditure.Throw("Campaign expenditure is too low.").IfEquals(0);
 	}
 
 	public void EnsureNotInStatus(params CampaignStatus[] statuses)
 	{
-		if (statuses.Contains(Status) == true)
-		{
-			throw new CampaignStatusException(statuses);
-		}
+		statuses.Throw(() => new CampaignStatusException(statuses)).IfContains(Status);
 	}
+
+	public void EnsureCreatedByCurrentUser(ICurrentUserService currentUserService)
+	{
+		(CreatorId != currentUserService.Id).Throw("Operation is only allowed for the campaign creator.").IfTrue();
+	}
+
+	public void ValidateAllocationDestinations(IPaymentMethodProvider paymentMethodProvider)
+		=> ActivatedPaymentMethods.ForEach(pm => paymentMethodProvider.Get(pm.Identifier).ValidateAllocationDestination(pm.AllocationDestination));
 }

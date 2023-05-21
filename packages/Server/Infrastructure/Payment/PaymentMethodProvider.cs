@@ -1,6 +1,7 @@
+using System.Reflection;
+
 namespace Solidarity.Infrastructure.Payment;
 
-[TransientService]
 public class PaymentMethodProvider : IPaymentMethodProvider, IHealthCheck
 {
 	private readonly IEnumerable<PaymentMethod> _enabledPaymentMethods;

@@ -50,6 +50,7 @@ public class DatabaseContext : DbContext, IDatabase
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
+		// TODO: Include alls
 		modelBuilder.Entity<Account>(a => a.HasIndex(e => e.Username).IsUnique());
 		modelBuilder.Entity<Account>().HasMany(a => a.Campaigns).WithOne().HasForeignKey(c => c.CreatorId);
 		modelBuilder.Entity<Account>().HasMany(a => a.Votes).WithOne(v => v.Account);
@@ -57,6 +58,7 @@ public class DatabaseContext : DbContext, IDatabase
 		modelBuilder.Entity<AccountProfile>().HasOne(i => i.Account).WithOne();
 
 		modelBuilder.Entity<AccountRecoveryHandshake>().HasOne(h => h.Account);
+		modelBuilder.Entity<AccountRecoveryHandshake>().Navigation(h => h.Account).AutoInclude();
 
 		modelBuilder.Entity<AuthenticationMethod>().Ignore(am => am.SupportsMultiple);
 		modelBuilder.Entity<AuthenticationMethod>().HasKey(am => new { am.AccountId, am.Type, am.Salt });
@@ -94,7 +96,7 @@ public class DatabaseContext : DbContext, IDatabase
 	private void HandleSaveChanges()
 	{
 		var userId = _currentUserService.Id;
-		foreach (var entry in ChangeTracker.Entries<Model>())
+		foreach (var entry in ChangeTracker.Entries<Entity>())
 		{
 			switch (entry.State)
 			{

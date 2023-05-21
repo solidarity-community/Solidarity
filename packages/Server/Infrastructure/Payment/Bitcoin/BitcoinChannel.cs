@@ -73,7 +73,7 @@ public class BitcoinChannel : PaymentChannel
 		{
 			PaymentMethodIdentifier = _paymentMethod.Identifier,
 			Type = ShallFund(x.Key) ? CampaignAllocationEntryType.Fund : CampaignAllocationEntryType.Refund,
-			Amount = x.Value.Sum(y => y.amount),
+			Amount = x.Value.Sum(y => y.Amount),
 			Data = transactionHash,
 		});
 	}

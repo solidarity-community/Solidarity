@@ -26,8 +26,8 @@ export class PageAccount extends PageComponent {
 	}
 
 	private async redirectToErrorPageIfNotAuthenticated() {
-		const isAuthenticated = await AccountService.isAuthenticated()
-		if (isAuthenticated === false) {
+		const authenticatedAccount = await AccountService.getAuthenticated()
+		if (!authenticatedAccount) {
 			new PageError({
 				error: HttpErrorCode.Unauthorized,
 				message: 'You are not authenticated into your account.'

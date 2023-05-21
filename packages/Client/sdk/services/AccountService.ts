@@ -1,9 +1,10 @@
 import { Api, Account, AuthenticationMethodType } from 'sdk'
 
 export class AccountService {
-	// TODO: Migrate: This endpoint does not exist.
 	static getAuthenticated() {
-		return Api.get<Account | undefined>('/account/authenticated')
+		return (Api.authenticator?.isAuthenticated() === false)
+			? Promise.resolve(undefined)
+			: Api.get<Account | undefined>('/account/authenticated')
 	}
 
 	static isUsernameAvailable(username: string) {
@@ -31,10 +32,6 @@ export class AccountService {
 	static async getAllAuthentications() {
 		const isNewByAuthenticationObject = await Api.get<Record<AuthenticationMethodType, boolean>>('/authentication')
 		return new Map(Object.entries(isNewByAuthenticationObject)) as Map<AuthenticationMethodType, boolean>
-	}
-
-	static async isAuthenticated() {
-		return !!Api.authenticator?.isAuthenticated() && await Api.get<boolean>(`/authentication/check`)
 	}
 
 	static async authenticateWithPassword(username: string, password: string) {

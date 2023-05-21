@@ -1,7 +1,6 @@
 namespace Solidarity.Application.Files;
 
-[TransientService]
-public class FileService : Service
+public class FileService
 {
 	public const string FileDirectory = "file";
 	public const int MaxFileSizeInMB = 5;
@@ -18,7 +17,7 @@ public class FileService : Service
 	private static string GetUri(Guid guid) => $"{FileDirectory}/{guid}";
 	private static string GetPath(Guid guid) => Directory.GetFiles(FileDirectory, $"{guid}.*")[0];
 
-	public FileService(IDatabase database, IPaymentMethodProvider paymentMethodProvider, ICurrentUserService currentUserService) : base(database, paymentMethodProvider, currentUserService)
+	public FileService()
 	{
 		EnsureDirectoryExists();
 	}

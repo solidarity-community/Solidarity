@@ -78,7 +78,7 @@ public class BitcoinClient
 
 	public async Task<string> AllocateAndSend(Dictionary<UTxO, IEnumerable<BitcoinAllocation>> allocationsByUTxOs)
 	{
-		var totalAmount = allocationsByUTxOs.SelectMany(kvp => kvp.Value.Select(am => am.amount)).Sum();
+		var totalAmount = allocationsByUTxOs.SelectMany(kvp => kvp.Value.Select(am => am.Amount)).Sum();
 		var totalFees = CalculateAndSendFeesSplit(allocationsByUTxOs);
 
 		var feeAdjustedAllocationsByUTxOs = allocationsByUTxOs.Select(kvp =>
@@ -94,7 +94,7 @@ public class BitcoinClient
 			return (utxo, adjustedAllocations);
 		}).ToDictionary(x => x.utxo, x => x.adjustedAllocations);
 
-		var maintainedFees = totalAmount - feeAdjustedAllocationsByUTxOs.SelectMany(kvp => kvp.Value.Select(refund => refund.amount)).Sum();
+		var maintainedFees = totalAmount - feeAdjustedAllocationsByUTxOs.SelectMany(kvp => kvp.Value.Select(refund => refund.Amount)).Sum();
 
 		var transaction = CreateTransactionBuilder()
 			.Allocate(feeAdjustedAllocationsByUTxOs)
@@ -115,7 +115,7 @@ public class BitcoinClient
 		var feeRate = GetFeeRateAsync().GetAwaiter().GetResult();
 		var estimatedTransactionFee = feeRate.GetFee(estimatedTransactionSize);
 		var totalInputAmount = allocationsByUTxOs.Select(kvp => kvp.Key.Coin.Amount.Satoshi).Sum();
-		var totalAmount = allocationsByUTxOs.SelectMany(kvp => kvp.Value.Select(am => am.amount)).Sum();
+		var totalAmount = allocationsByUTxOs.SelectMany(kvp => kvp.Value.Select(am => am.Amount)).Sum();
 		var remainingAmountDueToRounding = new Money((long)(totalInputAmount - totalAmount));
 		return estimatedTransactionFee >= totalAmount
 			? throw new InvalidOperationException("Estimated transaction fee is greater than total amount")

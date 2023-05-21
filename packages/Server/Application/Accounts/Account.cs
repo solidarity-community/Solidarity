@@ -1,8 +1,7 @@
 ﻿namespace Solidarity.Application.Accounts;
 
-public class Account : Model
+public class Account : Entity
 {
-	// TODO: Use semi-auto property feature of C# 11 after upgrade
 	[MaxLength(50), Required(ErrorMessage = "Username cannot be null")]
 	private string username = null!;
 	public string Username { get => username; set => username = value.ToLower(); }
@@ -24,7 +23,7 @@ public class Account : Model
 
 public static class AccountExtensions
 {
-	public static Account WithoutAuthenticationData(this Account account)
+	public static Account WithoutCredentials(this Account account)
 	{
 		account.AuthenticationMethods = new();
 		return account;

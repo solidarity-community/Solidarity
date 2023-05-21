@@ -1,3 +1,5 @@
+using System.Reflection;
+
 namespace Solidarity.Api;
 
 public static class ExceptionHandlerExtension

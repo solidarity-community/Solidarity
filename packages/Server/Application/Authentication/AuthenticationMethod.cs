@@ -1,6 +1,6 @@
 ﻿namespace Solidarity.Application.Authentication;
 
-public abstract class AuthenticationMethod : Model
+public abstract class AuthenticationMethod : Entity
 {
 	public int AccountId { get; set; }
 
@@ -27,6 +27,7 @@ public abstract class AuthenticationMethod : Model
 
 public static class AuthenticationExtensions
 {
+	// TODO: Move all these extensions inside the classes themselves and user mapster to map them
 	public static T WithoutData<T>(this T auth) where T : AuthenticationMethod
 	{
 		auth.Data = null!;

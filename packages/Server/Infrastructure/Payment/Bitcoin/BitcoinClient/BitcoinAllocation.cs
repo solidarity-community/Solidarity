@@ -1,10 +1,10 @@
 namespace Solidarity.Infrastructure.Payment.Bitcoin;
 
-public record struct BitcoinAllocation(BitcoinAddress bitcoinAddress, Money amount)
+public record struct BitcoinAllocation(BitcoinAddress BitcoinAddress, Money Amount)
 {
 	public static implicit operator (BitcoinAddress bitcoinAddress, Money amount)(BitcoinAllocation value)
 	{
-		return (value.bitcoinAddress, value.amount);
+		return (value.BitcoinAddress, value.Amount);
 	}
 
 	public static implicit operator BitcoinAllocation((BitcoinAddress bitcoinAddress, Money amount) value)

@@ -2,39 +2,40 @@ namespace Solidarity.Application.Accounts;
 
 public class AccountModule : Module
 {
+	public override void ConfigureServices(IServiceCollection services)
+	{
+		services.AddTransient<GetAuthenticatedAccount>();
+		services.AddTransient<CreateAccount>();
+		services.AddTransient<IsAccountUsernameAvailable>();
+		services.AddTransient<UpdateAccount>();
+		services.AddTransient<ResetAccountByUsername>();
+		services.AddTransient<RecoverAccount>();
+	}
+
 	public override void ConfigureEndpoints(IEndpointRouteBuilder endpoints)
 	{
-		endpoints.MapGet("/account",
-			(AccountService accountService) => accountService.GetWithoutAuthentication()
+		endpoints.MapGet("/account/authenticated",
+			(GetAuthenticatedAccount getAuthenticatedAccount) => getAuthenticatedAccount.Execute()
 		);
 
 		endpoints.MapPost("/account",
-			[AllowAnonymous] (AccountService accountService, Account account) => accountService.CreateAndIssueToken(account)
+			[AllowAnonymous] (CreateAccount createAccount, Account account) => createAccount.Execute(account)
 		);
 
 		endpoints.MapGet("/account/is-username-available/{username}",
-			[AllowAnonymous] (AccountService accountService, string username) => accountService.IsUsernameAvailable(username)
+			[AllowAnonymous] (IsAccountUsernameAvailable isAccountUsernameAvailable, string username) => isAccountUsernameAvailable.Execute(username)
 		);
 
 		endpoints.MapPut("/account",
-			(AccountService accountService, Account account) => accountService.Update(account)
+			(UpdateAccount updateAccount, Account account) => updateAccount.Execute(account)
 		);
 
 		endpoints.MapGet("/account/{username}/reset",
-			[AllowAnonymous] (AccountService accountService, string username) => accountService.ResetByUsername(username)
+			[AllowAnonymous] (ResetAccountByUsername resetAccountByUsername, string username) => resetAccountByUsername.Execute(username)
 		);
 
 		endpoints.MapGet("/account/recover",
-			[AllowAnonymous] (AccountService accountService, string phrase) => accountService.Recover(phrase)
+			[AllowAnonymous] (RecoverAccount recoverAccount, string phrase) => recoverAccount.Execute(phrase)
 		);
-
-		endpoints.MapGet("/account/profile", (AccountProfileService accountProfileService) => accountProfileService.GetByAccountId(null));
-		endpoints.MapGet("/account/{accountId}/profile", (AccountProfileService accountProfileService, int accountId) => accountProfileService.GetByAccountId(accountId));
-
-		endpoints.MapGet("/account/profile/{id}", (AccountProfileService accountProfileService, int id) => accountProfileService.Get(id));
-
-		var postAndPut = (AccountProfileService accountProfileService, AccountProfile profile) => accountProfileService.CreateOrUpdate(profile);
-		endpoints.MapPost("/account/profile", postAndPut);
-		endpoints.MapPut("/account/profile", postAndPut);
 	}
 }

@@ -13,16 +13,18 @@ global using Microsoft.IdentityModel.Tokens;
 global using NBitcoin;
 global using NBitcoin.RPC;
 global using NetTopologySuite.Geometries;
-global using Microsoft.EntityFrameworkCore.Metadata;
-global using Solidarity;
-global using Solidarity.Application.Abstractions;
+global using Solidarity.Application.Common;
 global using Solidarity.Application.Accounts;
+global using Solidarity.Application.Accounts.Profiles;
 global using Solidarity.Application.Authentication;
+global using Solidarity.Application.Authentication.Password;
 global using Solidarity.Application.Campaigns;
+global using Solidarity.Application.Campaigns.Media;
+global using Solidarity.Application.Campaigns.Funding;
+global using Solidarity.Application.Campaigns.Validation;
+global using Solidarity.Application.Campaigns.Allocation;
 global using Solidarity.Application.Files;
 global using Solidarity.Application.PaymentMethods;
-global using Solidarity.Domain.Models;
-global using Solidarity.Infrastructure;
 global using Solidarity.Infrastructure.Identity;
 global using Solidarity.Infrastructure.Persistence;
 global using Solidarity.Infrastructure.Payment;
@@ -36,14 +38,21 @@ global using System.Net;
 global using System.Security.Claims;
 global using System.Security.Cryptography;
 global using System.Text;
-global using System.Reflection;
 global using Xunit;
 global using System.Text.RegularExpressions;
 global using Microsoft.Extensions.Diagnostics.HealthChecks;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;
-global using TanvirArjel.Extensions.Microsoft.DependencyInjection;
+global using System.Linq.Expressions;
+global using Throw;
+global using A11d.Module;
+global using Mapster;
+
+TypeAdapterConfig.GlobalSettings.Default.PreserveReference(true);
 
 WebApplication.CreateBuilder(args)
-	.InstallSolidarity().Build()
-	.ConfigureSolidarity().Run();
+	.Install<Solid>().Build()
+	.Configure<Solid>().Run();
+
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1050", Justification = "This is a marker class.")]
+public class Solid { }

@@ -2,24 +2,28 @@
 
 public class AuthenticationModule : Module
 {
+	public override void ConfigureServices(IServiceCollection services)
+	{
+		services.AddTransient<GetAuthenticationMethods>();
+		services.AddTransient<UpdatePassword>();
+		services.AddTransient<AuthenticatePassword>();
+		services.AddTransient<Authenticate<PasswordAuthenticationMethod>>();
+	}
+
 	public override void ConfigureEndpoints(IEndpointRouteBuilder endpoints)
 	{
-		endpoints.MapGet("/authentication/check",
-			[AllowAnonymous] (AuthenticationService authenticationService) => authenticationService.IsAuthenticated()
-		);
-
 		endpoints.MapGet("/authentication",
-			[AllowAnonymous] (AuthenticationService authenticationService) => authenticationService.GetAll()
+			[AllowAnonymous] (GetAuthenticationMethods getAuthenticationMethods) => getAuthenticationMethods.Execute()
 		);
 
 		endpoints.MapPut("/authentication/password",
-			(AuthenticationService authenticationService, string newPassword, string? oldPassword)
-				=> authenticationService.UpdatePassword(newPassword, oldPassword)
+			(UpdatePassword updatePassword, string newPassword, string? oldPassword)
+				=> updatePassword.Execute(newPassword, oldPassword)
 		);
 
 		endpoints.MapGet("/authentication/password",
-			[AllowAnonymous] (AuthenticationService authenticationService, string username, string password)
-				=> authenticationService.PasswordLogin(username, password)
+			[AllowAnonymous] (AuthenticatePassword authenticatePassword, string username, string password)
+				=> authenticatePassword.Execute(username, password)
 		);
 	}
 }
