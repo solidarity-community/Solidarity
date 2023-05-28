@@ -1,4 +1,4 @@
-FROM node:16
+FROM node:19
 RUN mkdir -p /Solidarity
 WORKDIR /Solidarity
 COPY package.json .

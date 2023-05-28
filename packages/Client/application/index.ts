@@ -1,4 +1,4 @@
-import '@a11d/lit-application-native'
+import '@a11d/lit-application'
 import '@a11d/lit-application-authentication'
 import 'leaflet'
 import '@geoman-io/leaflet-geoman-free'

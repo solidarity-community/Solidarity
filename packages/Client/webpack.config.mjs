@@ -9,8 +9,8 @@ import FaviconsWebpackPlugin from 'favicons-webpack-plugin'
 export default (_, args) => {
 	const mode = args.mode || 'production'
 	return {
-		entry: './index.ts',
-		context: resolve(__dirname),
+		mode: mode === 'development' ? 'development' : 'production',
+		entry: './application/index.ts',
 		watchOptions: {
 			poll: 1000, // Check for changes every second
 		},

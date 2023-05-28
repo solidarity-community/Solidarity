@@ -9,8 +9,8 @@ public class PersistenceModule : Module
 		var password = Environment.GetEnvironmentVariable("DATABASE_PASSWORD");
 
 		var connectionString = server is null || user is null || password is null
-			? "Data Source=localhost\\SQLEXPRESS;Database=Solidarity;Integrated Security=True;"
-			: $"Server={server};User ID={user};Database=Solidarity;Password={password};";
+			? "Data Source=localhost\\SQLEXPRESS;Database=Solidarity;Integrated Security=True;Encrypt=False;"
+			: $"Server={server};User ID={user};Database=Solidarity;Password={password};Encrypt=False;";
 
 		services.AddHealthChecks().AddSqlServer(connectionString, name: "Database");
 

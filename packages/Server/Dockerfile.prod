@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /Solidarity
 COPY *.csproj .
 RUN dotnet restore
@@ -6,7 +6,7 @@ COPY . .
 RUN dotnet test
 RUN dotnet publish -c Release -o dist
 
-FROM mcr.microsoft.com/dotnet/aspnet:6.0
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /Solidarity
 COPY --from=build /Solidarity/dist .
 EXPOSE 80
