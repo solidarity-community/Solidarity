@@ -1,6 +1,8 @@
 import { Component, component, html, css, property, ifDefined, when, query, style } from '@a11d/lit'
 // import { type Slider } from '@a11d/lit-slider'
 import { type Campaign, type CampaignMedia, CampaignMediaType, File, DialogCampaignMedia } from 'application'
+import { register } from 'swiper/element/bundle';
+register();
 
 @component('solid-campaign-slider')
 export class CampaignSlider extends Component {
@@ -23,10 +25,15 @@ export class CampaignSlider extends Component {
 				min-height: 400px;
 			}
 
-			lit-slider {
-				position: absolute;
+			swiper-container {
 				width: 100%;
 				height: 100%;
+				swiper-slide {
+					* {
+						width: 100%;
+						height: 100%;
+					}
+				}
 			}
 
 			mo-fab {
@@ -55,9 +62,9 @@ export class CampaignSlider extends Component {
 					No media
 				</mo-empty-state>
 			` : html`
-				<lit-slider hasPagination hasNavigation>
+				<swiper-container hasPagination hasNavigation>
 					${this.campaign.media?.map(media => this.getSlideTemplate(media))}
-				</lit-slider>
+				</swiper-container>
 			`}
 			${when(!this.readOnly, () => html`
 				<mo-fab icon='add' ${style({ right: '8px' })} @click=${() => this.create()}>Add</mo-fab>
@@ -100,28 +107,30 @@ export class CampaignSlider extends Component {
 
 	private getFileSlideTemplate(media: CampaignMedia) {
 		return !media.uri ? html.nothing : html`
-			<lit-slide ${style({ background: `url(${File.getPath(media.uri)})` })}></lit-slide>
+			<swiper-slide>
+				<img src=${File.getPath(media.uri)}>
+			</swiper-slide>
 		`
 	}
 
 	private getYouTubeSlideTemplate(media: CampaignMedia) {
 		return html`
-			<lit-slide>
-				<iframe type='text/html' ${style({ width: '100%', height: '100%' })}
+			<swiper-slide>
+				<iframe type='text/html'
 					src=${ifDefined(!media.uri ? undefined : `http://www.youtube.com/embed/${media.uri}`)}
 				></iframe>
-			</lit-slide>
+			</swiper-slide>
 		`
 
 	}
 
 	private getTwitchSlideTemplate(media: CampaignMedia) {
 		return html`
-			<lit-slide>
-				<iframe type='text/html' ${style({ width: '100%', height: '100%' })}
+			<swiper-slide>
+				<iframe type='text/html'
 					src=${ifDefined(!media.uri ? undefined : `https://player.twitch.tv/?channel=${media.uri}&html5&parent=${window.location.hostname}`)}
 				></iframe>
-			</lit-slide>
+			</swiper-slide>
 		`
 	}
 }

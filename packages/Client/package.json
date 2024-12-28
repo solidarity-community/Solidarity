@@ -72,7 +72,8 @@
 		"@3mo/date-time-value-constructor": "x",
 		"@3mo/split-page-host": "x",
 		"jsencrypt": "3.x",
-		"leaflet": "1.7.x"
+		"leaflet": "1.7.x",
+		"swiper": "x"
 	},
 	"devDependencies": {
 		"@a11d/eslint-config": "x",
