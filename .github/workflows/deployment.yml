@@ -1,0 +1,38 @@
+name: Deployment
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  Deploy:
+    name: 📦 Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -f ./Dockerfile.prod --tag solidarity:latest .
+      - run: docker save solidarity:latest -o solidarity-image
+      - run: |
+          mkdir -p ./artifacts
+          mv solidarity-image ./artifacts/solidarity-image
+          mv compose.prod.yml ./artifacts/compose.yml
+      - uses: up9cloud/action-rsync@v1.4
+        env:
+          SOURCE: ./artifacts/
+          TARGET: ~/solidarity/.build
+          KEY: ${{secrets.SSH_KEY}}
+          HOST: ${{secrets.DEPLOY_SERVER_SSH_HOST}}
+          PORT: ${{secrets.DEPLOY_SERVER_SSH_PORT}}
+          USER: ${{secrets.DEPLOY_SERVER_SSH_USERNAME}}
+          VERBOSE: true
+  Release:
+    name: 🚀 Release
+    uses: ./.github/workflows/execute-compose.yml
+    needs: Deploy
+    secrets: inherit
+    with:
+      pre_command: docker load -i ./solidarity-image && podman-compose down
+      command: up -d
+      post_command: docker image prune -f

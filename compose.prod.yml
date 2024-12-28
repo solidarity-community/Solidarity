@@ -1,0 +1,33 @@
+services:
+  solidarity-database:
+    container_name: solidarity-database
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: unless-stopped
+    user: root
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=${DATABASE_PASSWORD}
+    volumes:
+      - ~/solidarity/database:/var/opt/mssql
+
+  solidarity:
+    container_name: solidarity
+    image: solidarity:latest
+    restart: unless-stopped
+    depends_on:
+      - solidarity-database
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - DATABASE_SERVER=solidarity-database,1433
+      - DATABASE_USER=SA
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - JWT_KEY=${JWT_KEY}
+      - PAYMENT_METHODS=BTC_TESTNET
+      - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://solidarity-bitcoin-testnet:18333/
+      - PAYMENT_METHOD_BTC_TESTNET_USERNAME=solidarity
+      - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=${CRYPTO_PASSWORD}
+
+networks:
+  default:
+    name: internet
+    external: true

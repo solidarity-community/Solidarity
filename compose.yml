@@ -1,0 +1,50 @@
+services:
+  database:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=Dev_Passw0rd
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./packages/Server/database/data:/var/opt/mssql/data
+      - ./packages/Server/database/log:/var/opt/mssql/log
+      - ./packages/Server/database/secrets:/var/opt/mssql/secrets
+
+  server:
+    restart: always
+    depends_on:
+      - database
+    build:
+      context: ./packages/Server
+    ports:
+      - "80:80"
+    volumes:
+      - ./packages/Server:/server
+      - /server/bin/
+      - /server/obj/
+      - client:/server/wwwroot/
+    environment:
+      - ASPNETCORE_URLS=http://+:80
+      - DOTNET_WATCH_RESTART_ON_RUDE_EDIT=true
+      - DATABASE_SERVER=database,1433
+      - DATABASE_USER=SA
+      - DATABASE_PASSWORD=Dev_Passw0rd
+      - JWT_KEY=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
+      - PAYMENT_METHODS=BTC_TESTNET
+      - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://crypto_bitcoin_testnet:18333/
+      - PAYMENT_METHOD_BTC_TESTNET_USERNAME=solidarity
+      - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=Dev_Passw0rd
+
+  client:
+    restart: always
+    build:
+      context: ./packages/Client
+    volumes:
+      - ./packages/Client:/client
+      - /client/node_modules/
+      - client:/client/dist/
+
+volumes:
+  client:

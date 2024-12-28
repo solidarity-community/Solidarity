@@ -1,0 +1,177 @@
+{
+	"TypeScript Property Definition": {
+		"prefix": "prop",
+		"body": [
+			"private _${1:propName}: ${2:propType}",
+			"get ${1:propName}() { return this._${1:propName} }",
+			"set ${1:propName}(value) { this._${1:propName} = value }"
+		],
+	},
+	"Property": {
+		"prefix": "mprop",
+		"body": [
+			"@property() ${1:propName}: ${2:propType}"
+		],
+	},
+	"State Property": {
+		"prefix": "sprop",
+		"body": [
+			"@state() private ${1:propName}: ${2:propType}"
+		],
+	},
+	"Initialized Callback": {
+		"prefix": "minit",
+		"body": [
+			"protected override initialized() {",
+			"\t${0}",
+			"}"
+		],
+	},
+	"Event Handler": {
+		"prefix": "event",
+		"body": [
+			"@event() readonly ${1:eventName}!: EventDispatcher<${2:eventHanlderType}>",
+		],
+	},
+	"Style Directive": {
+		"prefix": "style",
+		"body": [
+			"${style({ ${0} })}",
+		],
+	},
+	"Styles Static Getter": {
+		"prefix": "styles",
+		"body": [
+			"static override get styles() {",
+			"\treturn css`",
+			"\t\t${0}",
+			"\t`",
+			"}"
+		],
+	},
+	"Test": {
+		"prefix": "test",
+		"body": [
+			"import { ${1:Component} } from '.'",
+			"import { ComponentTestFixture } from '@a11d/lit/dist/test'",
+			"",
+			"describe('${1:Component}', () => {",
+			"\tconst fixture = new ComponentTestFixture(() => new ${1:Component})",
+			"",
+			"\tit('should ${2:}', () => {",
+			"",
+			"\t})",
+			"})"
+		]
+	},
+	"Register HTMLElement in TypeScript": {
+		"prefix": "register",
+		"body": [
+			"declare global {",
+			"\tinterface HTMLElementTagNameMap {",
+			"\t\t'${1:tagName}': ${2:tagClass}",
+			"\t}",
+			"}"
+		],
+	},
+	"Handle Event HTML": {
+		"prefix": "handle",
+		"body": [
+			"@${1:eventName}=${(e: CustomEvent<${2:eventHandlerType}>) => ${3}e.detail}"
+		],
+	},
+	"Handle Event TS": {
+		"prefix": "handle",
+		"body": [
+			"private handle${1:EventName}(e: CustomEvent<${2:eventHandlerType}>) {",
+			"\t${3}",
+			"}"
+		],
+	},
+	"Tempalte Getter Function": {
+		"prefix": "template",
+		"body": [
+			"protected override get template() {",
+			"\treturn html`",
+			"\t\t${1}",
+			"\t`",
+			"}"
+		],
+	},
+	"Component": {
+		"prefix": "component",
+		"body": [
+			"import { Component, component, html } from '@a11d/lit'",
+			"",
+			"@component('eb-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}')",
+			"export class ${TM_FILENAME_BASE} extends Component {",
+			"\tprotected override get template() {",
+			"\t\treturn html`",
+			"\t\t\t${0}",
+			"\t\t`",
+			"\t}",
+			"}",
+			"",
+			"declare global {",
+			"\tinterface HTMLElementTagNameMap {",
+			"\t\t'eb-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}': ${TM_FILENAME_BASE}",
+			"\t}",
+			"}"
+		],
+	},
+	"PageComponent": {
+		"prefix": "pageComponent",
+		"body": [
+			"import { component, html } from '@a11d/lit'",
+			"import { PageComponent, route } from '@a11d/lit-application'",
+			"",
+			"@route('/${1:route}')",
+			"@component('eb-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}')",
+			"export class ${TM_FILENAME_BASE} extends PageComponent {",
+			"\tprotected override get template() {",
+			"\t\treturn html`",
+			"\t\t\t<lit-page heading='${2:${TM_FILENAME_BASE/(Page)//}}'>",
+			"\t\t\t\t${0}",
+			"\t\t\t</lit-page>",
+			"\t\t`",
+			"\t}",
+			"}"
+		],
+	},
+	"DialogComponent": {
+		"prefix": "dialogComponent",
+		"body": [
+			"import { component, html } from '@a11d/lit'",
+			"import { DialogComponent } from '@a11d/lit-application'",
+			"",
+			"@component('eb-${TM_FILENAME_BASE/(^[A-Z][a-z]*|[a-z])([A-Z])?/${1:/downcase}${2:+-}${2:/downcase}/g}')",
+			"export class ${TM_FILENAME_BASE} extends DialogComponent {",
+			"\tprotected override get template() {",
+			"\t\treturn html`",
+			"\t\t\t<mo-dialog heading='${1:${TM_FILENAME_BASE/(Dialog)//}}'>",
+			"\t\t\t\t${0}",
+			"\t\t\t</mo-dialog>",
+			"\t\t`",
+			"\t}",
+			"}"
+		],
+	},
+	"Render If": {
+		"prefix": "renderIf",
+		"body": [
+			"${${1:condition} ? html`${0}` : html.nothing}"
+		]
+	},
+	"Render Unless": {
+		"prefix": "renderUnless",
+		"body": [
+			"${${1:condition} ? html.nothing : html`${0}`}"
+		]
+	},
+	"Tooltip Directive": {
+		"prefix": "tooltip",
+		"body": [
+			"${tooltip('${1:label}')}"
+		]
+	}
+}

@@ -1,0 +1,19 @@
+{
+	"sqltools.connections": [
+		{
+			"mssqlOptions": {
+				"appName": "SQLTools",
+				"useUTC": true,
+				"encrypt": true
+			},
+			"previewLimit": 50,
+			"server": "localhost",
+			"port": 1433,
+			"driver": "MSSQL",
+			"name": "Solidarity",
+			"password": "Dev_Passw0rd",
+			"username": "SA",
+			"database": "Solidarity"
+		}
+	]
+}

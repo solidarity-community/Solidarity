@@ -1,0 +1,26 @@
+{
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"name": ".NET Docker Attach",
+			"type": "coreclr",
+			"justMyCode": false,
+			"request": "attach",
+			"processId": "${command:pickRemoteProcess}",
+			"pipeTransport": {
+				"pipeProgram": "docker",
+				"pipeArgs": [
+					"exec",
+					"-i",
+					"solidarity-server-1"
+				],
+				"debuggerPath": "/vsdbg/vsdbg",
+				"pipeCwd": "${workspaceRoot}/packages/Server",
+				"quoteArgs": false
+			},
+			"sourceFileMap": {
+				"/Solidarity": "${workspaceRoot}/packages/server/"
+			}
+		}
+	]
+}

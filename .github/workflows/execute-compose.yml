@@ -1,0 +1,61 @@
+name: Docker Compose
+
+on:
+  workflow_call:
+    inputs:
+      command:
+        description: 'The docker compose command to execute'
+        type: string
+        required: true
+      pre_command:
+        description: 'The command to execute before the docker compose command'
+        type: string
+        required: false
+      post_command:
+        description: 'The command to execute after the docker compose command'
+        type: string
+        required: false
+    secrets:
+      JWT_KEY:
+        required: true
+      DATABASE_PASSWORD:
+        required: true
+      DEPLOY_SERVER_SSH_HOST:
+        required: true
+      DEPLOY_SERVER_SSH_PORT:
+        required: true
+      DEPLOY_SERVER_SSH_USERNAME:
+        required: true
+  workflow_dispatch:
+    inputs:
+      command:
+        description: 'The docker compose command to execute'
+        required: true
+        type: choice
+        options:
+          - up -d
+          - down
+          - stop
+          - start
+          - restart
+
+jobs:
+  Run:
+    name: ⚡ Run Docker Compose ${{inputs.command}}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v0.1.4
+        with:
+          key: ${{secrets.SSH_KEY}}
+          host: ${{secrets.DEPLOY_SERVER_SSH_HOST}}
+          port: ${{secrets.DEPLOY_SERVER_SSH_PORT}}
+          username: ${{secrets.DEPLOY_SERVER_SSH_USERNAME}}
+          script: |
+            cd ./solidarity/.build
+            ${{inputs.pre_command || ''}}
+            echo "COMPOSE_PROJECT_NAME=solidarity" > .env
+            echo "JWT_KEY=${{secrets.JWT_KEY}}" >> .env
+            echo "DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}}" >> .env
+            echo "CRYPTO_PASSWORD=${{ secrets.CRYPTO_PASSWORD }}" >> .env
+            podman-compose ${{inputs.command}}
+            ${{inputs.post_command || ''}}

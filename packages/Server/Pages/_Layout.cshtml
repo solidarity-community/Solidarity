@@ -1,0 +1,35 @@
+@{
+	string? GetPath(string path, bool relative = false)
+	{
+		var currentDirectory = System.IO.Directory.GetCurrentDirectory();
+		var result = System.IO.Directory.GetFiles(System.IO.Path.Combine(currentDirectory, "wwwroot"), path).FirstOrDefault();
+		return !relative ? result : result?.Replace($"{currentDirectory}/wwwroot", "");
+	}
+	var scriptPath = GetPath("index*.js", true);
+	var headersPath = GetPath("headers.html", false);
+}
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+		@if (!string.IsNullOrWhiteSpace(headersPath))
+		{
+			Html.Raw(await System.IO.File.ReadAllTextAsync(headersPath));
+		}
+		<script type="module" src="@scriptPath"></script>
+		<title>Solidarity</title>
+		<meta name="title" content="Solidarity" />
+		<meta name="og:title" content="Solidarity" />
+		<meta name="twitter:title" content="Solidarity" />
+
+		@RenderSection("MetaTags", false)
+	</head>
+
+	<body>
+		@RenderBody()
+		<solid-application></solid-application>
+	</body>
+</html>

@@ -1,0 +1,64 @@
+name: Pull Request
+
+on:
+  pull_request:
+
+jobs:
+  # Client-Test:
+  #   name: 🧪 Client Test
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 22
+  #         cache: 'npm'
+  #     - run: npm ci
+  #     - run: npm run test:ci
+
+  client-lint:
+    name: 📝 Client Lint
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/Client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      - run: npm ci
+      - run: npm run lint
+
+  client-build:
+    name: 🔨 Client Build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/Client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
+      - run: npm ci
+      - run: npm run build
+
+  server-test:
+    name: 🧪 Server Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./packages/Server
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.x
+      - run: dotnet restore
+      - run: dotnet build --configuration Release --no-restore
+      - run: dotnet test --no-restore --verbosity normal
