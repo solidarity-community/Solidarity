@@ -51,7 +51,7 @@ export class PageStatus extends PageComponent {
 
 	protected override get template() {
 		return html`
-			<mo-page heading='Status' fullHeight style='--mo-page-margin: 0px'>
+			<lit-page heading='Status' fullHeight>
 				${!this.health ? html`
 					<mo-flex alignItems='center' justifyContent='center'>
 						<mo-circular-progress></mo-circular-progress>
@@ -68,7 +68,7 @@ export class PageStatus extends PageComponent {
 						</mo-flex>
 					</mo-flex>
 				`}
-			</mo-page>
+			</lit-page>
 		`
 	}
 

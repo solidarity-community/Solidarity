@@ -2,7 +2,7 @@ import { component, html, style } from '@a11d/lit'
 import { PageComponent, PageError, route, HttpErrorCode } from '@a11d/lit-application'
 import { requiresAuthentication } from '@a11d/lit-application-authentication'
 import { Task } from '@lit/task'
-import { Account, DialogAccountCreation } from 'application'
+import { Account } from 'application'
 
 @requiresAuthentication()
 @route('/account')
@@ -20,7 +20,7 @@ export class PageAccount extends PageComponent {
 
 	protected override get template() {
 		return html`
-			<mo-page heading='Account'>
+			<lit-page heading='Account'>
 				<mo-flex gap='24px' ${style({ height: '100%', width: '100%', maxWidth: '1028px', margin: 'auto' })}>
 					${this.accountTemplate}
 					${this.activitiesTemplate}
@@ -28,7 +28,7 @@ export class PageAccount extends PageComponent {
 					<mo-grid gap='16px' ${style({ flex: '1' })}>
 					</mo-grid>
 				</mo-flex>
-			</mo-page>
+			</lit-page>
 		`
 	}
 

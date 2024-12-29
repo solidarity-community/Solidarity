@@ -1,12 +1,10 @@
-using Solidarity.Api;
-
 namespace Solidarity.Application.Health;
 
 public sealed class HealthModule : Module
 {
 	public override void ConfigureApplication(WebApplication application)
 	{
-		application.MapHealthChecks("/health", new()
+		application.MapHealthChecks("/api/health", new()
 		{
 			AllowCachingResponses = true,
 			ResponseWriter = async (context, report) =>

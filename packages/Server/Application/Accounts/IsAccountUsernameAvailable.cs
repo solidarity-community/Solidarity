@@ -1,5 +1,3 @@
-using Throw;
-
 namespace Solidarity.Application.Accounts;
 
 public sealed class IsAccountUsernameAvailable(DatabaseContext database)
