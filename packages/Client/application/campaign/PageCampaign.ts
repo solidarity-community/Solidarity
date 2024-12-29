@@ -1,4 +1,4 @@
-import { component, html, state, queryAll, style } from '@a11d/lit'
+import { component, html, state, queryAll, style, ifDefined } from '@a11d/lit'
 import { PageComponent, NotificationComponent, route, PageError, HttpErrorCode, } from '@a11d/lit-application'
 import { type Button, ButtonType } from '@3mo/button'
 import { DialogAcknowledge } from '@3mo/standard-dialogs'
@@ -70,7 +70,7 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 								</mo-card>
 							`}
 
-							<mo-card heading='Overview'>
+							<mo-card heading=${ifDefined(this.campaign.title)}>
 								${this.campaign.description}
 							</mo-card>
 						</mo-flex>
@@ -105,9 +105,9 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 					>Allocations</mo-button>
 				`}
 
-				${!this.authenticatedAccount?.id || !this.balanceShare || this.campaign?.status !== CampaignStatus.Validation ? html.nothing : html`
+				${!this.campaign || !this.authenticatedAccount?.id || !this.balanceShare || this.campaign?.status !== CampaignStatus.Validation ? html.nothing : html`
 					<mo-button class='action' leadingIcon='how_to_vote'
-						@click=${() => !this.campaign || !this.balanceShare ? void 0 : new DialogCampaignValidationVote({ campaign: this.campaign }).confirm()}
+						@click=${() => new DialogCampaignValidationVote({ campaign: this.campaign! }).confirm()}
 					>
 						<mo-flex direction='horizontal' gap='5px' alignItems='baseline'>
 							<div>Vote</div>

@@ -37,7 +37,7 @@ public sealed class Campaign : Entity, IValidatableObject
 
 	public long TotalExpenditure => Expenditures.Sum(e => e.TotalPrice);
 
-	public List<CampaignPaymentMethod> ActivatedPaymentMethods { get; set; } = [];
+	[AutoInclude] public List<CampaignPaymentMethod> ActivatedPaymentMethods { get; set; } = [];
 
 	public int? ValidationId { get; set; }
 	[AutoInclude] public CampaignValidation? Validation { get; set; }
@@ -72,6 +72,7 @@ public sealed class Campaign : Entity, IValidatableObject
 	public async Task<Campaign> Save(IDatabase database, IAuthenticatedAccount authenticatedAccount, IPaymentMethodProvider paymentMethodProvider)
 	{
 		Validate();
+		ActivatedPaymentMethods.ForEach(pm => paymentMethodProvider.Get(pm.Identifier).ValidateAllocationDestination(pm.AllocationDestination));
 
 		var existing = await database.GetAsNoTrackingOrDefault<Campaign>(Id);
 		CreatorId = existing?.CreatorId ?? authenticatedAccount.Id!.Value;
@@ -104,8 +105,6 @@ public sealed class Campaign : Entity, IValidatableObject
 				throw new InvalidOperationException("Cannot change activated payment methods once the campaign is in allocation status");
 			}
 		}
-
-		ActivatedPaymentMethods.ForEach(pm => paymentMethodProvider.Get(pm.Identifier).ValidateAllocationDestination(pm.AllocationDestination));
 
 		return await database.Save(this);
 	}

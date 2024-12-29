@@ -4,7 +4,7 @@ import { Account } from 'application'
 import JSEncrypt from 'jsencrypt'
 
 @component('solid-dialog-account-creation')
-export class DialogAccountCreation extends DialogComponent<{ readonly id?: number }> {
+export class DialogAccountCreation extends DialogComponent {
 	@state() private username = ''
 	@state() private privateKey = new JSEncrypt
 	@state() private isUsernameValid = false

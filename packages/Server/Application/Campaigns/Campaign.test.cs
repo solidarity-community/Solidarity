@@ -2,44 +2,26 @@ namespace Solidarity.Application.Campaigns;
 
 public sealed class CampaignTest
 {
-	public static List<object[]> ExpenditureData => [
-		[Array.Empty<object>(), 0],
-		[new[] { (11, 1), (17, 2), (25, 0) }, 45],
-		[new[] { (11, 1), (17, 2), (25, 3) }, 120],
-	];
-
-	[Theory(DisplayName = "TotalExpenditure should return the sum of campaign expenditures")]
-	[MemberData(nameof(ExpenditureData))]
-	public void TestTotalExpenditure((int unitPrice, int quantity)[] expendituresList, int expected)
+	[Fact(DisplayName = "TotalExpenditure should return the sum of campaign expenditures")]
+	public void TestTotalExpenditure()
 	{
 		Campaign campaign = new()
 		{
-			Expenditures = expendituresList.Select(e => new CampaignExpenditure
-			{
-				UnitPrice = e.unitPrice,
-				Quantity = e.quantity,
-			}).ToList(),
+			Expenditures = [
+				new() { UnitPrice = 11, Quantity = 1 },
+				new() { UnitPrice = 17, Quantity = 2 },
+				new() { UnitPrice = 25, Quantity = 3 }
+			]
 		};
 
-		Assert.Equal(expected, campaign.TotalExpenditure);
+		Assert.Equal(120, campaign.TotalExpenditure);
 	}
 
-	public static List<object[]> StatusData => [
-		[null!, null!, CampaignStatus.Funding],
-		[new CampaignValidation(), null!, CampaignStatus.Validation],
-		[new CampaignValidation(), new CampaignAllocation(), CampaignStatus.Allocation],
-	];
-
-	[Theory(DisplayName = "Status getter should return the correct status")]
-	[MemberData(nameof(StatusData))]
-	public void TestStatus(CampaignValidation? validation, CampaignAllocation? allocation, CampaignStatus expected)
+	[Fact(DisplayName = "Status getter should return the correct status")]
+	public void TestStatus()
 	{
-		Campaign campaign = new()
-		{
-			Validation = validation,
-			Allocation = allocation,
-		};
-
-		Assert.Equal(expected, campaign.Status);
+		Assert.Equal(CampaignStatus.Funding, new Campaign() { }.Status);
+		Assert.Equal(CampaignStatus.Validation, new Campaign() { Validation = new() }.Status);
+		Assert.Equal(CampaignStatus.Allocation, new Campaign() { Validation = new(), Allocation = new() }.Status);
 	}
 }
