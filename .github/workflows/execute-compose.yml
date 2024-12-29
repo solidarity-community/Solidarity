@@ -56,6 +56,6 @@ jobs:
             echo "COMPOSE_PROJECT_NAME=solidarity" > .env
             echo "JWT_KEY=${{secrets.JWT_KEY}}" >> .env
             echo "DATABASE_PASSWORD=${{secrets.DATABASE_PASSWORD}}" >> .env
-            echo "CRYPTO_PASSWORD=${{ secrets.CRYPTO_PASSWORD }}" >> .env
+            echo "CRYPTO_PASSWORD=${{secrets.CRYPTO_PASSWORD}}" >> .env
             podman-compose ${{inputs.command}}
             ${{inputs.post_command || ''}}

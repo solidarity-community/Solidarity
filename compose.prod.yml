@@ -1,4 +1,23 @@
 services:
+  solidarity-bitcoin-testnet:
+    container_name: solidarity-bitcoin-testnet
+    image: docker.io/bitcoin/bitcoin:latest
+    restart: always
+    command:
+      -chain=testnet4
+      -server
+      -printtoconsole=1
+      -maxuploadtarget=5000
+      -txindex=1
+      -rpcallowip=0.0.0.0/0
+      -rpcbind=0.0.0.0
+      -rpcport=80
+      -rpcuser=bitcoin
+      -rpcpassword=${CRYPTO_PASSWORD}
+      -dbcache=1024
+    volumes:
+      - /mnt/bitcoin/testnet:/home/bitcoin/.bitcoin
+
   solidarity-database:
     container_name: solidarity-database
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -23,8 +42,8 @@ services:
       - DATABASE_PASSWORD=${DATABASE_PASSWORD}
       - JWT_KEY=${JWT_KEY}
       - PAYMENT_METHODS=BTC_TESTNET
-      - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://solidarity-bitcoin-testnet:18333/
-      - PAYMENT_METHOD_BTC_TESTNET_USERNAME=solidarity
+      - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://solidarity-bitcoin-testnet:80
+      - PAYMENT_METHOD_BTC_TESTNET_USERNAME=bitcoin
       - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=${CRYPTO_PASSWORD}
 
 networks:
