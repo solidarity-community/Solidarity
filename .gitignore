@@ -10,6 +10,7 @@
 
 # Server
 *.db
+compose.yml
 /packages/server/database/
 /packages/server/file/
 
