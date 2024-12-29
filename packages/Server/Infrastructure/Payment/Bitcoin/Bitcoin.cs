@@ -25,7 +25,7 @@ public abstract class Bitcoin : PaymentMethod
 		Key ??= new ExtKey().GetWif(Client.Network).ToWif();
 		ExtendedPrivateKey = new BitcoinExtKey(Key, network);
 
-		try { Client.EnsureWalletCreated().GetAwaiter().GetResult(); }
+		try { Client.LoadOrCreateWallet().GetAwaiter().GetResult(); }
 		catch { }
 	}
 

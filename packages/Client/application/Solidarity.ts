@@ -71,6 +71,7 @@ export class Header extends Component {
 			}
 
 			mo-flex#logo {
+				cursor: pointer;
 				height: 100%;
 				opacity: 0.8;
 				color: color-mix(in srgb, var(--mo-color-foreground), var(--mo-color-accent) 32%);
@@ -82,6 +83,18 @@ export class Header extends Component {
 
 				div {
 					font-size: min(1.8em, 24px);
+				}
+
+				span {
+					display: block;
+					border-radius: var(--mo-border-radius);
+					padding: 0.2em 0.4em;
+					font-size: 0.8em;
+					opacity: 0.8;
+					margin-inline-start: 8px;
+					background-color: color-mix(in srgb, var(--mo-color-foreground), var(--mo-color-accent) 32%);
+					color: var(--mo-color-on-accent);
+					font-weight: bold;
 				}
 			}
 
@@ -104,7 +117,7 @@ export class Header extends Component {
 
 	protected get logoTemplate() {
 		return html`
-			<mo-flex id='logo' direction='horizontal' alignItems='center'>
+			<mo-flex id='logo' direction='horizontal' alignItems='center' ${routerLink(new Solid.PageCampaigns)}>
 				<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1999.06 1999.06'>
 					<defs>
 						<style>
@@ -125,6 +138,7 @@ export class Header extends Component {
 					<path d='M1605.18,495.6c-225.15,111-497.65,18.47-608.65-206.67C1221.68,177.93,1494.18,270.46,1605.18,495.6Z' />
 				</svg>
 				<div>Solidarity</div>
+				<span>${location.hostname.includes('localhost') ? 'Local' : 'Test'}</span>
 			</mo-flex>
 		`
 	}

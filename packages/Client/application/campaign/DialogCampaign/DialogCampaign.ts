@@ -5,7 +5,7 @@ import { CampaignPaymentMethod, Campaign, CampaignStatus, PaymentMethod } from '
 
 @component('solid-dialog-campaign')
 export class DialogCampaign extends EntityDialogComponent<Campaign> {
-	protected override entity = new Campaign
+	protected override entity = location.hostname === 'localhost' ? Campaign.sample() : new Campaign()
 	protected override fetch = Campaign.get
 	protected override save = Campaign.save
 	protected override delete = undefined

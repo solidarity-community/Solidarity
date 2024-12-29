@@ -1,6 +1,6 @@
-namespace Solidarity.Api;
-
 using Options = System.Text.Json.JsonSerializerOptions;
+
+namespace Solidarity.Api;
 
 public static class JsonSerializerOptions
 {

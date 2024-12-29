@@ -1,4 +1,23 @@
 services:
+  bitcoin-testnet:
+    image: bitcoin/bitcoin:latest
+    restart: always
+    command:
+      -chain=testnet4
+      -server
+      -printtoconsole=1
+      -maxuploadtarget=5000
+      -txindex=1
+      -rpcallowip=0.0.0.0/0
+      -rpcbind=0.0.0.0
+      -rpcport=80
+      -rpcuser=solidarity
+      -rpcpassword=Dev_Passw0rd
+      -dbcache=1024
+      -deprecatedrpc=create_bdb
+    volumes:
+      - ~/.bitcoin/testnet:/home/bitcoin/.bitcoin
+
   database:
     image: mcr.microsoft.com/mssql/server:2022-latest
     restart: always
@@ -16,6 +35,7 @@ services:
     restart: always
     depends_on:
       - database
+      - bitcoin-testnet
     build:
       context: ./packages/Server
     ports:
@@ -33,7 +53,7 @@ services:
       - DATABASE_PASSWORD=Dev_Passw0rd
       - JWT_KEY=75pQjmReLS7FRTYZg7ehvb2NE5ZtEkdMdw7h7CKgLh4S8T45jUS9jbuUqLeeUdcP
       - PAYMENT_METHODS=BTC_TESTNET
-      - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://crypto_bitcoin_testnet:18333/
+      - PAYMENT_METHOD_BTC_TESTNET_SERVER=http://bitcoin-testnet
       - PAYMENT_METHOD_BTC_TESTNET_USERNAME=solidarity
       - PAYMENT_METHOD_BTC_TESTNET_PASSWORD=Dev_Passw0rd
 

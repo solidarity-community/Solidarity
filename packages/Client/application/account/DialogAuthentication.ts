@@ -7,7 +7,7 @@ import { Account, DialogAccountCreation, DialogAccountRecover } from 'applicatio
 export class DialogAuthentication extends DialogAuthenticator<Account> {
 	protected override get template() {
 		return html`
-			<mo-dialog blocking primaryOnEnter ${style({ '--mdc-dialog-scrim-color': 'var(--mo-color-background)' })}>
+			<mo-dialog blocking primaryOnEnter ${style({ '--mo-dialog-scrim-color': 'var(--mo-color-background)' })}>
 				<mo-loading-button slot='primaryAction' type='raised'>${t('Login')}</mo-loading-button>
 				<mo-loading-button slot='footer' type='outlined' @click=${() => this.register()}>${t('Register')}</mo-loading-button>
 				<mo-flex alignItems='center' gap='40px'>
@@ -15,7 +15,6 @@ export class DialogAuthentication extends DialogAuthenticator<Account> {
 					${this.contentTemplate}
 				</mo-flex>
 				<mo-flex slot='footer' direction='horizontal' gap='4px' ${style({ flex: '1' })}>
-					<mo-button type='outlined' @click=${() => this.register()}>Register</mo-button>
 					<mo-button type='outlined' @click=${() => this.recover()}>Recover</mo-button>
 				</mo-flex>
 			</mo-dialog>

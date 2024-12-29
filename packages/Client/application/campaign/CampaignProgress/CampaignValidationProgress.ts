@@ -38,10 +38,10 @@ export class CampaignValidationProgress extends Progress {
 					<div ${style({ fontSize: 'small' })}>Raised</div>
 				</mo-flex>
 				<div>●</div>
-				<div>
+				<mo-flex direction='horizontal' gap='3px' alignItems='baseline'>
 					<div ${style({ color: 'var(--mo-color-foreground)' })}>${(this.votes.endorsedBalance / this.votes.balance).formatAsPercent()}</div>
 					<div ${style({ fontSize: 'small' })}>Endorsed</div>
-				</div>
+				</mo-flex>
 			</mo-flex>
 		`
 	}

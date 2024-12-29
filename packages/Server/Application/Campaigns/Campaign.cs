@@ -37,7 +37,7 @@ public sealed class Campaign : Entity, IValidatableObject
 
 	public long TotalExpenditure => Expenditures.Sum(e => e.TotalPrice);
 
-	public List<CampaignPaymentMethod> ActivatedPaymentMethods { get; set; } = [];
+	[AutoInclude] public List<CampaignPaymentMethod> ActivatedPaymentMethods { get; set; } = [];
 
 	public int? ValidationId { get; set; }
 	[AutoInclude] public CampaignValidation? Validation { get; set; }
@@ -72,6 +72,7 @@ public sealed class Campaign : Entity, IValidatableObject
 	public async Task<Campaign> Save(IDatabase database, IAuthenticatedAccount authenticatedAccount, IPaymentMethodProvider paymentMethodProvider)
 	{
 		Validate();
+		ActivatedPaymentMethods.ForEach(pm => paymentMethodProvider.Get(pm.Identifier).ValidateAllocationDestination(pm.AllocationDestination));
 
 		var existing = await database.GetAsNoTrackingOrDefault<Campaign>(Id);
 		CreatorId = existing?.CreatorId ?? authenticatedAccount.Id!.Value;
@@ -104,8 +105,6 @@ public sealed class Campaign : Entity, IValidatableObject
 				throw new InvalidOperationException("Cannot change activated payment methods once the campaign is in allocation status");
 			}
 		}
-
-		ActivatedPaymentMethods.ForEach(pm => paymentMethodProvider.Get(pm.Identifier).ValidateAllocationDestination(pm.AllocationDestination));
 
 		return await database.Save(this);
 	}
@@ -141,6 +140,12 @@ public sealed class Campaign : Entity, IValidatableObject
 		return balances?.Sum() ?? 0;
 	}
 
+	public async Task<double> GetBalanceShare(IDatabase database, IPaymentMethodProvider paymentMethodProvider, int? accountId = null)
+	{
+		var account = accountId.HasValue is false ? null : await database.Get<Account>(accountId.Value);
+		return await GetBalance(paymentMethodProvider, account);
+	}
+
 	public async Task Vote(IDatabase database, IAuthenticatedAccount authenticatedAccount, bool value)
 	{
 		AssertNotInStatus(CampaignStatus.Allocation, CampaignStatus.Funding);
@@ -157,6 +162,22 @@ public sealed class Campaign : Entity, IValidatableObject
 		vote.Value = value;
 
 		await database.CommitChanges();
+	}
+
+	public bool? GetVoteByAccountId(int? accountId) => Validation?.Votes.GetByAccountId(accountId);
+
+	public record Votes(double EndorsedBalance, double Balance, double ApprovalThreshold);
+	public async Task<Votes> GetVotes(IDatabase database, IPaymentMethodProvider paymentMethodProvider)
+	{
+		AssertNotInStatus(CampaignStatus.Funding, CampaignStatus.Allocation);
+		var balance = await GetTotalBalance(paymentMethodProvider);
+		var endorsedDonations = 0d;
+		foreach (var vote in Validation!.Votes.Where(vote => vote.Value == true))
+		{
+			endorsedDonations += await GetBalanceShare(database, paymentMethodProvider, vote.AccountId);
+		}
+		return new(endorsedDonations, balance, Validation!.ApprovalThreshold);
+
 	}
 
 	public async Task Refund(IPaymentMethodProvider paymentMethodProvider)

@@ -8,7 +8,6 @@ public sealed class CampaignFundAllocator(IServiceProvider serviceProvider, ILog
 	{
 		var database = serviceProvider.GetRequiredService<IDatabase>();
 		var paymentMethodProvider = serviceProvider.GetRequiredService<IPaymentMethodProvider>();
-		var getVotes = serviceProvider.GetRequiredService<GetVotes>();
 
 		var campaigns = await database.Campaigns
 			.Where(campaign => campaign.AllocationId == null && campaign.ValidationId != null && campaign.Validation!.Expiration < DateTime.Now)
@@ -16,7 +15,7 @@ public sealed class CampaignFundAllocator(IServiceProvider serviceProvider, ILog
 
 		foreach (var campaign in campaigns)
 		{
-			var votesStatus = await getVotes.Execute(campaign.Id);
+			var votesStatus = await campaign.GetVotes(database, paymentMethodProvider);
 			var endorsedRatio = votesStatus.EndorsedBalance / votesStatus.Balance;
 
 			if (double.IsNaN(endorsedRatio))

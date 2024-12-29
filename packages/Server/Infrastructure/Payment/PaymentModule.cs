@@ -5,6 +5,6 @@ public sealed class PaymentModule : Module
 	public override void ConfigureServices(IServiceCollection services)
 	{
 		services.AddHealthChecks().AddCheck<PaymentMethodProvider>("Payment Method Provider");
-		services.AddTransient<IPaymentMethodProvider, PaymentMethodProvider>();
+		services.AddSingleton<IPaymentMethodProvider, PaymentMethodProvider>();
 	}
 }

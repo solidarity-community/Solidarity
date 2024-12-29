@@ -1,12 +1,35 @@
 import { type GeometryCollection } from 'geojson'
 import { NotificationComponent } from '@a11d/lit-application'
-import { Model, model, Api, PaymentMethod, type PaymentMethodIdentifier, type Account, type HttpError } from 'application'
+import { Model, model, Api, PaymentMethod, PaymentMethodIdentifier, type Account, type HttpError } from 'application'
 import { DialogDeletion } from '@3mo/standard-dialogs'
 
 export enum CampaignStatus { Funding, Validation, Allocation }
 
 @model('Campaign')
 export class Campaign extends Model {
+	static sample() {
+		return new Campaign({
+			title: 'Clean Alster Initiative',
+			description: 'This initiative focuses on removing litter, promoting environmental awareness, and fostering community involvement.',
+			activatedPaymentMethods: [new CampaignPaymentMethod(PaymentMethodIdentifier.BitcoinTestnet)],
+			expenditures: [
+				new CampaignExpenditure({ quantity: 10, unitPrice: 40, name: 'Litter collection tools' }),
+				new CampaignExpenditure({ quantity: 16, unitPrice: 100, name: 'Recycling bins for sorting waste' }),
+				new CampaignExpenditure({ quantity: 30, unitPrice: 1, name: 'Refreshments for volunteers' }),
+				new CampaignExpenditure({ quantity: 30, unitPrice: 50, name: 'Safety equipment' })
+			],
+			location: {
+				type: 'GeometryCollection',
+				geometries: [
+					{
+						type: 'Polygon',
+						coordinates: [[[9.994769, 53.552246], [10.00067, 53.555649], [10.000992, 53.55686], [10.001056, 53.557498], [10.004747, 53.557612], [10.010197, 53.55969], [10.016699, 53.563732], [10.01627, 53.567861], [10.010176, 53.569951], [10.006485, 53.575405], [10.003395, 53.579379], [9.999533, 53.580602], [9.998245, 53.579278], [10.00185, 53.575812], [10.002623, 53.572296], [10.001163, 53.566026], [9.995241, 53.559093], [9.99155, 53.554928], [9.994769, 53.552246]]]
+					}
+				]
+			}
+		})
+	}
+
 	static get(id: number) {
 		return Api.get<Campaign>(`/campaign/${id}`)
 	}
@@ -65,6 +88,11 @@ export class Campaign extends Model {
 			content: 'Are you sure you want to delete this campaign irreversibly? All donations will be refunded.',
 			deletionAction: () => Api.delete(`/campaign/${id}`)
 		}).confirm()
+	}
+
+	constructor(init?: Partial<Campaign>) {
+		super()
+		Object.assign(this, init)
 	}
 
 	readonly creatorId!: number
@@ -137,6 +165,11 @@ export class CampaignExpenditure extends Model {
 	unitPrice = 0
 
 	get totalPrice() { return this.quantity * this.unitPrice }
+
+	constructor(init?: Partial<CampaignExpenditure>) {
+		super()
+		Object.assign(this, init)
+	}
 }
 
 export const enum CampaignMediaType { File, YouTube, Twitch, }

@@ -19,7 +19,7 @@
 				"quoteArgs": false
 			},
 			"sourceFileMap": {
-				"/Solidarity": "${workspaceRoot}/packages/server/"
+				"/server": "${workspaceRoot}/packages/server/"
 			}
 		}
 	]

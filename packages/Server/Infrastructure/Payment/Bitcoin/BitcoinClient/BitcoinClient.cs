@@ -21,10 +21,9 @@ public sealed class BitcoinClient
 	public Network Network => client.Network;
 	private TransactionBuilder CreateTransactionBuilder() => client.Network.CreateTransactionBuilder();
 
-	private bool isWalletLoaded;
-	public async Task EnsureWalletCreated()
+	public async Task LoadOrCreateWallet()
 	{
-		if (isWalletLoaded == true)
+		if (string.IsNullOrEmpty(client.CredentialString.WalletName) is false)
 		{
 			return;
 		}
@@ -35,7 +34,10 @@ public sealed class BitcoinClient
 			try { await client.LoadWalletAsync(WalletName); }
 			catch (RPCException) { }
 		}
-		finally { isWalletLoaded = true; }
+		finally
+		{
+			client.CredentialString.WalletName = WalletName;
+		}
 	}
 
 	public Task<BlockchainInfo> GetBlockchainInfoAsync(CancellationToken cancellationToken = default)
