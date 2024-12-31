@@ -62,25 +62,21 @@ export class PageCampaign extends PageComponent<{ readonly id: number }> {
 						${this.actionButtonsTemplate}
 					</mo-flex>
 
-					<mo-flex id='container' direction='horizontal' gap='25px' wrap='wrap'>
-						<mo-flex gap='25px' ${style({ flex: '2 0 400px' })}>
-							${!this.campaign?.media?.length ? html.nothing : html`
-								<mo-card heading='Gallery'>
-									<solid-campaign-slider readOnly .campaign=${this.campaign}></solid-campaign-slider>
-								</mo-card>
-							`}
+					<mo-flex direction='horizontal' gap='25px' wrap='wrap' ${style({ width: '100%' })}>
+						<mo-flex gap='25px' ${style({ flex: '2 0 300px', width: '100%' })}>
+							<solid-campaign-media-card readOnly hideWhenEmpty .campaign=${this.campaign}></solid-campaign-media-card>
 
 							<mo-card heading=${ifDefined(this.campaign.title)}>
 								${this.campaign.description}
 							</mo-card>
 						</mo-flex>
 
-						<mo-flex gap='25px' ${style({ flex: '1 0 300px' })}>
+						<mo-flex gap='25px' ${style({ flex: '1 0 150px' })}>
 							<mo-card heading='Location' style='--mo-card-body-padding: 0'>
 								<solid-map readOnly .selectedArea=${this.campaign.location}></solid-map>
 							</mo-card>
 
-							<solid-section-campaign-expenditure .campaign=${this.campaign}></solid-section-campaign-expenditure>
+							<solid-campaign-expenditure-card .campaign=${this.campaign}></solid-campaign-expenditure-card>
 						</mo-flex>
 					</mo-flex>
 				`}

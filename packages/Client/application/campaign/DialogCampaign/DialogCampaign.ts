@@ -35,9 +35,7 @@ export class DialogCampaign extends EntityDialogComponent<Campaign> {
 						<solid-map ${style({ height: '400px' })} ?readOnly=${this.campaign.status !== CampaignStatus.Funding} ${bind('location')}></solid-map>
 					</mo-card>
 
-					<mo-collapsible-card heading='Media' collapsed>
-						<solid-campaign-slider .campaign=${this.campaign}></solid-campaign-slider>
-					</mo-collapsible-card>
+					<solid-campaign-media-card .campaign=${this.campaign}></solid-campaign-media-card>
 
 					<mo-card heading='Donation methods'>
 						${this.paymentMethods?.map(pm => html`
@@ -60,7 +58,7 @@ export class DialogCampaign extends EntityDialogComponent<Campaign> {
 						`)}
 					</mo-card>
 
-					<solid-section-campaign-expenditure editable .campaign=${this.campaign}></solid-section-campaign-expenditure>
+					<solid-campaign-expenditure-card editable .campaign=${this.campaign}></solid-campaign-expenditure-card>
 				</mo-flex>
 			</mo-entity-dialog>
 		`

@@ -1,8 +1,8 @@
 import { Component, component, css, html, property, style } from '@a11d/lit'
 import { type Campaign, CampaignExpenditure, CampaignStatus } from 'application'
 
-@component('solid-section-campaign-expenditure')
-export class SectionCampaignExpenditure extends Component {
+@component('solid-campaign-expenditure-card')
+export class CampaignExpenditureCard extends Component {
 	@property({ type: Object }) campaign!: Campaign
 	@property({ type: Boolean }) editable = false
 
@@ -36,7 +36,7 @@ export class SectionCampaignExpenditure extends Component {
 					></mo-icon-button>
 				`}
 
-				<mo-grid alignItems=${this.editable ? 'center' : 'end'} columns='3* * auto 2* auto 2*' gap='10px'>
+				<mo-grid alignItems=${this.editable ? 'center' : 'end'} columns='3* auto auto auto auto auto' gap='10px'>
 					${this.campaign.expenditures.map(expenditure => html`
 						${this.getNameTemplate(expenditure)}
 						${this.getQuantityTemplate(expenditure)}
@@ -93,6 +93,6 @@ export class SectionCampaignExpenditure extends Component {
 
 declare global {
 	interface HTMLElementTagNameMap {
-		'solid-section-campaign-expenditure': SectionCampaignExpenditure
+		'solid-campaign-expenditure-card': CampaignExpenditureCard
 	}
 }
