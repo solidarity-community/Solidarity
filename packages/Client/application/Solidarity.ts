@@ -20,7 +20,6 @@ export class Solidarity extends Application {
 
 			${super.styles}
 
-
 			:root {
 				background-color: var(--mo-color-background);
 				font-family: var(--mo-font-family);
@@ -28,6 +27,7 @@ export class Solidarity extends Application {
 				--mdc-typography-font-family: var(--mo-font-family);
 				--mdc-typography-body1-font-family: var(--mo-font-family);
 				--md-ref-typeface-plain: var(--mo-font-family);
+				--md-ref-typeface-brand: var(--mo-font-family);
 				font-size: 1rem;
 			}
 		`

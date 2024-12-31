@@ -48,7 +48,7 @@ public sealed class Campaign : Entity, IValidatableObject
 	public async Task TransitionToValidationPhase(IDatabase database, IAuthenticatedAccount authenticatedAccount, IPaymentMethodProvider paymentMethodProvider)
 	{
 		AssertNotInStatus(CampaignStatus.Allocation, CampaignStatus.Validation);
-		AssertCreatedByCurrentUser(authenticatedAccount);
+		(CreatorId != authenticatedAccount.Id).Throw("Operation is only allowed for the campaign creator.").IfTrue();
 
 		var totalBalance = await GetTotalBalance(paymentMethodProvider);
 
@@ -149,18 +149,7 @@ public sealed class Campaign : Entity, IValidatableObject
 	public async Task Vote(IDatabase database, IAuthenticatedAccount authenticatedAccount, bool value)
 	{
 		AssertNotInStatus(CampaignStatus.Allocation, CampaignStatus.Funding);
-
-		var accountId = authenticatedAccount.Id!.Value;
-
-		var vote = Validation!.Votes.Find(v => v.AccountId == accountId);
-		if (vote is null)
-		{
-			vote = new() { ValidationId = Validation!.Id, AccountId = accountId };
-			Validation!.Votes.Add(vote);
-		}
-
-		vote.Value = value;
-
+		Validation!.Votes.Cast(authenticatedAccount.Id!.Value, value);
 		await database.CommitChanges();
 	}
 
@@ -229,7 +218,4 @@ public sealed class Campaign : Entity, IValidatableObject
 
 	public void AssertNotInStatus(params CampaignStatus[] statuses)
 		=> statuses.Throw(() => new CampaignStatusException(statuses)).IfContains(Status);
-
-	public void AssertCreatedByCurrentUser(IAuthenticatedAccount authenticatedAccount)
-		=> (CreatorId != authenticatedAccount.Id).Throw("Operation is only allowed for the campaign creator.").IfTrue();
 }

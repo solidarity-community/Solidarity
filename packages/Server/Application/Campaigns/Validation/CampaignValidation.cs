@@ -5,6 +5,17 @@ public static class VotesExtensions
 {
 	public static bool? GetByAccountId(this List<CampaignValidationVote> votes, int? accountId)
 		=> votes.Find(v => v.AccountId == accountId)?.Value;
+
+	public static void Cast(this List<CampaignValidationVote> votes, int accountId, bool value)
+	{
+		var vote = votes.Find(v => v.AccountId == accountId);
+		if (vote is null)
+		{
+			vote = new() { AccountId = accountId };
+			votes.Add(vote);
+		}
+		vote.Value = value;
+	}
 }
 
 public sealed class CampaignValidation : Entity
