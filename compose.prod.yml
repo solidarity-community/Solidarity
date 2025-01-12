@@ -16,7 +16,7 @@ services:
       -rpcpassword=${CRYPTO_PASSWORD}
       -dbcache=1024
     volumes:
-      - /mnt/bitcoin/testnet:/home/bitcoin/.bitcoin
+      - ~/solidarity/bitcoin/testnet:/home/bitcoin/.bitcoin
 
   solidarity-database:
     container_name: solidarity-database
