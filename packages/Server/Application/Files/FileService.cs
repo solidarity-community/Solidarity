@@ -2,7 +2,7 @@ namespace Solidarity.Application.Files;
 
 public sealed class FileService
 {
-	public const string FileDirectory = "file";
+	public const string FileDirectory = "files";
 	public const int MaxFileSizeInMB = 5;
 	public static readonly string[] AllowedFileExtensions = ["jpg", "png", "gif"];
 

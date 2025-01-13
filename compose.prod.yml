@@ -35,6 +35,8 @@ services:
     restart: unless-stopped
     depends_on:
       - solidarity-database
+    volumes:
+      - ~/solidarity/files:/server/files
     environment:
       - ASPNETCORE_URLS=http://+:80
       - DATABASE_SERVER=solidarity-database,1433
