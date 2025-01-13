@@ -33,7 +33,7 @@ export class DialogAuthentication extends DialogAuthenticator<Account> {
 	protected get contentTemplate() {
 		return html`
 			<mo-flex gap='8px' ${style({ height: '*', width: '100%', paddingBottom: '25px' })}>
-				<mo-field-text data-focus
+				<mo-field-text autofocus
 					label=${t('Username')}
 					.value=${this.username}
 					@input=${(e: CustomEvent<string>) => this.username = e.detail}

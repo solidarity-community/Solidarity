@@ -1,5 +1,6 @@
 import { Component, component, css, html } from '@a11d/lit'
 import { Application, application, routerLink } from '@a11d/lit-application'
+import { Task } from '@lit/task'
 import { Theme } from '@3mo/theme'
 import { DataGrid } from '@3mo/data-grid'
 import * as Solid from '.'
@@ -9,7 +10,6 @@ import { Icon, IconVariant } from '@3mo/icon'
 Theme.accent.value = 'rgb(124, 179, 76)'
 DataGrid.hasAlternatingBackground.value = false
 Icon.defaultVariant = IconVariant.Outlined
-
 
 @application()
 @component('solid-application')
@@ -35,7 +35,7 @@ export class Solidarity extends Application {
 
 	protected override async initialized() {
 		if (await Solid.Account.isAuthenticated() === false) {
-			Solid.JwtApiAuthenticator.token = undefined
+			Api.authenticator?.unauthenticate()
 		}
 
 		return super.initialized()
@@ -59,6 +59,8 @@ export class Solidarity extends Application {
 
 @component('solid-header')
 export class Header extends Component {
+	private readonly authenticatedAccountFetchTask = new Task(this, Solid.Account.getAuthenticated, () => [])
+
 	static override get styles() {
 		return css`
 			:host {
@@ -145,8 +147,14 @@ export class Header extends Component {
 
 	private get navigationTemplate() {
 		return html`
-			<mo-flex>
+			<mo-flex direction='horizontal' gap='8px'>
 				<mo-button ${routerLink(new Solid.PageCampaigns)}>Campaigns</mo-button>
+					${this.authenticatedAccountFetchTask.render({
+						complete: account => !account
+							? html`<mo-button @click=${() => new Solid.DialogAuthentication().confirm()}>Login to Account</mo-button>`
+							: html`<fm-account-avatar withMenu .account=${account}></fm-account-avatar>`,
+					})}
+				</mo-button>
 			</mo-flex>
 		`
 	}

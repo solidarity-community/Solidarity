@@ -24,7 +24,6 @@ export class PageAccount extends PageComponent {
 				<mo-flex gap='24px' ${style({ height: '100%', width: '100%', maxWidth: '1028px', margin: 'auto' })}>
 					${this.accountTemplate}
 					${this.activitiesTemplate}
-					${this.securityTemplate}
 					<mo-grid gap='16px' ${style({ flex: '1' })}>
 					</mo-grid>
 				</mo-flex>
@@ -33,14 +32,12 @@ export class PageAccount extends PageComponent {
 	}
 
 	private get accountTemplate() {
-		return html`
+		return !this.account ? html.nothing : html`
 			<mo-flex direction='horizontal' justifyContent='space-between' alignItems='center'>
 				<mo-flex alignItems='center' direction='horizontal' gap='12px'>
-					<fm-avatar ${style({ width: '50px', height: '50px', fontSize: 'x-large', color: 'var(--mo-color-on-accent)' })}>
-						${(this.account?.name || this.account?.username || '').charAt(0).toUpperCase()}
-					</fm-avatar>
+					<fm-account-avatar .account=${this.account}></fm-account-avatar>
 					<mo-flex>
-						<mo-heading typography='heading3'>${this.account?.nameOrUsername}</mo-heading>
+						<mo-heading typography='heading3'>${this.account.nameOrUsername}</mo-heading>
 						${!this.account?.username ? html.nothing : html`<mo-heading typography='heading5' ${style({ color: 'var(--mo-color-gray)' })}>${this.account.username}</mo-heading>`}
 					</mo-flex>
 				</mo-flex>
@@ -66,7 +63,7 @@ export class PageAccount extends PageComponent {
 		`
 	}
 
-	private get securityTemplate() {
+	protected get securityTemplate() {
 		const getAuthenticationMethodTemplate = (name: string, activated = false, editAction?: () => Promise<void> | void, deleteAction?: () => Promise<void> | void) => html`
 			<mo-card class='authenticationMethod'>
 				<mo-flex direction='horizontal'>

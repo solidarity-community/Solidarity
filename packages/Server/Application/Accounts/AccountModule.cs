@@ -24,5 +24,6 @@ public sealed class AccountModule : Module
 		endpoints.MapPut("/api/account", (UpdateAccount update, Account account) => update.Execute(account));
 		endpoints.MapGet("/api/account/{username}/reset", [AllowAnonymous] (ResetAccountByUsername reset, string username) => reset.Execute(username));
 		endpoints.MapGet("/api/account/recover", [AllowAnonymous] (RecoverAccount recover, string phrase) => recover.Execute(phrase));
+		endpoints.MapPost("/api/account/authenticate", [AllowAnonymous] (AuthenticateAccount authenticate, [FromBody] AuthenticateAccount.Parameters parameters) => authenticate.Execute(parameters));
 	}
 }
