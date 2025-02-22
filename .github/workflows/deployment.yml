@@ -33,6 +33,6 @@ jobs:
     needs: Deploy
     secrets: inherit
     with:
-      pre_command: docker load -i ./solidarity-image && podman-compose down
+      pre_command: docker load -i ./solidarity-image && docker compose down
       command: up -d
       post_command: docker image prune -f

@@ -37,6 +37,10 @@ services:
       - solidarity-database
     volumes:
       - ~/solidarity/files:/server/files
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.solidarity.rule=Host(`solidarity.community`)"
+      - "traefik.http.services.solidarity.loadbalancer.server.port=80"
     environment:
       - ASPNETCORE_URLS=http://+:80
       - DATABASE_SERVER=solidarity-database,1433
